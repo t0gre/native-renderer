@@ -1,0 +1,8 @@
+
+build
+dist
+**/.DS_Store
+
+# native build artifacts
+native
+**/test-run
