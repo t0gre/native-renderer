@@ -21,8 +21,8 @@ RenderProgram initShader(void)
     const GLchar* vertexSource = get_shader_content("basic.vert");
     const GLchar* fragmentSource = get_shader_content("basic.frag");
     #else 
-    const GLchar* vertexSource = get_shader_content("./lib/shaders/basic.vert");
-    const GLchar* fragmentSource = get_shader_content("./lib/shaders/basic.frag");
+    const GLchar* vertexSource = get_shader_content("./shaders/basic.vert");
+    const GLchar* fragmentSource = get_shader_content("./shaders/basic.frag");
     #endif
 
     // Create and compile vertex shader
@@ -241,8 +241,8 @@ ShadowRenderProgram initShadowRenderProgram() {
     const GLchar* vertexSource = get_shader_content("depth-only.vert");
     const GLchar* fragmentSource = get_shader_content("depth-only.frag");
     #else 
-    const GLchar* vertexSource = get_shader_content("./lib/shaders/depth-only.vert");
-    const GLchar* fragmentSource = get_shader_content("./lib/shaders/depth-only.frag");
+    const GLchar* vertexSource = get_shader_content("./shaders/depth-only.vert");
+    const GLchar* fragmentSource = get_shader_content("./shaders/depth-only.frag");
     #endif
 
     // Create and compile vertex shader

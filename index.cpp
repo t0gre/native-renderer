@@ -288,8 +288,8 @@ int main(int argc, char** argv)
 
    
     // TODO do these need to be cleaned up?
-    FloatData normals = read_csv("normals.txt");
-    FloatData positions = read_csv("positions.txt");
+    FloatData normals = read_csv("assets/normals.txt");
+    FloatData positions = read_csv("assets/positions.txt");
 
     Vertices vertices = {
         .vertex_count = positions.count / 3,
