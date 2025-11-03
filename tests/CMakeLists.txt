@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(NativeRendererTests)
 
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+#set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(OpenGL REQUIRED)
 
