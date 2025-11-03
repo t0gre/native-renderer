@@ -1,3 +1,13 @@
+## Features
+
+- phong shading
+- scene graph
+- raycasting
+- shadow mapping
+
+
+![screenshot](/docs/screenshot.png "Screenshot")
+
 ## Makefile
 
 Although this part of the project uses a makefile, it doesn't use any actual features of make. It could be just a series of shell scripts, one for each command. See below for setting up emscripten before `make build-en` will work.

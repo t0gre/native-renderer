@@ -1,0 +1,43 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/lib/include",
+                "/usr/include/SDL2"
+            ],
+            "compilerArgs": [
+                "-Wall",
+                "-Werror",
+                "-Wno-missing-braces"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-clang-x64"
+        },
+        {
+            "name": "Emscriptem",
+            "includePath": [
+                "${workspaceFolder}/emsdk/upstream/emscripten/cache/sysroot/include/SDL2",
+                "${workspaceFolder}/emsdk/upstream/emscripten/cache/sysroot/include/compat",
+                "${workspaceFolder}/emsdk/upstream/lib/clang/19/include",
+                "${workspaceFolder}/emsdk/upstream/emscripten/cache/sysroot/include",
+                "${workspaceFolder}/demo-02-c-opengl/lib/include"
+            ],
+            "defines": [
+                "__EMSCRIPTEN__"
+            ],
+            "compilerPath": "${workspaceFolder}/emsdk/upstream/bin/clang",
+            "compilerArgs": [
+                "-Werror",
+                "-Wall"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-clang-x64"
+        }
+    ],
+    "version": 4
+}
