@@ -7,21 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
 
-# lib
-add_library(lib SHARED 
-    lib/camera.cpp
-    lib/mat4.cpp
-    lib/scene.cpp
-    lib/events.cpp
-    lib/math_utils.cpp
-    lib/raycast.cpp    
-    lib/vec.cpp
-    lib/loaders.cpp
-    lib/render_program.cpp
-)
-
-target_include_directories(lib PUBLIC lib/include ${SDL2_INCLUDE_DIRS})
-target_link_libraries(lib ${SDL2_LIBRARIES})
+add_subdirectory(lib lib)
 
 # executable
 add_executable(native index.cpp)
