@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.24)
 project(NativeRenderer)
 
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
 
@@ -38,4 +41,3 @@ target_include_directories(native PUBLIC
 file(COPY lib/shaders DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
-set(CMAKE_BUILD_TYPE Debug)
