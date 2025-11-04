@@ -2,7 +2,7 @@
 #define APP_STATE_H
 
 
-#include "SDL3/SDL.h"
+#include <SDL3/SDL.h>
 #include "camera.h"
 #include "render_program.h"
 #include "scene.h"
