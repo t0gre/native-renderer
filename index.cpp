@@ -57,12 +57,10 @@ WindowState initWindow(const char* title)
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-    SDL_Window* window_object = SDL_CreateWindow(title, 
-                         SDL_WINDOWPOS_CENTERED, 
-                         SDL_WINDOWPOS_CENTERED,
+    SDL_Window* window_object = SDL_CreateWindow(title,
                          initial_window_width, 
                          initial_window_height, 
-                         SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE| SDL_WINDOW_SHOWN);
+                         SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     
     const Uint32 window_id = SDL_GetWindowID(window_object);
 

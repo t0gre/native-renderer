@@ -53,14 +53,13 @@ void processEvents(AppState* state)
     {
         switch (event.type)
         {
-            case SDL_QUIT:
+            case SDL_EVENT_QUIT:
                 state->window.should_close = true;
                 break;
 
-            case SDL_WINDOWEVENT:
+            case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
             {
-                if (event.window.windowID == state->window.id
-                    && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+                if (event.window.windowID == state->window.id)
                 {
                     int width = event.window.data1; 
                     int height = event.window.data2;
@@ -75,7 +74,7 @@ void processEvents(AppState* state)
                 break;
             }
 
-            case SDL_MOUSEBUTTONDOWN:
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
             {
                 SDL_MouseButtonEvent* e = (SDL_MouseButtonEvent*)&event;
                 if (event.button.button == 1) {
@@ -119,7 +118,7 @@ void processEvents(AppState* state)
                  }
                 break;
             }
-            case SDL_MOUSEMOTION:
+            case SDL_EVENT_MOUSE_MOTION:
             {
                 SDL_MouseMotionEvent *e = (SDL_MouseMotionEvent*)&event;
                 if (state->input.pointer_down) {
@@ -151,7 +150,7 @@ void processEvents(AppState* state)
                 break;
             }
 
-            case SDL_MOUSEBUTTONUP:
+            case SDL_EVENT_MOUSE_BUTTON_UP:
             {
                 if (event.button.button == 1) {
                     state->input.pointer_down = false;
