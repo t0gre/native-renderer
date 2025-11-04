@@ -3,8 +3,8 @@ project(NativeRendererLib)
 
 #set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
+add_subdirectory(../SDL SDL3)
 
 # lib
 add_library(lib SHARED 
@@ -19,7 +19,7 @@ add_library(lib SHARED
     render_program.cpp
 )
 
-target_include_directories(lib PUBLIC include ${SDL2_INCLUDE_DIRS})
-target_link_libraries(lib ${SDL2_LIBRARIES})
+target_include_directories(lib PUBLIC include ${SDL3_INCLUDE_DIRS})
+target_link_libraries(lib SDL3::SDL3)
 
 

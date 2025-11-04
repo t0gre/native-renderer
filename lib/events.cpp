@@ -1,7 +1,6 @@
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <GLES3/gl3.h>
-#include <stdbool.h>
 #include "math.h"
 
 #include "events.h"

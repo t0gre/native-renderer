@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <assert.h>
 #else 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_opengl.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <assert.h>
