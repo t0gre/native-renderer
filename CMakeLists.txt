@@ -15,7 +15,7 @@ target_link_libraries(native PRIVATE
 
 target_include_directories(native PUBLIC 
     lib/include
-    ${SDL3_INCLUDE_DIRS}
+    SDL/include
 )
 
 # shaders

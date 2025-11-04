@@ -4,7 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/lib/include",
-                "/usr/include/SDL2"
+                "${workspaceFolder}/SDL/include"
             ],
             "compilerArgs": [
                 "-Wall",

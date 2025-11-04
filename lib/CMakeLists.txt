@@ -19,7 +19,7 @@ add_library(lib SHARED
     render_program.cpp
 )
 
-target_include_directories(lib PUBLIC include ${SDL3_INCLUDE_DIRS})
+target_include_directories(lib PUBLIC include ../SDL/include)
 target_link_libraries(lib SDL3::SDL3)
 
 
