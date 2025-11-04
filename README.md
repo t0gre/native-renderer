@@ -31,6 +31,7 @@ cmake --build .
 
 ## Platform support
 
-Currently, the native code is only tested with Cmake on linux. The cmake config expects to find 
-SDL2 dev folders locally so you will need SDL2 dev stuff installed locally to build it.
+Currently, the native code is only tested with Cmake on linux. The cmake config uses sdl3 in the
+submodule and links it statically so there should be no requirement to install sdl to 
+build or run the app
 
