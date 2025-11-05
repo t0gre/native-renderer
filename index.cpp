@@ -1,10 +1,4 @@
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#include <emscripten/html5.h>
-#endif
-
 #include "std_imports.h"
-
 #include "mat4.h"
 #include "math_utils.h"
 #include "camera.h"
@@ -24,33 +18,6 @@ WindowState initWindow(const char* title)
 
     GLsizei initial_window_height = 480;
     GLsizei initial_window_width = 600;
-    
-    // Create SDL window
-    #ifdef __EMSCRIPTEN__
-
-     SDL_Window* window_object = SDL_CreateWindow(title, 
-                         SDL_WINDOWPOS_CENTERED, 
-                         SDL_WINDOWPOS_CENTERED,
-                         initial_window_width, initial_window_height, 
-                         SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE| SDL_WINDOW_SHOWN);
-    const Uint32 window_id = SDL_GetWindowID(window_object);
-    // This emscripten call fixes an antialiasing bug in sdl context creation for webgl2
-
-    EmscriptenWebGLContextAttributes attributes = {
-        .depth = 1,
-        .stencil = 1,
-        .antialias = 1,
-        .majorVersion = 2,
-        .minorVersion = 0
-    };
-    EMSCRIPTEN_WEBGL_CONTEXT_HANDLE context = emscripten_webgl_create_context("canvas", &attributes);
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-
-    SDL_GL_CreateContext(window_object);
-    // emscripten_webgl_make_context_current(context);
-    #else 
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
@@ -72,10 +39,6 @@ WindowState initWindow(const char* title)
         SDL_GL_SetSwapInterval(-1);
     }
 
-
-    #endif
-
-    
     glClearColor(0.01f, 0.05f, 0.05f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 
@@ -186,13 +149,8 @@ void draw(
         SceneNode node = scene->nodes.at(i);
         drawSceneNode(node, render_program);
     }
-   
-   
 
-    #ifndef __EMSCRIPTEN__ 
-    // Swap front/back framebuffers
     SDL_GL_SwapWindow(window.object);
-    #endif
 }
 
 
@@ -433,22 +391,9 @@ int main(int argc, char** argv)
         .shadow_map = shadowMap
     };
 
-    // Start the main loop
-    void* mainLoopArg = &state;
-    
-
-
-#ifdef __EMSCRIPTEN__
-   
-    int fps = 0; // Use browser's requestAnimationFrame
-    emscripten_set_main_loop_arg(mainLoop, mainLoopArg, fps, 1);
-   
-#else
-    while(!state.window.should_close) 
-        
-        mainLoop(mainLoopArg);
-
-#endif
+    while(!state.window.should_close) {
+        mainLoop(&state);
+    }
 
     return 0;
 }
