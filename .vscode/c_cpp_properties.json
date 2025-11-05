@@ -17,27 +17,6 @@
             "cppStandard": "gnu++17",
             "intelliSenseMode": "linux-clang-x64",
             "compileCommands": "build/compile_commands.json"
-        },
-        {
-            "name": "Emscriptem",
-            "includePath": [
-                "${workspaceFolder}/emsdk/upstream/emscripten/cache/sysroot/include/SDL2",
-                "${workspaceFolder}/emsdk/upstream/emscripten/cache/sysroot/include/compat",
-                "${workspaceFolder}/emsdk/upstream/lib/clang/19/include",
-                "${workspaceFolder}/emsdk/upstream/emscripten/cache/sysroot/include",
-                "${workspaceFolder}/demo-02-c-opengl/lib/include"
-            ],
-            "defines": [
-                "__EMSCRIPTEN__"
-            ],
-            "compilerPath": "${workspaceFolder}/emsdk/upstream/bin/clang",
-            "compilerArgs": [
-                "-Werror",
-                "-Wall"
-            ],
-            "cStandard": "c11",
-            "cppStandard": "gnu++17",
-            "intelliSenseMode": "linux-clang-x64"
         }
     ],
     "version": 4

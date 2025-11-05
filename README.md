@@ -24,11 +24,6 @@ cmake --build .
 ./tests
 
 
-## setup emscripten (not currently used but keeping around in case it makes a comeback)
-
-- First, ensure that the emscripten sdk is checkout out by running `git submodule update --init --recursive`
-- Run `here=$(pwd) && cd ../emsdk && ./emsdk install 3.1.54 && ./emsdk activate 3.1.54 && source ./emsdk_env.sh && cd $here`
-
 ## Platform support
 
 Currently, the native code is only tested with Cmake on linux. The cmake config uses sdl3 in the

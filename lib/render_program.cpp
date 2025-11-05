@@ -17,13 +17,8 @@ GLuint guaranteeUniformLocation(const GLuint program, const GLchar *name) {
 RenderProgram initShader()
 {
 
-    #ifdef __EMSCRIPTEN__
-    const GLchar* vertexSource = get_shader_content("basic.vert");
-    const GLchar* fragmentSource = get_shader_content("basic.frag");
-    #else 
     const GLchar* vertexSource = get_shader_content("./shaders/basic.vert");
     const GLchar* fragmentSource = get_shader_content("./shaders/basic.frag");
-    #endif
 
     // Create and compile vertex shader
     const GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -236,13 +231,8 @@ ShadowRenderProgram initShadowRenderProgram() {
     
     attribBindings.push_back({ .name = "a_position", .location = 0});
 
-    #ifdef __EMSCRIPTEN__
-    const GLchar* vertexSource = get_shader_content("depth-only.vert");
-    const GLchar* fragmentSource = get_shader_content("depth-only.frag");
-    #else 
     const GLchar* vertexSource = get_shader_content("./shaders/depth-only.vert");
     const GLchar* fragmentSource = get_shader_content("./shaders/depth-only.frag");
-    #endif
 
     // Create and compile vertex shader
     const GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
