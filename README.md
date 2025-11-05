@@ -10,18 +10,18 @@
 
 ## Building the main app with CMake
 
-touch build && cd build
-cmake ..
-cmake --build .
-./native
+touch build && cd build  
+cmake ..  
+cmake --build .  
+./native  
 
 ## Building the tests with CMake
 
-cd tests
-touch build && cd build
-cmake ..
-cmake --build .
-./tests
+cd tests  
+touch build && cd build  
+cmake ..  
+cmake --build .  
+./tests  
 
 
 ## Platform support
