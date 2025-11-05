@@ -4,7 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/lib/include",
-                "/usr/include/SDL2"
+                "${workspaceFolder}/SDL/include"
             ],
             "compilerArgs": [
                 "-Wall",
@@ -15,7 +15,8 @@
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c11",
             "cppStandard": "gnu++17",
-            "intelliSenseMode": "linux-clang-x64"
+            "intelliSenseMode": "linux-clang-x64",
+            "compileCommands": "build/compile_commands.json"
         },
         {
             "name": "Emscriptem",

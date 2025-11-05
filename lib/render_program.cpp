@@ -8,31 +8,31 @@
 #include <stdio.h>
 
 
-GLuint guaranteeUniformLocation(GLuint program, const GLchar *name) {
+GLuint guaranteeUniformLocation(const GLuint program, const GLchar *name) {
     const GLuint location = glGetUniformLocation(program, name);
     assert(location != -1);
     return location;
 }
 
-RenderProgram initShader(void)
+RenderProgram initShader()
 {
 
     #ifdef __EMSCRIPTEN__
     const GLchar* vertexSource = get_shader_content("basic.vert");
     const GLchar* fragmentSource = get_shader_content("basic.frag");
     #else 
-    const GLchar* vertexSource = get_shader_content("./lib/shaders/basic.vert");
-    const GLchar* fragmentSource = get_shader_content("./lib/shaders/basic.frag");
+    const GLchar* vertexSource = get_shader_content("./shaders/basic.vert");
+    const GLchar* fragmentSource = get_shader_content("./shaders/basic.frag");
     #endif
 
     // Create and compile vertex shader
     const GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexSource, NULL);
+    glShaderSource(vertexShader, 1, &vertexSource, nullptr);
     glCompileShader(vertexShader);
 
     // Create and compile fragment shader
     const GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+    glShaderSource(fragmentShader, 1, &fragmentSource, nullptr);
     glCompileShader(fragmentShader);
 
     // Link vertex and fragment shader into shader program and use it
@@ -157,7 +157,7 @@ void drawSceneNode(SceneNode node, RenderProgram render_program) {
             // Draw the vertex buffer
             glDrawArrays(GL_TRIANGLES, 0, node.mesh.value().vertices.vertex_count);
         } else {
-            auto initedMesh = initMesh(node.mesh.value(), &render_program);
+            const auto initedMesh = initMesh(node.mesh.value(), &render_program);
             // draw initedMesh
             glUseProgram(render_program.shader_program);
         
@@ -180,7 +180,7 @@ void drawSceneNode(SceneNode node, RenderProgram render_program) {
         }
     
     for (size_t i = 0; i < node.children.size(); i++) {
-               SceneNode child = node.children.at(i);
+               const SceneNode child = node.children.at(i);
                drawSceneNode(child, render_program);
         
      
@@ -191,8 +191,7 @@ void drawSceneNode(SceneNode node, RenderProgram render_program) {
 ///////// shadows
 
 ShadowMap createShadowMap() {
-
-    int size = 2048;
+    constexpr int size = 2048;
     GLuint depthTexture;
     glGenTextures(1, &depthTexture);
 
@@ -241,18 +240,18 @@ ShadowRenderProgram initShadowRenderProgram() {
     const GLchar* vertexSource = get_shader_content("depth-only.vert");
     const GLchar* fragmentSource = get_shader_content("depth-only.frag");
     #else 
-    const GLchar* vertexSource = get_shader_content("./lib/shaders/depth-only.vert");
-    const GLchar* fragmentSource = get_shader_content("./lib/shaders/depth-only.frag");
+    const GLchar* vertexSource = get_shader_content("./shaders/depth-only.vert");
+    const GLchar* fragmentSource = get_shader_content("./shaders/depth-only.frag");
     #endif
 
     // Create and compile vertex shader
     const GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexSource, NULL);
+    glShaderSource(vertexShader, 1, &vertexSource, nullptr);
     glCompileShader(vertexShader);
 
     // Create and compile fragment shader
     const GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+    glShaderSource(fragmentShader, 1, &fragmentSource, nullptr);
     glCompileShader(fragmentShader);
 
     // Link vertex and fragment shader into shader program and use it
@@ -282,7 +281,7 @@ ShadowRenderProgram initShadowRenderProgram() {
 void drawSceneNodeShadow(
     SceneNode node,
     RenderProgram renderProgram,
-    ShadowRenderProgram shadowProgram,
+    const ShadowRenderProgram shadowProgram,
     Mat4 lightViewProj
 ) {
       
@@ -302,7 +301,7 @@ void drawSceneNodeShadow(
             // Draw the vertex buffer
             glDrawArrays(GL_TRIANGLES, 0, node.mesh.value().vertices.vertex_count);
         } else {
-            auto initedMesh = initMesh(node.mesh.value(), &renderProgram);
+            const auto initedMesh = initMesh(node.mesh.value(), &renderProgram);
             // draw initedMesh
             glUseProgram(shadowProgram.program);
         
@@ -316,7 +315,7 @@ void drawSceneNodeShadow(
     }
     
     for (size_t i = 0; i < node.children.size(); i++) {
-               SceneNode child = node.children.at(i);
+               const SceneNode child = node.children.at(i);
                drawSceneNodeShadow(child, renderProgram, shadowProgram, lightViewProj);
     }
 
