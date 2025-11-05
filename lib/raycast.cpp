@@ -96,7 +96,7 @@ std::vector<Intersection> rayIntersectsSceneNode(Ray ray, SceneNode node) {
     
     node_stack.push(node);
 
-    while (node_stack.size() > 0) {
+    while (!node_stack.empty()) {
 
         SceneNode nodeUnderTest = node_stack.top();
         node_stack.pop();
@@ -156,7 +156,7 @@ std::vector<Intersection> rayIntersectsSceneNode(Ray ray, SceneNode node) {
 std::vector<Intersection> rayIntersectsScene(Ray ray, Scene scene) {
     std::vector<Intersection> intersections;
     
-    for (auto& node: scene.nodes) {
+    for (const auto& node: scene.nodes) {
         auto rayNodeIntersections = rayIntersectsSceneNode(ray, node);
         if (!rayNodeIntersections.empty()) {
                 for (auto& intersection: rayNodeIntersections) {
@@ -176,11 +176,11 @@ std::vector<Intersection> sortBySceneDepth(
     auto result = intersections; // not yet sorted but we will sort in-place
 
     sort(result.begin(),result.end(), [camera](Intersection &a, Intersection &b){
-        auto viewMatrix = m4inverse(camera.transform);
-        auto projectionMatrix = getProjectionMatrix(camera);
-        auto viewProj = m4multiply(projectionMatrix, viewMatrix);
-        auto glPosA = m4PositionMultiply(a.point, viewProj);
-        auto glPosB = m4PositionMultiply(b.point, viewProj);
+        const auto viewMatrix = m4inverse(camera.transform);
+        const auto projectionMatrix = getProjectionMatrix(camera);
+        const auto viewProj = m4multiply(projectionMatrix, viewMatrix);
+        const auto glPosA = m4PositionMultiply(a.point, viewProj);
+        const auto glPosB = m4PositionMultiply(b.point, viewProj);
 
         return   glPosA.z < glPosB.z;
 

@@ -3,7 +3,7 @@
 #include "math_utils.h"
 #include <algorithm>
 
-Vec3 scaleVector(Vec3 vec, float scalar) {
+Vec3 scaleVector(const Vec3 vec, const float scalar) {
    
     return (Vec3){
         .x = vec.x * scalar, 
@@ -11,22 +11,22 @@ Vec3 scaleVector(Vec3 vec, float scalar) {
         .z = vec.z * scalar};
 }
 
-Vec3 addVectors(Vec3 a, Vec3 b) {
+Vec3 addVectors(const Vec3 a, const Vec3 b) {
     return (Vec3){
         .x = a.x + b.x, 
         .y = a.y + b.y, 
         .z = a.z + b.z};
 }
 
-Vec3 subtractVectors(Vec3 a, Vec3 b) {
+Vec3 subtractVectors(const Vec3 a, const Vec3 b) {
     return (Vec3){
         .x = a.x - b.x, 
         .y = a.y - b.y, 
         .z = a.z - b.z};
 }
 
-Vec3 normalize(Vec3 v) {
-    float length = sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+Vec3 normalize(const Vec3 v) {
+    const float length = sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
     // make sure we don't divide by 0.
     if (length > 0.00001) {
         return (Vec3){
@@ -38,7 +38,7 @@ Vec3 normalize(Vec3 v) {
     }
 }
 
-Vec3 cross(Vec3 a, Vec3 b) {
+Vec3 cross(const Vec3 a, const Vec3 b) {
     
     return (Vec3){
         .x = a.y * b.z - a.z * b.y,
@@ -47,27 +47,27 @@ Vec3 cross(Vec3 a, Vec3 b) {
         };
 }
 
-float dot(Vec3 a, Vec3 b) {
+float dot(const Vec3 a, const Vec3 b) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-float length(Vec3 v) {
+float length(const Vec3 v) {
     return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
 Vec3 calculateOrbitPosition(
-    float azimuth, 
-    float elevation, 
-    Vec3 orbitTarget,
-    float orbitRadius
+    const float azimuth,
+    float elevation,
+    const Vec3 orbitTarget,
+    const float orbitRadius
 ) {
     // Clamp elevation to avoid flipping
     elevation = std::max(0.001f, std::min(PI / 2.0f - 0.001f, elevation));
 
     // Spherical to Cartesian
-    float x = orbitTarget.x + orbitRadius * sin(elevation) * sin(azimuth);
-    float y = orbitTarget.y + orbitRadius * cos(elevation);
-    float z = orbitTarget.z + orbitRadius * sin(elevation) * cos(azimuth);
+    const float x = orbitTarget.x + orbitRadius * sin(elevation) * sin(azimuth);
+    const float y = orbitTarget.y + orbitRadius * cos(elevation);
+    const float z = orbitTarget.z + orbitRadius * sin(elevation) * cos(azimuth);
 
     return {x,y,z};
 }

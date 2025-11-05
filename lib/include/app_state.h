@@ -19,15 +19,15 @@ typedef struct WindowState  {
 
 
 typedef struct AppState  {
-    WindowState window;
-    Uint64 last_frame_time;
-    Camera camera;
-    InputState input;
-    RenderProgram render_program;
+    WindowState window{};
+    Uint64 last_frame_time{};
+    Camera camera{};
+    InputState input{};
+    RenderProgram render_program{};
     Scene scene;
-    ShadowRenderProgram shadow_render_program;
-    ShadowMap shadow_map;
+    ShadowRenderProgram shadow_render_program{};
+    ShadowMap shadow_map{};
 
 } AppState;
 
-#endif //APP_STATE
+#endif //APP_STATE_H

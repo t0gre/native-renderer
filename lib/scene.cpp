@@ -11,11 +11,11 @@ void setParent(SceneNode node, SceneNode * parent) {
    // Remove node from its current parent's children array
    if (node.parent.has_value() && node.parent.value()->id != parent->id) {
     
-    auto oldParent = node.parent.value();
+    const auto oldParent = node.parent.value();
 
     for (size_t i = 0; i < oldParent->children.size(); i++) {
         
-        SceneNode existing_child = oldParent->children.at(i);
+        const SceneNode existing_child = oldParent->children.at(i);
         
         if (existing_child.id == node.id) {
             oldParent->children.erase(parent->children.begin()+i);

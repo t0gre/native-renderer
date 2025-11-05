@@ -1,5 +1,5 @@
 #include "math_utils.h"
 
-float degreeToRad(float d) {
+float degreeToRad(const float d) {
     return d * PI / 180;
 }

@@ -7,10 +7,10 @@
 #include "mat4.h"
 #include "raycast.h"
 
-Vec2 getPointerClickInClipSpace(int mouse_x, int mouse_y, int canvas_width, int canvas_height) {
+Vec2 getPointerClickInClipSpace(const int mouse_x, const int mouse_y, const int canvas_width, const int canvas_height) {
     // Convert from window coordinates to normalized device coordinates (clip space)
-    float x = (float)mouse_x / (float)canvas_width * 2.0f - 1.0f;
-    float y = (float)mouse_y / (float)canvas_height * -2.0f + 1.0f;
+    const float x = static_cast<float>(mouse_x) / static_cast<float>(canvas_width) * 2.0f - 1.0f;
+    const float y = static_cast<float>(mouse_y) / static_cast<float>(canvas_height) * -2.0f + 1.0f;
     return { x, y };
 }
 
@@ -76,7 +76,7 @@ void processEvents(AppState* state)
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
             {
-                SDL_MouseButtonEvent* e = (SDL_MouseButtonEvent*)&event;
+                const auto* e = reinterpret_cast<SDL_MouseButtonEvent *>(&event);
                 if (event.button.button == 1) {
                     state->input.pointer_down = true;
                     Vec2 pointer_position = {
@@ -87,13 +87,13 @@ void processEvents(AppState* state)
                     state->input.pointer_position = pointer_position;
 
                     // get mouse position ndc
-                    Vec2 pointer_clip = getPointerClickInClipSpace(
+                    const Vec2 pointer_clip = getPointerClickInClipSpace(
                         e->x, e->y, state->window.width, state->window.height
                     );
                     
 
                     // create ray
-                    Ray worldRay = getWorldRayFromClipSpaceAndCamera(
+                    const Ray worldRay = getWorldRayFromClipSpaceAndCamera(
                         pointer_clip,
                         state->camera
                     );
@@ -106,12 +106,12 @@ void processEvents(AppState* state)
                     // update floor with color of first hit
                     auto sortedHits = sortBySceneDepth(hits, state->camera);
 
-                    auto clicked = sortedHits[0];
+                    const auto& clicked = sortedHits[0];
 
                     // set the floor node to have the same color at the clicked thing
                     for (auto& node: state->scene.nodes) {
                         if (node.name == "floor") {
-                            auto floor = &node;
+                            const auto floor = &node;
                             floor->mesh.value().material.color = clicked.meshInfo.value().material.color;
                         }
                     }
@@ -120,17 +120,17 @@ void processEvents(AppState* state)
             }
             case SDL_EVENT_MOUSE_MOTION:
             {
-                SDL_MouseMotionEvent *e = (SDL_MouseMotionEvent*)&event;
+                const auto *e = reinterpret_cast<SDL_MouseMotionEvent *>(&event);
                 if (state->input.pointer_down) {
                     
-                    float orbitSensitivity = state->camera.orbit.sensitivity;
-                    Vec3 orbitTarget = state->camera.orbit.target;
-                    float orbitRadius = state->camera.orbit.radius;
+                    const float orbitSensitivity = state->camera.orbit.sensitivity;
+                    const Vec3 orbitTarget = state->camera.orbit.target;
+                    const float orbitRadius = state->camera.orbit.radius;
 
                     state->camera.orbit.azimuth -= e->xrel * orbitSensitivity;
                     state->camera.orbit.elevation -= e->yrel * orbitSensitivity;
 
-                    Vec3 newCameraPosition = calculateOrbitPosition(
+                    const Vec3 newCameraPosition = calculateOrbitPosition(
                         state->camera.orbit.azimuth,
                         state->camera.orbit.elevation,
                         orbitTarget,
@@ -139,7 +139,7 @@ void processEvents(AppState* state)
 
                     state->camera.transform = m4lookAt(newCameraPosition, orbitTarget, state->camera.up);
 
-                    Vec2 pointer_position = {
+                    const Vec2 pointer_position = {
                     .x = static_cast<float>(e->x),
                     .y = static_cast<float>(e->y)
                     };
@@ -154,7 +154,7 @@ void processEvents(AppState* state)
             {
                 if (event.button.button == 1) {
                     state->input.pointer_down = false;
-                    Vec2 pointer_position ={ .x = 0, .y = 0 } ;
+                    constexpr Vec2 pointer_position ={ .x = 0, .y = 0 } ;
                     state->input.pointer_position = pointer_position;
                 }
                 break;

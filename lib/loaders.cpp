@@ -7,12 +7,10 @@
 // Loads the content of a GLSL Shader file into a char* variable
 char* get_shader_content(const char* fileName)
 {
-    FILE *fp;
     long size = 0;
-    char* shaderContent;
-    
+
     /* Read File to get size */
-    fp = fopen(fileName, "rb");
+    FILE *fp = fopen(fileName, "rb");
     if(fp == NULL) {
         printf("Fatal Error: Failed to load shader at path: %s\n", fileName);
         exit(1);
@@ -23,7 +21,7 @@ char* get_shader_content(const char* fileName)
 
     /* Read File for Content */
     fp = fopen(fileName, "r");
-    shaderContent = (char*)memset(malloc(size), '\0', size);
+    const auto shaderContent = static_cast<char *>(memset(malloc(size), '\0', size));
     fread(shaderContent, 1, size-1, fp);
     fclose(fp);
 
@@ -44,8 +42,8 @@ FloatData read_csv(const char* filename) {
     }
     
   number_of_floats++;
-  size_t number = number_of_floats;
-  float* floats = (float *)malloc(sizeof(float)*number);
+  const size_t number = number_of_floats;
+  auto* floats = (float *)malloc(sizeof(float)*number);
 
   size_t float_cursor = 0;
   char number_string[10] = { 0 }; // it wont be longer than this
@@ -56,7 +54,7 @@ FloatData read_csv(const char* filename) {
     
     if (read != ',') {
         // add chars to number string
-        char t = read; 
+        const char t = read;
         number_string[digit_cursor] = t;
         digit_cursor++;
     } else {
