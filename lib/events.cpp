@@ -101,12 +101,12 @@ void processEvents(AppState* state)
                     // intersect scene
                     auto hits = rayIntersectsScene(worldRay, state->scene);
 
-                    if (hits.empty()) break;
+                    if (hits.size() == 0) break;
                         
                     // update floor with color of first hit
-                    auto sortedHits = sortBySceneDepth(hits, state->camera);
+                    sortBySceneDepth(hits, state->camera);
 
-                    const auto& clicked = sortedHits[0];
+                    const auto& clicked = hits[0];
 
                     // set the floor node to have the same color at the clicked thing
                     for (auto& node: state->scene.nodes) {
