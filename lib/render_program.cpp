@@ -1,8 +1,8 @@
 #include "render_program.h"
 #include "loaders.h"
 #include "mesh.h"
+#include "mystl.hpp"
 
-#include <vector>
 #include <stddef.h>
 #include <assert.h>
 #include <stdio.h>
@@ -227,7 +227,7 @@ ShadowMap createShadowMap() {
 
 ShadowRenderProgram initShadowRenderProgram() {
 
-    std::vector<AttributeBinding> attribBindings;
+    DArray<AttributeBinding> attribBindings;
     
     attribBindings.push_back({ .name = "a_position", .location = 0});
 
@@ -250,7 +250,9 @@ ShadowRenderProgram initShadowRenderProgram() {
     glAttachShader(program, fragmentShader);
 
     
-    for (auto& binding: attribBindings) {
+    for (size_t i = 0; i < attribBindings.size() ; i++ )
+     
+    {   auto& binding = attribBindings[i];
         glBindAttribLocation(program, binding.location, binding.name);
     }
     

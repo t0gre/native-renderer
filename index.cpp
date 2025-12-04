@@ -7,10 +7,6 @@
 #include "scene.h"
 #include "events.h"
 
-
-
-
-
 WindowState initWindow(const char* title)
 {
     
