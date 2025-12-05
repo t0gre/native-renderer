@@ -1,9 +1,7 @@
-#include "stdbool.h"
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <vector>
+#include <cstdio>
 #include <string>
+
+#include "mystl.hpp"
 
 #include "test_helpers.cpp" // include before tests
 #include "raycast_triangle_tests.cpp"
@@ -12,7 +10,7 @@
 
     
 int main(int argc, char** argv) {
-    std::vector<TestResult> results;
+    DArray<TestResult> results;
 
     // triangle tests
     results.push_back(intersect_triangle());
@@ -36,8 +34,8 @@ int main(int argc, char** argv) {
     for (size_t i = 0; i < results.size(); ++i) {
         total++;
         std::string result_message;
-        const char * test_message = results.at(i).message;
-        bool test_result = results.at(i).pass;
+        const char * test_message = results[i].message;
+        bool test_result = results[i].pass;
 
         auto stringified_total = std::to_string(total);
         

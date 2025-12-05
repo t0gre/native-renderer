@@ -9,21 +9,44 @@ class DArray {
     private:
         size_t _capacity;
         size_t _size;
-        std::unique_ptr<T[]> data;;
+        T* data;
 
-    void resize(const size_t new_capacity) {
-        std::unique_ptr<T[]> new_data = std::make_unique<T[]>(new_capacity);
+        void resize(const size_t new_capacity) {
+            T* new_data = new T[new_capacity];
 
-        for (size_t i = 0; i < _size; i++) {
-            new_data[i] = data[i];
+            for (size_t i = 0; i < _size; i++) {
+                new_data[i] = data[i];
+            }
+
+            data = new_data;
+            _capacity = new_capacity;
         }
-
-        data = std::move(new_data);
-        _capacity = new_capacity;
-    }
 
     public:
         DArray() : _capacity(0), _size(0), data(nullptr) {}
+
+        // Copy constructor (deep copy)
+        DArray(const DArray& other)
+            : _capacity(other._capacity),
+              _size(other._size),
+              data(other._capacity ? new T[other._capacity] : nullptr)
+        {
+            for (size_t i = 0; i < _size; ++i)
+                data[i] = other.data[i];
+        }
+
+        // Copy assignment (deep copy, strong exception safety)
+        DArray& operator=(const DArray& other) {
+            if (this != &other) {
+                // Make a temporary deep copy first
+                DArray temp(other);
+                // Swap with *this* (strong guarantee)
+                std::swap(_capacity, temp._capacity);
+                std::swap(_size, temp._size);
+                std::swap(data, temp.data);
+            }
+            return *this;
+        }
 
         // Move constructor
         DArray(DArray&& other) noexcept
@@ -48,7 +71,19 @@ class DArray {
                 return *this;
             }
 
-        ~DArray() {}
+        void erase(const size_t index) {
+                if (index >= _size) {
+                    throw std::out_of_range("erase index out of range");
+                }
+
+                // Move elements left by one
+                for (size_t i = index; i < _size - 1; ++i) {
+                    data[i] = data[i + 1];
+                }
+
+                --_size;
+            }
+
 
         void push_back(const T& value) {
             if (_size == _capacity) {
@@ -68,12 +103,15 @@ class DArray {
             }
         }
 
-        T* begin() { return data.get(); }
-        T* end()   { return data.get() + _size; }
+        T* begin() { return data; }
+        T* end()   { return data + _size; }
+        const T* begin() const { return data; }
+        const T* end()   const { return data + _size; }
 
         T* addr(size_t index) {
             return &data[index];
         }
+
         size_t size() const { return _size; }
 
         T& operator[](size_t index) {
@@ -82,6 +120,11 @@ class DArray {
             }
             return data[index];
         }
+
+        ~DArray() {
+                delete[] data;
+            }
+
         
 };
 

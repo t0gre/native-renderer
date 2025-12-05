@@ -94,7 +94,7 @@ void draw(
 
 
     for (size_t i = 0; i < scene->nodes.size(); i++) {
-        SceneNode node = scene->nodes.at(i);
+        SceneNode node = scene->nodes[i];
         drawSceneNodeShadow(node, render_program, shadow_render_program, lightViewProj);
     }
 
@@ -142,7 +142,7 @@ void draw(
 
     
     for (size_t i = 0; i < scene->nodes.size(); i++) {
-        SceneNode node = scene->nodes.at(i);
+        SceneNode node = scene->nodes[i];
         drawSceneNode(node, render_program);
     }
 
@@ -335,7 +335,7 @@ int main(int argc, char** argv)
             "floor"
         );
 
-    auto scene_nodes = std::vector<SceneNode>();
+    auto scene_nodes = DArray<SceneNode>();
     scene_nodes.push_back(tree_shape);
     scene_nodes.push_back(floor_model);
     

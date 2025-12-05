@@ -44,13 +44,13 @@ TestResult intersect_vertices_first() {
         .triangleIdx = 0 
     };
 
-    if (result.empty()) {
+    if (result.size() == 0) {
         return (TestResult){
             .pass = false,
             .message = "no intersection found",
         };
     } else {
-        Intersection intersection_result = result.at(0);
+        Intersection intersection_result = result[0];
         if (vec3sAreEqual(expected.point, intersection_result.point) &&
             expected.triangleIdx == intersection_result.triangleIdx) {
            return (TestResult){
@@ -84,13 +84,13 @@ TestResult intersect_vertices_last() {
         .triangleIdx = 1 
     };
 
-    if (result.empty()) {
+    if (result.size() == 0) {
         return (TestResult){
             .pass = false,
             .message = "no intersection found",
         };
     } else {
-        Intersection intersection_result = result.at(0);
+        Intersection intersection_result = result[0];
         if (vec3sAreEqual(expected.point, intersection_result.point) &&
             expected.triangleIdx == intersection_result.triangleIdx) {
            return (TestResult){

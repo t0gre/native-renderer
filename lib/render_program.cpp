@@ -175,7 +175,7 @@ void drawSceneNode(SceneNode node, RenderProgram render_program) {
         }
     
     for (size_t i = 0; i < node.children.size(); i++) {
-               const SceneNode child = node.children.at(i);
+               const SceneNode child = node.children[i];
                drawSceneNode(child, render_program);
         
      
@@ -307,7 +307,7 @@ void drawSceneNodeShadow(
     }
     
     for (size_t i = 0; i < node.children.size(); i++) {
-               const SceneNode child = node.children.at(i);
+               const SceneNode child = node.children[i];
                drawSceneNodeShadow(child, renderProgram, shadowProgram, lightViewProj);
     }
 

@@ -66,7 +66,7 @@ TestResult intersect_node_with_position_transform() {
         .triangleIdx = 0 
     };
 
-    if (result.empty()) {
+    if (result.size() == 0) {
         return (TestResult){
             .pass = false,
             .message = "no intersection found",
@@ -130,7 +130,7 @@ TestResult intersect_node_with_multiple_position_transform() {
         .triangleIdx = 0 
     };
 
-    if (result.empty()) {
+    if (result.size() == 0) {
         return (TestResult){
             .pass = false,
             .message = "no intersection found",
@@ -184,7 +184,7 @@ TestResult intersect_node_with_roation_transform() {
         .triangleIdx = 0 
     };
 
-    if (result.empty()) {
+    if (result.size() == 0) {
         return (TestResult){
             .pass = false,
             .message = "no intersection found",

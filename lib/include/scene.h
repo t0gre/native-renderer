@@ -1,22 +1,20 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <vector>
 #include <optional>
 #include <string>
 
 #include "light.h"
-#include "vec.h"
 #include "data_structures.h"
 #include "camera.h"
 #include "mesh.h"
-#include "material.h"
+#include "mystl.hpp"
 
 typedef struct SceneNode {
     size_t id;
     Mat4 local_transform; 
     Mat4 world_transform;
-    std::vector<SceneNode> children; // empty if no children
+    DArray<SceneNode> children; // empty if no children
     std::optional<Mesh> mesh; 
     std::optional<SceneNode*> parent; 
     std::optional<std::string> name;
@@ -27,7 +25,7 @@ typedef struct SceneNode {
 void setParent(SceneNode node, SceneNode * parent);
 
 typedef struct Scene {
-    std::vector<SceneNode> nodes;
+    DArray<SceneNode> nodes;
     AmbientLight ambient_light;
     DirectionalLight directional_light;
     PointLight point_light;
@@ -35,8 +33,8 @@ typedef struct Scene {
 
 void updateWorldTransform(SceneNode * node);
 
-void updateTransform(SceneNode * node, Mat4 transform);
+void updateTransform(SceneNode * node, const Mat4 &transform);
 
-SceneNode initSceneNode(Mat4 transform, std::optional<Mesh> mesh, std::string name);
+SceneNode initSceneNode(const Mat4 &transform, const std::optional<Mesh> &mesh, std::string name);
 
 #endif
