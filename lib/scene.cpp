@@ -1,7 +1,7 @@
-#include "stdlib.h"
 #include "scene.h"
 #include "mat4.h"
 #include "camera.h"
+
 
 
 size_t sceneNodeCounter = 0;
@@ -15,10 +15,10 @@ void setParent(SceneNode node, SceneNode * parent) {
 
     for (size_t i = 0; i < oldParent->children.size(); i++) {
         
-        const SceneNode existing_child = oldParent->children.at(i);
+        const SceneNode existing_child = oldParent[i];
         
         if (existing_child.id == node.id) {
-            oldParent->children.erase(parent->children.begin()+i);
+            oldParent->children.erase(i);
         }
     }
 
@@ -49,17 +49,17 @@ void updateWorldTransform(SceneNode * node) {
 
 }
 
-void updateTransform(SceneNode * node, Mat4 transform) {
+void updateTransform(SceneNode * node, const Mat4 &transform) {
    node->local_transform = transform;
    updateWorldTransform(node);
 }
 
-SceneNode initSceneNode(Mat4 transform, std::optional<Mesh> mesh, std::string name) {
+SceneNode initSceneNode(const Mat4 &transform, const std::optional<Mesh> &mesh, std::string name) {
    SceneNode node = {
    .id = sceneNodeCounter,
    .local_transform = transform,
    .world_transform = transform, // actually valid since there's no parent
-   .children = std::vector<SceneNode>(), // empty array if no children
+   .children = DArray<SceneNode>(), // empty array if no children
    .mesh = mesh,
    .name = name
 };
