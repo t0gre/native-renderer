@@ -10,14 +10,14 @@
 
 ## Building the main app with CMake (for dev)
 
-touch Debug && cd Debug  
+mkdir Debug && cd Debug  
 cmake -DCMAKE_BUILD_TYPE=Debug ..  
 cmake --build .  
 ./native  
 
 ## Building the main app with CMake (for release)
 
-touch Release && cd Release  
+mkdir Release && cd Release  
 cmake -DCMAKE_BUILD_TYPE=Release ..  
 cmake --build .  
 ./native  
@@ -25,7 +25,7 @@ cmake --build .
 ## Building the tests with CMake (for dev)
 
 cd tests  
-touch Debug && cd Debug  
+mkdir Debug && cd Debug  
 cmake -DCMAKE_BUILD_TYPE=Debug ..  
 cmake --build .  
 ./tests 
@@ -33,7 +33,7 @@ cmake --build .
 ## Building the tests with CMake (for ci)
 
 cd tests  
-touch Release && cd Release  
+mkdir Release && cd Release  
 cmake -DCMAKE_BUILD_TYPE=Release ..  
 cmake --build .  
 ./tests  
