@@ -7,10 +7,6 @@
 #include "scene.h"
 #include "events.h"
 
-
-
-
-
 WindowState initWindow(const char* title)
 {
     
@@ -337,7 +333,7 @@ int main(int argc, char** argv)
             "floor"
         );
 
-    auto scene_nodes = std::vector<SceneNode>();
+    auto scene_nodes = DArray<SceneNode>();
     scene_nodes.push_back(tree_shape);
     scene_nodes.push_back(floor_model);
     

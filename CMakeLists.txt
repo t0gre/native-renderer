@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 project(NativeRenderer)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(OpenGL REQUIRED)
 

@@ -6,6 +6,7 @@
 #include "scene.h"
 #include "mesh.h"
 #include <string>
+#include "mystl.hpp"
 
 typedef struct MaterialUniform {
       GLuint color_location;
@@ -55,7 +56,7 @@ typedef struct AttributeBinding {
 RenderProgram initShader(void);
 
 typedef struct GlState {
-    std::vector<GLuint> vaos;
+    DArray<GLuint> vaos;
 } GlState;
 
 

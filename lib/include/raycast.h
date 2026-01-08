@@ -7,6 +7,7 @@
 #include "vec.h"
 #include "mesh.h"
 #include "scene.h"
+#include "mystl.hpp"
 
 
 typedef struct Triangle {
@@ -36,14 +37,14 @@ typedef struct Intersection {
 
 Vec3Result rayIntersectsTriangle(Ray ray, Triangle triangle);
 
-std::vector<Intersection> rayIntersectsVertices(Ray ray, Vertices vertices);
+DArray<Intersection> rayIntersectsVertices(Ray ray, Vertices vertices);
 
-std::vector<Intersection> rayIntersectsSceneNode(Ray ray, SceneNode node);
+DArray<Intersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node);
 
-std::vector<Intersection> rayIntersectsScene(Ray ray, Scene scene);
+DArray<Intersection> rayIntersectsScene(const Ray &ray, const Scene& scene);
 
-std::vector<Intersection> sortBySceneDepth(
-    std::vector<Intersection> intersections,
+void sortBySceneDepth(
+    DArray<Intersection>& intersections,
     Camera camera
 );
 

@@ -5,7 +5,7 @@
 #include "scene.h"
 #include <stack>
 #include <algorithm>
-
+#include "mystl.hpp"
 
 Ray m4RayMultiply(Ray ray, Mat4 m) {
     return (Ray){
@@ -55,9 +55,9 @@ Vec3Result rayIntersectsTriangle(Ray ray, Triangle triangle) {
 }
 
 
-std::vector<Intersection> rayIntersectsVertices(Ray ray, Vertices vertices) {
+DArray<Intersection> rayIntersectsVertices(Ray ray, Vertices vertices) {
     
-    std::vector<Intersection> intersections;
+    DArray<Intersection> intersections;
 
     float * positions = vertices.positions;
 
@@ -88,9 +88,9 @@ std::vector<Intersection> rayIntersectsVertices(Ray ray, Vertices vertices) {
 }
 
 
-std::vector<Intersection> rayIntersectsSceneNode(Ray ray, SceneNode node) {
+DArray<Intersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
     
-    std::vector<Intersection> intersections;
+    DArray<Intersection> intersections;
     std::stack<SceneNode> node_stack;
     
     
@@ -122,9 +122,8 @@ std::vector<Intersection> rayIntersectsSceneNode(Ray ray, SceneNode node) {
                 newRay, 
                 nodeUnderTest.mesh.value().vertices);
 
-            if (!rayNodeIntersections.empty()) {
-                for (size_t i = 0; i < rayNodeIntersections.size(); i++) {
-                    auto intersection = rayNodeIntersections[i];
+            if (rayNodeIntersections.size() > 0) {
+                for (auto intersection : rayNodeIntersections) {
                     // transform the intersection back into world space
                     auto worldSpaceIntersection = m4PositionMultiply(
                         intersection.point, 
@@ -153,13 +152,13 @@ std::vector<Intersection> rayIntersectsSceneNode(Ray ray, SceneNode node) {
     return intersections;
 }
 
-std::vector<Intersection> rayIntersectsScene(Ray ray, Scene scene) {
-    std::vector<Intersection> intersections;
+DArray<Intersection> rayIntersectsScene(const Ray &ray, const Scene& scene) {
+    DArray<Intersection> intersections;
     
     for (const auto& node: scene.nodes) {
         auto rayNodeIntersections = rayIntersectsSceneNode(ray, node);
-        if (!rayNodeIntersections.empty()) {
-                for (auto& intersection: rayNodeIntersections) {
+        if (rayNodeIntersections.size() > 0) {
+                for (const auto& intersection : rayNodeIntersections) {
                      intersections.push_back(intersection);
                 }
             }
@@ -169,13 +168,13 @@ std::vector<Intersection> rayIntersectsScene(Ray ray, Scene scene) {
 }
 
 
-std::vector<Intersection> sortBySceneDepth(
-    std::vector<Intersection> intersections,
+void sortBySceneDepth(
+    DArray<Intersection>& intersections,
     Camera camera
 ) {
-    auto result = intersections; // not yet sorted but we will sort in-place
 
-    sort(result.begin(),result.end(), [camera](Intersection &a, Intersection &b){
+
+    std::sort(intersections.begin(),intersections.end(), [camera](Intersection &a, Intersection &b){
         const auto viewMatrix = m4inverse(camera.transform);
         const auto projectionMatrix = getProjectionMatrix(camera);
         const auto viewProj = m4multiply(projectionMatrix, viewMatrix);
@@ -186,6 +185,4 @@ std::vector<Intersection> sortBySceneDepth(
 
 
     });
-
-    return result;
 }
