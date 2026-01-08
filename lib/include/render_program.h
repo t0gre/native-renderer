@@ -78,10 +78,10 @@ typedef struct ShadowRenderProgram {
 
 ShadowRenderProgram initShadowRenderProgram();
 
-void drawSceneNode(SceneNode scene_node, RenderProgram render_program);
+void drawSceneNode(SceneNode* scene_node, RenderProgram render_program);
 
 void drawSceneNodeShadow(
-    SceneNode node,
+    SceneNode* node,
     RenderProgram renderProgram,
     ShadowRenderProgram shadowProgram,
     Mat4 lightViewProj

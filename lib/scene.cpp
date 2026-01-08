@@ -18,7 +18,7 @@ void setParent(SceneNode node, SceneNode * parent) {
         const SceneNode existing_child = oldParent->children.at(i);
         
         if (existing_child.id == node.id) {
-            oldParent->children.erase(parent->children.begin()+i);
+            oldParent->children.erase(oldParent->children.begin()+i);
         }
     }
 

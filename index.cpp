@@ -98,8 +98,7 @@ void draw(
 
 
     for (size_t i = 0; i < scene->nodes.size(); i++) {
-        SceneNode node = scene->nodes.at(i);
-        drawSceneNodeShadow(node, render_program, shadow_render_program, lightViewProj);
+        drawSceneNodeShadow(&scene->nodes[i], render_program, shadow_render_program, lightViewProj);
     }
 
     
@@ -146,8 +145,7 @@ void draw(
 
     
     for (size_t i = 0; i < scene->nodes.size(); i++) {
-        SceneNode node = scene->nodes.at(i);
-        drawSceneNode(node, render_program);
+        drawSceneNode(&scene->nodes[i], render_program);
     }
 
     SDL_GL_SwapWindow(window.object);

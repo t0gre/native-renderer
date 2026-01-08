@@ -129,54 +129,54 @@ Mesh initMesh(Mesh mesh, RenderProgram* render_program) {
     return mesh;
 }
 
-void drawSceneNode(SceneNode node, RenderProgram render_program) {
+void drawSceneNode(SceneNode* node, RenderProgram render_program) {
 
-    if (node.mesh.has_value()) {
+    if (node->mesh.has_value()) {
         
         // check if the mesh has been initialized and init if not
-        if (node.mesh.value().id.has_value()) {
+        if (node->mesh.value().id.has_value()) {
             // draw this mesh
             glUseProgram(render_program.shader_program);
         
-            glUniformMatrix4fv(render_program.world_matrix_uniform_location,1,0, &node.world_transform.data[0][0]);
+            glUniformMatrix4fv(render_program.world_matrix_uniform_location,1,0, &node->world_transform.data[0][0]);
             
             glUniform3fv(render_program.material_uniform.color_location,1, 
-                node.mesh.value().material.color.data);
+                node->mesh.value().material.color.data);
             glUniform3fv(render_program.material_uniform.specular_color_location,1, 
-                node.mesh.value().material.specular_color.data);
+                node->mesh.value().material.specular_color.data);
             glUniform1f(render_program.material_uniform.shininess_location, 
-                node.mesh.value().material.shininess);
+                node->mesh.value().material.shininess);
 
 
-            glBindVertexArray(node.mesh.value().id.value());
+            glBindVertexArray(node->mesh.value().id.value());
             // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, node.mesh.value().vertices.vertex_count);
+            glDrawArrays(GL_TRIANGLES, 0, node->mesh.value().vertices.vertex_count);
         } else {
-            const auto initedMesh = initMesh(node.mesh.value(), &render_program);
-            // draw initedMesh
+            // Initialize the mesh and store it back in the node
+            node->mesh = initMesh(node->mesh.value(), &render_program);
+            // draw mesh
             glUseProgram(render_program.shader_program);
         
-            glUniformMatrix4fv(render_program.world_matrix_uniform_location,1,0, &node.world_transform.data[0][0]);
+            glUniformMatrix4fv(render_program.world_matrix_uniform_location,1,0, &node->world_transform.data[0][0]);
             
             glUniform3fv(render_program.material_uniform.color_location,1, 
-                initedMesh.material.color.data);
+                node->mesh.value().material.color.data);
             glUniform3fv(render_program.material_uniform.specular_color_location,1, 
-                initedMesh.material.specular_color.data);
+                node->mesh.value().material.specular_color.data);
             glUniform1f(render_program.material_uniform.shininess_location, 
-                initedMesh.material.shininess);
+                node->mesh.value().material.shininess);
 
 
-            glBindVertexArray(initedMesh.id.value());
+            glBindVertexArray(node->mesh.value().id.value());
             // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, node.mesh.value().vertices.vertex_count);
+            glDrawArrays(GL_TRIANGLES, 0, node->mesh.value().vertices.vertex_count);
         }
 
         
         }
     
-    for (size_t i = 0; i < node.children.size(); i++) {
-               const SceneNode child = node.children.at(i);
-               drawSceneNode(child, render_program);
+    for (size_t i = 0; i < node->children.size(); i++) {
+               drawSceneNode(&node->children[i], render_program);
         
      
     }
@@ -269,44 +269,44 @@ ShadowRenderProgram initShadowRenderProgram() {
 }
 
 void drawSceneNodeShadow(
-    SceneNode node,
+    SceneNode* node,
     RenderProgram renderProgram,
     const ShadowRenderProgram shadowProgram,
     Mat4 lightViewProj
 ) {
       
    
-    if (node.mesh.has_value()) {
+    if (node->mesh.has_value()) {
 
         
         // check if the mesh has been initialized and init if not
-        if (node.mesh.value().id.has_value()) {
+        if (node->mesh.value().id.has_value()) {
             // draw this mesh
             glUseProgram(shadowProgram.program);
         
-            glUniformMatrix4fv(shadowProgram.u_model,1,0, &node.world_transform.data[0][0]);
+            glUniformMatrix4fv(shadowProgram.u_model,1,0, &node->world_transform.data[0][0]);
             glUniformMatrix4fv(shadowProgram.u_lightViewProj,1,0, &lightViewProj.data[0][0]);
 
-            glBindVertexArray(node.mesh.value().id.value());
+            glBindVertexArray(node->mesh.value().id.value());
             // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, node.mesh.value().vertices.vertex_count);
+            glDrawArrays(GL_TRIANGLES, 0, node->mesh.value().vertices.vertex_count);
         } else {
-            const auto initedMesh = initMesh(node.mesh.value(), &renderProgram);
-            // draw initedMesh
+            // Initialize the mesh and store it back in the node
+            node->mesh = initMesh(node->mesh.value(), &renderProgram);
+            // draw mesh
             glUseProgram(shadowProgram.program);
         
-            glUniformMatrix4fv(shadowProgram.u_model,1,0, &node.world_transform.data[0][0]);
+            glUniformMatrix4fv(shadowProgram.u_model,1,0, &node->world_transform.data[0][0]);
             glUniformMatrix4fv(shadowProgram.u_lightViewProj,1,0, &lightViewProj.data[0][0]);
   
-            glBindVertexArray(initedMesh.id.value());
+            glBindVertexArray(node->mesh.value().id.value());
             // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, node.mesh.value().vertices.vertex_count);
+            glDrawArrays(GL_TRIANGLES, 0, node->mesh.value().vertices.vertex_count);
         }
     }
     
-    for (size_t i = 0; i < node.children.size(); i++) {
-               const SceneNode child = node.children.at(i);
-               drawSceneNodeShadow(child, renderProgram, shadowProgram, lightViewProj);
+    for (size_t i = 0; i < node->children.size(); i++) {
+               drawSceneNodeShadow(&node->children[i], renderProgram, shadowProgram, lightViewProj);
     }
 
 }

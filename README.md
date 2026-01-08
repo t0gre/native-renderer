@@ -8,18 +8,33 @@
 
 ![screenshot](/docs/screenshot.png "Screenshot")
 
-## Building the main app with CMake
+## Building the main app with CMake (for dev)
 
-touch build && cd build  
-cmake ..  
+touch Debug && cd Debug  
+cmake -DCMAKE_BUILD_TYPE=Debug ..  
 cmake --build .  
 ./native  
 
-## Building the tests with CMake
+## Building the main app with CMake (for release)
+
+touch Release && cd Release  
+cmake -DCMAKE_BUILD_TYPE=Release ..  
+cmake --build .  
+./native  
+
+## Building the tests with CMake (for dev)
 
 cd tests  
-touch build && cd build  
-cmake ..  
+touch Debug && cd Debug  
+cmake -DCMAKE_BUILD_TYPE=Debug ..  
+cmake --build .  
+./tests 
+
+## Building the tests with CMake (for ci)
+
+cd tests  
+touch Release && cd Release  
+cmake -DCMAKE_BUILD_TYPE=Release ..  
 cmake --build .  
 ./tests  
 
