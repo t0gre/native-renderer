@@ -9,3 +9,5 @@ dist
 # native build artifacts
 native
 **/test-run
+Debug
+Release
