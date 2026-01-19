@@ -176,9 +176,7 @@ void drawSceneNode(SceneNode* node, RenderProgram render_program) {
         }
     
     for (size_t i = 0; i < node->children.size(); i++) {
-               drawSceneNode(&node->children[i], render_program);
-        
-     
+               drawSceneNode(node->children[i], render_program);
     }
 }
 
@@ -308,7 +306,7 @@ void drawSceneNodeShadow(
     }
     
     for (size_t i = 0; i < node->children.size(); i++) {
-               drawSceneNodeShadow(&node->children[i], renderProgram, shadowProgram, lightViewProj);
+               drawSceneNodeShadow(node->children[i], renderProgram, shadowProgram, lightViewProj);
     }
 
 }

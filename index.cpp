@@ -94,7 +94,7 @@ void draw(
 
 
     for (size_t i = 0; i < scene->nodes.size(); i++) {
-        drawSceneNodeShadow(&scene->nodes[i], render_program, shadow_render_program, lightViewProj);
+        drawSceneNodeShadow(scene->nodes[i], render_program, shadow_render_program, lightViewProj);
     }
 
     
@@ -141,7 +141,7 @@ void draw(
 
     
     for (size_t i = 0; i < scene->nodes.size(); i++) {
-        drawSceneNode(&scene->nodes[i], render_program);
+        drawSceneNode(scene->nodes[i], render_program);
     }
 
     SDL_GL_SwapWindow(window.object);
@@ -289,8 +289,8 @@ int main(int argc, char** argv)
             "blue tree"
         );
     
-    setParent(tree_shape1, &tree_shape2);
-    setParent(tree_shape2, &tree_shape);
+    setParent(tree_shape1, tree_shape2);
+    setParent(tree_shape2, tree_shape);
 
 
     float floor_positions_data[18] = {
@@ -333,9 +333,9 @@ int main(int argc, char** argv)
             "floor"
         );
 
-    auto scene_nodes = DArray<SceneNode>();
-    scene_nodes.push_back(tree_shape);
-    scene_nodes.push_back(floor_model);
+    auto scene_nodes = DArray<SceneNode*>();
+    scene_nodes.push_back(&tree_shape);
+    scene_nodes.push_back(&floor_model);
     
     Scene scene =  { 
         .nodes = scene_nodes,
