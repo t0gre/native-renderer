@@ -110,8 +110,8 @@ void processEvents(AppState* state)
 
                     // set the floor node to have the same color at the clicked thing
                     for (auto& node: state->scene.nodes) {
-                        if (node.name == "floor") {
-                            const auto floor = &node;
+                        if (node->name == "floor") {
+                            const auto floor = node;
                             floor->mesh.value().material.color = clicked.meshInfo.value().material.color;
                         }
                     }

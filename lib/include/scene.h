@@ -14,18 +14,18 @@ typedef struct SceneNode {
     size_t id;
     Mat4 local_transform; 
     Mat4 world_transform;
-    DArray<SceneNode> children; // empty if no children
+    DArray<SceneNode *> children; // empty if no children
     std::optional<Mesh> mesh; 
-    std::optional<SceneNode*> parent; 
+    std::optional<SceneNode *> parent;
     std::optional<std::string> name;
     
 } SceneNode;  
 
 
-void setParent(SceneNode node, SceneNode * parent);
+void setParent(SceneNode& node, SceneNode& parent);
 
 typedef struct Scene {
-    DArray<SceneNode> nodes;
+    DArray<SceneNode*> nodes;
     AmbientLight ambient_light;
     DirectionalLight directional_light;
     PointLight point_light;

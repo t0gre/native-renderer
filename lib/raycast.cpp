@@ -91,19 +91,19 @@ DArray<Intersection> rayIntersectsVertices(Ray ray, Vertices vertices) {
 DArray<Intersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
     
     DArray<Intersection> intersections;
-    std::stack<SceneNode> node_stack;
+    std::stack<const SceneNode*> node_stack;
     
     
-    node_stack.push(node);
+    node_stack.push(&node);
 
     while (!node_stack.empty()) {
 
-        SceneNode nodeUnderTest = node_stack.top();
+        const SceneNode * nodeUnderTest = node_stack.top();
         node_stack.pop();
         
-        if (nodeUnderTest.mesh) {
+        if (nodeUnderTest->mesh) {
             // transform the ray into mesh space
-            auto inverseTransform = m4inverse(nodeUnderTest.world_transform);
+            auto inverseTransform = m4inverse(nodeUnderTest->world_transform);
             auto meshSpaceOrigin = m4PositionMultiply(
                 ray.origin, 
                 inverseTransform);
@@ -120,23 +120,23 @@ DArray<Intersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
             
             auto rayNodeIntersections = rayIntersectsVertices(
                 newRay, 
-                nodeUnderTest.mesh.value().vertices);
+                nodeUnderTest->mesh.value().vertices);
 
             if (rayNodeIntersections.size() > 0) {
-                for (auto intersection : rayNodeIntersections) {
+                for (const auto& intersection : rayNodeIntersections) {
                     // transform the intersection back into world space
                     auto worldSpaceIntersection = m4PositionMultiply(
                         intersection.point, 
-                        nodeUnderTest.world_transform);
+                        nodeUnderTest->world_transform);
 
                  
                     intersections.push_back((Intersection){ 
-                        .nodeName = nodeUnderTest.name.value_or(""),
+                        .nodeName = nodeUnderTest->name.value_or(""),
                         .point = worldSpaceIntersection, 
                         .triangleIdx = intersection.triangleIdx,
                         .meshInfo = (MeshInfo){ 
-                            .material = nodeUnderTest.mesh.value().material,
-                            .id = nodeUnderTest.mesh.value().id 
+                            .material = nodeUnderTest->mesh.value().material,
+                            .id = nodeUnderTest->mesh.value().id
                         }
                     });
                 }
@@ -144,7 +144,7 @@ DArray<Intersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
             }
         }
         
-        for (auto& child: nodeUnderTest.children) {
+        for (auto& child: nodeUnderTest->children) {
             node_stack.push(child);
         }
     }
@@ -156,7 +156,7 @@ DArray<Intersection> rayIntersectsScene(const Ray &ray, const Scene& scene) {
     DArray<Intersection> intersections;
     
     for (const auto& node: scene.nodes) {
-        auto rayNodeIntersections = rayIntersectsSceneNode(ray, node);
+        auto rayNodeIntersections = rayIntersectsSceneNode(ray, *node);
         if (rayNodeIntersections.size() > 0) {
                 for (const auto& intersection : rayNodeIntersections) {
                      intersections.push_back(intersection);

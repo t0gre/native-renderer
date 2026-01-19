@@ -6,27 +6,27 @@
 
 size_t sceneNodeCounter = 0;
 
-void setParent(SceneNode node, SceneNode * parent) {
+void setParent(SceneNode& node, SceneNode& parent) {
    
    // Remove node from its current parent's children array
-   if (node.parent.has_value() && node.parent.value()->id != parent->id) {
+   if (node.parent.has_value() && node.parent.value()->id != parent.id) {
     
-    const auto oldParent = node.parent.value();
+    SceneNode * oldParent = node.parent.value();
 
     for (size_t i = 0; i < oldParent->children.size(); i++) {
         
-        const SceneNode existing_child = oldParent[i];
+        const SceneNode * existing_child = oldParent->children[i];
         
-        if (existing_child.id == node.id) {
+        if (existing_child->id == node.id) {
             oldParent->children.erase(i);
         }
     }
 
 }
     // add to the new parent
-    node.parent = parent;
-    parent->children.push_back(node); // a copy of the node
-    updateWorldTransform(parent);
+    node.parent = &parent;
+    parent.children.push_back(&node); // a copy of the node
+    updateWorldTransform(&parent);
 }
 
 void updateWorldTransform(SceneNode * node) {
@@ -43,8 +43,8 @@ void updateWorldTransform(SceneNode * node) {
    node->world_transform = m4multiply(parentWorldTransform, node->local_transform);
 
    for (auto& child: node->children) {
-    child.parent = node;
-    updateWorldTransform(&child);
+    child->parent = node;
+    updateWorldTransform(child);
    }
 
 }
@@ -59,7 +59,7 @@ SceneNode initSceneNode(const Mat4 &transform, const std::optional<Mesh> &mesh, 
    .id = sceneNodeCounter,
    .local_transform = transform,
    .world_transform = transform, // actually valid since there's no parent
-   .children = DArray<SceneNode>(), // empty array if no children
+   .children = DArray<SceneNode*>(), // empty array if no children
    .mesh = mesh,
    .name = name
 };
