@@ -343,6 +343,11 @@ int main(int argc, char** argv)
     auto scene_nodes = DArray<SceneNode*>();
     scene_nodes.push_back(&tree_shape);
     scene_nodes.push_back(&floor_model);
+
+    std::string gorilla_path = "assets/gorila.glb";
+    SceneNode gorilla = load_glb(gorilla_path);
+
+    scene_nodes.push_back(&gorilla);
     
     Scene scene =  { 
         .nodes = scene_nodes,
