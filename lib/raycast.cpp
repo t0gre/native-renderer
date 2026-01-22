@@ -59,7 +59,7 @@ DArray<Intersection> rayIntersectsVertices(Ray ray, Vertices vertices) {
     
     DArray<Intersection> intersections;
 
-    float * positions = vertices.positions;
+    float * positions = vertices.positions.begin();
 
     for (size_t i = 0; i < vertices.vertex_count * 3; i += 9) {
         

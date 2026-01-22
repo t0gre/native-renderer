@@ -87,6 +87,66 @@ FloatData read_csv(const char* filename) {
 
 }
 
+  // Helper: convert aiMesh -> Mesh (fills Vertices.positions and Vertices.normals using DArray)
+Mesh convertAiMesh(const aiMesh* aMesh) {
+    Mesh m;
+    const size_t vcount = aMesh->mNumVertices;
+    m.vertices.vertex_count = vcount;
+
+    // fill positions (3 floats per vertex)
+    for (unsigned i = 0; i < vcount; ++i) {
+      const aiVector3D &p = aMesh->mVertices[i];
+      m.vertices.positions.push_back(p.x);
+      m.vertices.positions.push_back(p.y);
+      m.vertices.positions.push_back(p.z);
+    }
+
+    // fill normals if present
+    if (aMesh->HasNormals()) {
+      for (unsigned i = 0; i < vcount; ++i) {
+        const aiVector3D &n = aMesh->mNormals[i];
+        m.vertices.normals.push_back(n.x);
+        m.vertices.normals.push_back(n.y);
+        m.vertices.normals.push_back(n.z);
+      }
+    }
+
+    // material / id left default (populate if you have material mapping)
+    m.id = std::nullopt;
+    return m;
+  };
+
+  // Recursive conversion aiNode -> SceneNode (nodes allocated on heap)
+SceneNode* convertNode(const aiNode* ai_node, SceneNode* parent, const aiScene * scene ) {
+  
+    Mat4 identity = m4fromPositionAndEuler({0.f,0.f,0.f}, {0.f,0.f,0.f});
+    SceneNode* node = new SceneNode(initSceneNode(identity, std::nullopt, std::string(ai_node->mName.C_Str())));
+
+    // attach to parent
+    if (parent) {
+      node->parent = parent;
+      parent->children.push_back(node);
+    }
+
+    // If this aiNode references meshes, convert the first mesh and move it into the node.
+    if (ai_node->mNumMeshes > 0 && scene->mNumMeshes > 0) {
+      const aiMesh* aMesh = scene->mMeshes[ ai_node->mMeshes[0] ];
+      Mesh converted = convertAiMesh(aMesh);
+      node->mesh.emplace(std::move(converted));
+    }
+
+    // recurse children
+    for (unsigned i = 0; i < ai_node->mNumChildren; ++i) {
+      convertNode(ai_node->mChildren[i], node, scene);
+    }
+
+    // update transforms for subtree
+    updateWorldTransform(node);
+
+    return node;
+  };
+
+ 
 SceneNode load_glb(const std::string& pFile) {
  
   // Create an instance of the Importer class
@@ -108,10 +168,11 @@ SceneNode load_glb(const std::string& pFile) {
     printf("%s\n", error_message);
     throw error_message;
   }
-
-  SceneNode root;
   
   // convert aiScene into SceneNode here
-  
+  SceneNode* root_ptr = convertNode(scene->mRootNode, nullptr, scene);
+  // return a moved copy of the root (children remain pointers to heap nodes)
+  SceneNode root = std::move(*root_ptr);
   return root;
+
 }

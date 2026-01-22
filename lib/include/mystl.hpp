@@ -17,7 +17,9 @@ class DArray {
             for (size_t i = 0; i < _size; i++) {
                 new_data[i] = data[i];
             }
-
+            
+            // free old buffer and take ownership of new buffer
+            delete[] data;
             data = new_data;
             _capacity = new_capacity;
         }
@@ -48,25 +50,29 @@ class DArray {
             return *this;
         }
 
-        // Move constructor
+        // Move constructor - take ownership of other's buffer
         DArray(DArray&& other) noexcept
             : _capacity(other._capacity),
               _size(other._size),
-              data(std::move(other.data))
-            {
-                other._capacity = 0;
-                other._size = 0;
-            }
+              data(other.data)
+        {
+            // leave other in a valid empty state
+            other._capacity = 0;
+            other._size = 0;
+            other.data = nullptr;
+        }
 
-        // Move assignment
+        // Move assignment - free current storage, take ownership of other's storage
         DArray& operator=(DArray&& other) noexcept {
                 if (this != &other) {
+                    delete[] data;
                     _capacity = other._capacity;
                     _size = other._size;
-                    data = std::move(other.data);
+                    data = other.data;
 
                     other._capacity = 0;
                     other._size = 0;
+                    other.data = nullptr;
                 }
                 return *this;
             }
@@ -89,7 +95,7 @@ class DArray {
             if (_size == _capacity) {
                 size_t new_capacity = 10;
                 if ( _capacity > 0 ) {
-                    new_capacity = _capacity * 2;;
+                    new_capacity = _capacity * 2;
                 }
                 resize(new_capacity);
             }
@@ -122,9 +128,8 @@ class DArray {
         }
 
         ~DArray() {
-                delete[] data;
-            }
-
+            delete[] data;
+        }
         
 };
 

@@ -241,11 +241,14 @@ int main(int argc, char** argv)
     FloatData normals = read_csv("assets/normals.txt");
     FloatData positions = read_csv("assets/positions.txt");
 
-    Vertices vertices = {
-        .vertex_count = positions.count / 3,
-        .positions = positions.data,
-        .normals = normals.data,
-    };
+    Vertices vertices;
+
+    vertices.vertex_count = positions.count / 3;
+
+    for (size_t i = 0; i < positions.count; i ++) {
+        vertices.positions.push_back(positions.data[i]);
+        vertices.normals.push_back(normals.data[i]);    
+    }
 
     SceneNode tree_shape = initSceneNode(m4fromPositionAndEuler(
             (Vec3){ .x = 0.f, .y = 0.f, .z = 0.f }, 
@@ -313,11 +316,15 @@ int main(int argc, char** argv)
             0.f ,1.f, 0.f,
         };
 
-    Vertices floor_vertices = {
-        .vertex_count = 6,
-        .positions = floor_positions_data,
-        .normals = floor_normals_data,
-    };
+    Vertices floor_vertices;
+
+    for (size_t i = 0; i < 18; i ++) {
+        floor_vertices.positions.push_back(floor_positions_data[i]);
+        floor_vertices.normals.push_back(floor_normals_data[i]);    
+    }
+
+    floor_vertices.vertex_count = 6;
+
 
     SceneNode floor_model = initSceneNode(m4fromPositionAndEuler(
             (Vec3){ .x = 0.f, .y = 0.1f, .z = 0.f }, 
