@@ -9,19 +9,19 @@
 #include "data_structures.h"
 #include "material.h"
 
-typedef struct Vertices {
+struct Vertices {
   size_t vertex_count;
   float * positions;
   float * normals;
   // add textcoords and indices
-} Vertices;
+};
 
 
-typedef struct Mesh {
+struct Mesh {
   Vertices vertices;
   Material material;
   std::optional<int> id; // the vao id once the mesh has been inited
-} Mesh;
+}; 
 
 
 

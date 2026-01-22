@@ -4,7 +4,8 @@ project(NativeRendererLib)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(OpenGL REQUIRED)
-add_subdirectory(../SDL SDL3)
+add_subdirectory(../third_party/SDL SDL3)
+add_subdirectory(../third_party/assimp assimp)
 
 # lib (include is for templates)
 add_library(lib SHARED 
@@ -20,7 +21,11 @@ add_library(lib SHARED
     include/mystl.hpp 
 )
 
-target_include_directories(lib PUBLIC include ../SDL/include)
-target_link_libraries(lib SDL3::SDL3)
+target_include_directories(lib PUBLIC include)
+
+target_link_libraries(lib 
+    SDL3::SDL3  
+    assimp::assimp
+    ${OPENGL_LIBRARIES})
 
 
