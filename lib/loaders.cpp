@@ -7,7 +7,7 @@
 #include <assimp/postprocess.h>     // Post processing flags
 
 #include "loaders.h"
-// #include "mesh.h"
+#include "mat4.h"
 #include "scene.h"
 
 
@@ -87,6 +87,18 @@ FloatData read_csv(const char* filename) {
 
 }
 
+// helper: convert Assimp matrix -> Mat4
+static Mat4 mat4FromAiMatrix(const aiMatrix4x4& a) {
+    Mat4 m;
+    // Assimp stores matrix in row-major order (a1..d4 are rows)
+    m.data[0][0] = a.a1; m.data[0][1] = a.a2; m.data[0][2] = a.a3; m.data[0][3]  = a.a4;
+    m.data[1][0] = a.b1; m.data[1][1] = a.b2; m.data[1][2] = a.b3; m.data[1][3]  = a.b4;
+    m.data[2][0] = a.c1; m.data[2][1] = a.c2; m.data[2][2] = a.c3; m.data[2][3] = a.c4;
+    m.data[3][0] = a.d1; m.data[3][1] = a.d2; m.data[3][2] = a.d3; m.data[3][3] = a.d4;
+    return m;
+}
+
+
   // Helper: convert aiMesh -> Mesh (fills Vertices.positions and Vertices.normals using DArray)
 Mesh convertAiMesh(const aiMesh* aMesh) {
     Mesh m;
@@ -94,7 +106,7 @@ Mesh convertAiMesh(const aiMesh* aMesh) {
     m.vertices.vertex_count = vcount;
 
     // fill positions (3 floats per vertex)
-    for (unsigned i = 0; i < vcount; ++i) {
+    for (size_t i = 0; i < vcount; ++i) {
       const aiVector3D &p = aMesh->mVertices[i];
       m.vertices.positions.push_back(p.x);
       m.vertices.positions.push_back(p.y);
@@ -103,7 +115,7 @@ Mesh convertAiMesh(const aiMesh* aMesh) {
 
     // fill normals if present
     if (aMesh->HasNormals()) {
-      for (unsigned i = 0; i < vcount; ++i) {
+      for (size_t i = 0; i < vcount; ++i) {
         const aiVector3D &n = aMesh->mNormals[i];
         m.vertices.normals.push_back(n.x);
         m.vertices.normals.push_back(n.y);
@@ -119,8 +131,8 @@ Mesh convertAiMesh(const aiMesh* aMesh) {
   // Recursive conversion aiNode -> SceneNode (nodes allocated on heap)
 SceneNode* convertNode(const aiNode* ai_node, SceneNode* parent, const aiScene * scene ) {
   
-    Mat4 identity = m4fromPositionAndEuler({0.f,0.f,0.f}, {0.f,0.f,0.f});
-    SceneNode* node = new SceneNode(initSceneNode(identity, std::nullopt, std::string(ai_node->mName.C_Str())));
+    Mat4 local = mat4FromAiMatrix(ai_node->mTransformation);
+    SceneNode* node = new SceneNode(initSceneNode(local, std::nullopt, std::string(ai_node->mName.C_Str())));
 
     // attach to parent
     if (parent) {
