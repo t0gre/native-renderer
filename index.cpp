@@ -112,7 +112,6 @@ void draw(
     // bind the shadowmap
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, shadow_map.depthTexture);
-    glUniform1i(render_program.shadow_uniform.shadow_map_location, 0);
 
     glUniformMatrix4fv(render_program.shadow_uniform.light_view_location, 1,0, &lightViewProj.data[0][0]);
 

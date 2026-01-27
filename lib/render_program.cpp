@@ -206,7 +206,6 @@ ShadowMap createShadowMap() {
          throw "failed to create frame buffer";
     }
 
-    
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
 
@@ -216,9 +215,7 @@ ShadowMap createShadowMap() {
         throw "failed to create complete framebuffer";
     }
 
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 
     return { depthTexture, framebuffer, size };
 }
