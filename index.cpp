@@ -87,7 +87,7 @@ void draw(
     };
     Vec3 up = {0.f, 1.f, 0.f};
 
-    Mat4 lightView = m4lookAt(lightCameraPosition, lightTarget, up);
+    Mat4 lightView = m4inverse(m4lookAt(lightCameraPosition, lightTarget, up));
     Mat4 lightProj = m4orthographic(-20, 20, -20, 20, 1, 100);
     Mat4 lightViewProj = m4multiply(lightProj, lightView);
 
@@ -199,10 +199,8 @@ void mainLoop(void* mainLoopArg)
 
 }
 
-
 int main(int argc, char** argv)
 {
-
 
     InputState input = {
         .pointer_down = false,
@@ -236,7 +234,6 @@ int main(int argc, char** argv)
         .quadratic = 0.032f
     };
 
-   
     // TODO do these need to be cleaned up?
     FloatData normals = read_csv("assets/normals.txt");
     FloatData positions = read_csv("assets/positions.txt");
@@ -295,7 +292,6 @@ int main(int argc, char** argv)
     setParent(tree_shape1, tree_shape2);
     setParent(tree_shape2, tree_shape);
 
-
     float floor_positions_data[18] = {
             -1000.f ,0.f, -1000.f, // back left
             -1000.f ,0.f, 1000.f, // front left
@@ -304,8 +300,6 @@ int main(int argc, char** argv)
             1000.f ,0.f, 1000.f, // front right
             1000.f ,0.f, -1000.f, // back right
         };
-
-    
 
     float floor_normals_data[18] = {
             0.f ,1.f, 0.f,
@@ -324,7 +318,6 @@ int main(int argc, char** argv)
     }
 
     floor_vertices.vertex_count = 6;
-
 
     SceneNode floor_model = initSceneNode(m4fromPositionAndEuler(
             (Vec3){ .x = 0.f, .y = 0.1f, .z = 0.f }, 
