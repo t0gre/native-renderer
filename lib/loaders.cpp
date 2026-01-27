@@ -91,10 +91,11 @@ FloatData read_csv(const char* filename) {
 static Mat4 mat4FromAiMatrix(const aiMatrix4x4& a) {
     Mat4 m;
     // Assimp stores matrix in row-major order (a1..d4 are rows)
-    m.data[0][0] = a.a1; m.data[0][1] = a.a2; m.data[0][2] = a.a3; m.data[0][3]  = a.a4;
-    m.data[1][0] = a.b1; m.data[1][1] = a.b2; m.data[1][2] = a.b3; m.data[1][3]  = a.b4;
-    m.data[2][0] = a.c1; m.data[2][1] = a.c2; m.data[2][2] = a.c3; m.data[2][3] = a.c4;
-    m.data[3][0] = a.d1; m.data[3][1] = a.d2; m.data[3][2] = a.d3; m.data[3][3] = a.d4;
+    // We need to transpose it to match our matrix convention
+    m.data[0][0] = a.a1; m.data[0][1] = a.b1; m.data[0][2] = a.c1; m.data[0][3] = a.d1;
+    m.data[1][0] = a.a2; m.data[1][1] = a.b2; m.data[1][2] = a.c2; m.data[1][3] = a.d2;
+    m.data[2][0] = a.a3; m.data[2][1] = a.b3; m.data[2][2] = a.c3; m.data[2][3] = a.d3;
+    m.data[3][0] = a.a4; m.data[3][1] = a.b4; m.data[3][2] = a.c4; m.data[3][3] = a.d4;
     return m;
 }
 

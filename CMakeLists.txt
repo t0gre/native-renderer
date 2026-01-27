@@ -21,7 +21,13 @@ target_include_directories(native PUBLIC
     third_party/SDL/include
 )
 
-# shaders
-file(COPY lib/shaders DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
+# shaders copy on configure
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}) # only runs on configure
+
+add_custom_command(
+         TARGET native POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E copy_directory              
+          ${CMAKE_SOURCE_DIR}/lib/shaders $<TARGET_FILE_DIR:native>/shaders
+         COMMENT "Copying shaders" VERBATIM
+         )

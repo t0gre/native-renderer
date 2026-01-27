@@ -77,18 +77,17 @@ void draw(
 
 
     // Compute light's view-projection matrix (for directional light)
-    Vec3 lightRotation = scene->directional_light.rotation;
+    Vec3 lightDirection = scene->directional_light.rotation;
+    float shadowDistance = 10.f;
+    Vec3 lightTarget = {0.f, 0.f, 0.f};
+    Vec3 lightCameraPosition = {
+        lightTarget.x - lightDirection.x * shadowDistance,
+        lightTarget.y - lightDirection.y * shadowDistance,
+        lightTarget.z - lightDirection.z * shadowDistance
+    };
+    Vec3 up = {0.f, 1.f, 0.f};
 
-    Mat4 xMatrix = m4xRotation(lightRotation.x);
-    Mat4 yMatrix = m4xRotation(lightRotation.y);
-    Mat4 zMatrix = m4xRotation(lightRotation.z);
-
-    Vec3 imaginaryCameraPosition = {10,10,10};
-    Vec3 effectiveCameraPosition = m4PositionMultiply(imaginaryCameraPosition,xMatrix);
-    effectiveCameraPosition = m4PositionMultiply(effectiveCameraPosition,yMatrix);
-    effectiveCameraPosition = m4PositionMultiply(effectiveCameraPosition,zMatrix);
-
-    Mat4 lightView = m4fromPositionAndEuler(effectiveCameraPosition, lightRotation);
+    Mat4 lightView = m4lookAt(lightCameraPosition, lightTarget, up);
     Mat4 lightProj = m4orthographic(-20, 20, -20, 20, 1, 100);
     Mat4 lightViewProj = m4multiply(lightProj, lightView);
 
@@ -113,6 +112,7 @@ void draw(
     // bind the shadowmap
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, shadow_map.depthTexture);
+    glUniform1i(render_program.shadow_uniform.shadow_map_location, 0);
 
     glUniformMatrix4fv(render_program.shadow_uniform.light_view_location, 1,0, &lightViewProj.data[0][0]);
 
@@ -225,7 +225,7 @@ int main(int argc, char** argv)
 
     DirectionalLight directional_light = {
         .color = { .r = 0.5f, .g = 0.5f, .b = 0.5f},
-        .rotation = { .x = 0.0f, .y = -0.8f, .z = -0.5f},
+        .rotation = { .x = 0.0f, .y = -1.0f, .z = -1.0f},  // pointing down and forward at 45 degrees
     };
 
     PointLight point_light = {

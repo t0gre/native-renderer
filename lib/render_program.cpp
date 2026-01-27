@@ -219,8 +219,8 @@ ShadowMap createShadowMap() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    
-    return { framebuffer, depthTexture, size };
+
+    return { depthTexture, framebuffer, size };
 }
 
 ShadowRenderProgram initShadowRenderProgram() {
