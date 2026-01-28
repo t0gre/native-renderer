@@ -90,8 +90,6 @@ FloatData read_csv(const char* filename) {
 // helper: convert Assimp matrix -> Mat4
 static Mat4 mat4FromAiMatrix(const aiMatrix4x4& a) {
     Mat4 m;
-    // Assimp stores matrix in row-major order (a1..d4 are rows)
-    // We need to transpose it to match our matrix convention
     m.data[0][0] = a.a1; m.data[0][1] = a.b1; m.data[0][2] = a.c1; m.data[0][3] = a.d1;
     m.data[1][0] = a.a2; m.data[1][1] = a.b2; m.data[1][2] = a.c2; m.data[1][3] = a.d2;
     m.data[2][0] = a.a3; m.data[2][1] = a.b3; m.data[2][2] = a.c3; m.data[2][3] = a.d3;
@@ -103,6 +101,13 @@ static Mat4 mat4FromAiMatrix(const aiMatrix4x4& a) {
   // Helper: convert aiMesh -> Mesh (fills Vertices.positions and Vertices.normals using DArray)
 Mesh convertAiMesh(const aiMesh* aMesh) {
     Mesh m;
+
+    m.material = Material{
+        .color = { .r = 0.8f, .g = 0.8f, .b = 0.8f },
+        .specular_color = { .r = 0.2f, .g = 0.2f, .b = 0.2f },
+        .shininess = 0.5f
+    };
+    
     const size_t vcount = aMesh->mNumVertices;
     m.vertices.vertex_count = vcount;
 

@@ -35,7 +35,7 @@
             "program": "${workspaceFolder}/Debug/native",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build",
+            "cwd": "${workspaceFolder}/Debug",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
