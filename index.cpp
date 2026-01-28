@@ -12,8 +12,8 @@ WindowState initWindow(const char* title)
     
     SDL_Init(SDL_INIT_VIDEO < 0);
 
-    GLsizei initial_window_height = 700;
-    GLsizei initial_window_width = 1000;
+    GLsizei initial_window_height = 1400;
+    GLsizei initial_window_width = 2000;
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
