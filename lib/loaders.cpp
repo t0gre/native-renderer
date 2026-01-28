@@ -103,11 +103,11 @@ Mesh convertAiMesh(const aiMesh* aMesh) {
     Mesh m;
 
     m.material = Material{
-        .color = { .r = 0.8f, .g = 0.8f, .b = 0.8f },
+        .color = { .r = 0.21f, .g = 0.12f, .b = 0.012f },
         .specular_color = { .r = 0.2f, .g = 0.2f, .b = 0.2f },
         .shininess = 0.5f
     };
-    
+
     const size_t vcount = aMesh->mNumVertices;
     m.vertices.vertex_count = vcount;
 

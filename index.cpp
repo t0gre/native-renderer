@@ -12,8 +12,8 @@ WindowState initWindow(const char* title)
     
     SDL_Init(SDL_INIT_VIDEO < 0);
 
-    GLsizei initial_window_height = 480;
-    GLsizei initial_window_width = 600;
+    GLsizei initial_window_height = 700;
+    GLsizei initial_window_width = 1000;
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
@@ -319,7 +319,7 @@ int main(int argc, char** argv)
     floor_vertices.vertex_count = 6;
 
     SceneNode floor_model = initSceneNode(m4fromPositionAndEuler(
-            (Vec3){ .x = 0.f, .y = 0.1f, .z = 0.f }, 
+            (Vec3){ .x = 0.f, .y = 0.0f, .z = 0.f }, 
             (Vec3) { .x = 0.f, .y = 0.f, .z = 0.f }),
             (Mesh){
                 .vertices =floor_vertices,
@@ -338,6 +338,10 @@ int main(int argc, char** argv)
 
     std::string gorilla_path = "assets/gorila.glb";
     SceneNode gorilla = load_glb(gorilla_path);
+    gorilla.name = "gorilla";
+    gorilla.local_transform = m4translate(gorilla.local_transform, -5.0f, 0.f, 0.f);
+
+    updateWorldTransform(&gorilla);
 
     scene_nodes.push_back(&gorilla);
     
