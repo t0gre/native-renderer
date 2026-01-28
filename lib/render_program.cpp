@@ -101,7 +101,7 @@ Mesh initMesh(Mesh mesh, RenderProgram* render_program) {
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mesh.vertices.vertex_count*3, 
-                 mesh.vertices.positions, GL_STATIC_DRAW);
+                 mesh.vertices.positions.begin(), GL_STATIC_DRAW);
 
     // Specify the layout of the shader vertex data (positions only, 3 floats)
     GLint posAttrib = 0;
@@ -112,7 +112,7 @@ Mesh initMesh(Mesh mesh, RenderProgram* render_program) {
     glGenBuffers(1, &vbo_norm);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_norm);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mesh.vertices.vertex_count*3, 
-                 mesh.vertices.normals, GL_STATIC_DRAW);
+                 mesh.vertices.normals.begin(), GL_STATIC_DRAW);
 
     // Specify the layout of the shader vertex data (normals only, 3 floats)
     
@@ -206,7 +206,6 @@ ShadowMap createShadowMap() {
          throw "failed to create frame buffer";
     }
 
-    
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
 
@@ -216,11 +215,9 @@ ShadowMap createShadowMap() {
         throw "failed to create complete framebuffer";
     }
 
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    
-    return { framebuffer, depthTexture, size };
+    return { depthTexture, framebuffer, size };
 }
 
 ShadowRenderProgram initShadowRenderProgram() {

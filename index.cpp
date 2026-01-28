@@ -12,8 +12,8 @@ WindowState initWindow(const char* title)
     
     SDL_Init(SDL_INIT_VIDEO < 0);
 
-    GLsizei initial_window_height = 480;
-    GLsizei initial_window_width = 600;
+    GLsizei initial_window_height = 1400;
+    GLsizei initial_window_width = 2000;
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
@@ -77,18 +77,17 @@ void draw(
 
 
     // Compute light's view-projection matrix (for directional light)
-    Vec3 lightRotation = scene->directional_light.rotation;
+    Vec3 lightDirection = scene->directional_light.rotation;
+    float shadowDistance = 10.f;
+    Vec3 lightTarget = {0.f, 0.f, 0.f};
+    Vec3 lightCameraPosition = {
+        lightTarget.x - lightDirection.x * shadowDistance,
+        lightTarget.y - lightDirection.y * shadowDistance,
+        lightTarget.z - lightDirection.z * shadowDistance
+    };
+    Vec3 up = {0.f, 1.f, 0.f};
 
-    Mat4 xMatrix = m4xRotation(lightRotation.x);
-    Mat4 yMatrix = m4xRotation(lightRotation.y);
-    Mat4 zMatrix = m4xRotation(lightRotation.z);
-
-    Vec3 imaginaryCameraPosition = {10,10,10};
-    Vec3 effectiveCameraPosition = m4PositionMultiply(imaginaryCameraPosition,xMatrix);
-    effectiveCameraPosition = m4PositionMultiply(effectiveCameraPosition,yMatrix);
-    effectiveCameraPosition = m4PositionMultiply(effectiveCameraPosition,zMatrix);
-
-    Mat4 lightView = m4fromPositionAndEuler(effectiveCameraPosition, lightRotation);
+    Mat4 lightView = m4inverse(m4lookAt(lightCameraPosition, lightTarget, up));
     Mat4 lightProj = m4orthographic(-20, 20, -20, 20, 1, 100);
     Mat4 lightViewProj = m4multiply(lightProj, lightView);
 
@@ -199,10 +198,8 @@ void mainLoop(void* mainLoopArg)
 
 }
 
-
 int main(int argc, char** argv)
 {
-
 
     InputState input = {
         .pointer_down = false,
@@ -225,7 +222,7 @@ int main(int argc, char** argv)
 
     DirectionalLight directional_light = {
         .color = { .r = 0.5f, .g = 0.5f, .b = 0.5f},
-        .rotation = { .x = 0.0f, .y = -0.8f, .z = -0.5f},
+        .rotation = { .x = 0.0f, .y = -1.0f, .z = -1.0f},  // pointing down and forward at 45 degrees
     };
 
     PointLight point_light = {
@@ -236,16 +233,18 @@ int main(int argc, char** argv)
         .quadratic = 0.032f
     };
 
-   
     // TODO do these need to be cleaned up?
     FloatData normals = read_csv("assets/normals.txt");
     FloatData positions = read_csv("assets/positions.txt");
 
-    Vertices vertices = {
-        .vertex_count = positions.count / 3,
-        .positions = positions.data,
-        .normals = normals.data,
-    };
+    Vertices vertices;
+
+    vertices.vertex_count = positions.count / 3;
+
+    for (size_t i = 0; i < positions.count; i ++) {
+        vertices.positions.push_back(positions.data[i]);
+        vertices.normals.push_back(normals.data[i]);    
+    }
 
     SceneNode tree_shape = initSceneNode(m4fromPositionAndEuler(
             (Vec3){ .x = 0.f, .y = 0.f, .z = 0.f }, 
@@ -292,7 +291,6 @@ int main(int argc, char** argv)
     setParent(tree_shape1, tree_shape2);
     setParent(tree_shape2, tree_shape);
 
-
     float floor_positions_data[18] = {
             -1000.f ,0.f, -1000.f, // back left
             -1000.f ,0.f, 1000.f, // front left
@@ -301,8 +299,6 @@ int main(int argc, char** argv)
             1000.f ,0.f, 1000.f, // front right
             1000.f ,0.f, -1000.f, // back right
         };
-
-    
 
     float floor_normals_data[18] = {
             0.f ,1.f, 0.f,
@@ -313,14 +309,17 @@ int main(int argc, char** argv)
             0.f ,1.f, 0.f,
         };
 
-    Vertices floor_vertices = {
-        .vertex_count = 6,
-        .positions = floor_positions_data,
-        .normals = floor_normals_data,
-    };
+    Vertices floor_vertices;
+
+    for (size_t i = 0; i < 18; i ++) {
+        floor_vertices.positions.push_back(floor_positions_data[i]);
+        floor_vertices.normals.push_back(floor_normals_data[i]);    
+    }
+
+    floor_vertices.vertex_count = 6;
 
     SceneNode floor_model = initSceneNode(m4fromPositionAndEuler(
-            (Vec3){ .x = 0.f, .y = 0.1f, .z = 0.f }, 
+            (Vec3){ .x = 0.f, .y = 0.0f, .z = 0.f }, 
             (Vec3) { .x = 0.f, .y = 0.f, .z = 0.f }),
             (Mesh){
                 .vertices =floor_vertices,
@@ -336,6 +335,15 @@ int main(int argc, char** argv)
     auto scene_nodes = DArray<SceneNode*>();
     scene_nodes.push_back(&tree_shape);
     scene_nodes.push_back(&floor_model);
+
+    std::string gorilla_path = "assets/gorila.glb";
+    SceneNode gorilla = load_glb(gorilla_path);
+    gorilla.name = "gorilla";
+    gorilla.local_transform = m4translate(gorilla.local_transform, -5.0f, 0.f, 0.f);
+
+    updateWorldTransform(&gorilla);
+
+    scene_nodes.push_back(&gorilla);
     
     Scene scene =  { 
         .nodes = scene_nodes,
