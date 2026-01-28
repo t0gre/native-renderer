@@ -18,6 +18,7 @@ add_library(lib SHARED
     vec.cpp
     loaders.cpp
     render_program.cpp
+    gl_renderer.cpp
     include/mystl.hpp 
 )
 
