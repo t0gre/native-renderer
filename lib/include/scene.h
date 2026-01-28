@@ -35,6 +35,6 @@ void updateWorldTransform(SceneNode * node);
 
 void updateTransform(SceneNode * node, const Mat4 &transform);
 
-SceneNode initSceneNode(const Mat4 &transform, const std::optional<Mesh> &mesh, std::string name);
+SceneNode createSceneNode(const Mat4 &transform, const std::optional<Mesh> &mesh, std::string name);
 
 #endif
