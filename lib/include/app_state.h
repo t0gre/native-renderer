@@ -8,22 +8,22 @@
 #include "scene.h"
 #include "input.h"
 
-typedef struct WindowState  {
+typedef struct GlWindowState  {
     SDL_Window* object;
     Uint32 id;
     bool should_close;
     size_t width;
     size_t height;
 
-} WindowState;
+} GlWindowState;
 
 
 typedef struct AppState  {
-    WindowState window{};
+    GlWindowState window{};
     Uint64 last_frame_time{};
     Camera camera{};
     InputState input{};
-    RenderProgram render_program{};
+    BasicColorRenderProgram render_program{};
     TextureRenderProgram texture_render_program{};
     Scene scene;
     ShadowRenderProgram shadow_render_program{};

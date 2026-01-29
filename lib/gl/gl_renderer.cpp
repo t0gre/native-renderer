@@ -1,6 +1,6 @@
 #include "gl_renderer.h"
 
-WindowState initWindow(const char* title)
+GlWindowState initWindow(const char* title)
 {
     
     SDL_Init(SDL_INIT_VIDEO < 0);
@@ -34,7 +34,7 @@ WindowState initWindow(const char* title)
     // Initialize viewport
     glViewport(0,0, initial_window_width, initial_window_height);
 
-    const WindowState window = {
+    const GlWindowState window = {
         .object = window_object, 
         .id = window_id,
         .width = static_cast<size_t>(initial_window_width),
@@ -47,10 +47,10 @@ WindowState initWindow(const char* title)
 
 
 void drawGl(
-    WindowState window, 
+    GlWindowState window, 
     Camera camera, 
     Scene* scene, 
-    RenderProgram render_program,
+    BasicColorRenderProgram render_program,
     TextureRenderProgram texture_render_program,
     ShadowRenderProgram shadow_render_program,
     ShadowMap shadow_map
@@ -134,7 +134,7 @@ void drawGl(
 
     // Draw color material meshes
     for (size_t i = 0; i < scene->nodes.size(); i++) {
-        drawSceneNode(scene->nodes[i], render_program);
+        drawSceneNodeBasicColor(scene->nodes[i], render_program);
     }
 
     // Set up texture render program with same uniforms

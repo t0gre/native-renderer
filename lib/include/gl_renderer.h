@@ -3,13 +3,13 @@
 
 #include "app_state.h"
 
-WindowState initWindow(const char* title);
+GlWindowState initWindow(const char* title);
 
 void drawGl(
-    WindowState window, 
+    GlWindowState window, 
     Camera camera, 
     Scene* scene, 
-    RenderProgram render_program,
+    BasicColorRenderProgram render_program,
     TextureRenderProgram texture_render_program,
     ShadowRenderProgram shadow_render_program,
     ShadowMap shadow_map

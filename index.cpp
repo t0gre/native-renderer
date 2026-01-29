@@ -68,10 +68,10 @@ int main(int argc, char** argv)
         .pointer_position = { 0 }
     };
 
-    WindowState window = initWindow("Tom");
+    GlWindowState window = initWindow("Tom");
        
     // Initialize shader and geometry
-    RenderProgram render_program = initShader();
+    BasicColorRenderProgram render_program = initShader();
     TextureRenderProgram texture_render_program = initTextureShader();
 
     // Shadow map setup
