@@ -20,7 +20,7 @@ typedef struct AmbientLightUniform {
 
 typedef struct DirectionalLightUniform {
       GLuint color_location;
-      GLuint rotation_location;
+      GLuint direction_location;
 } DirectionalLightUniform;
 
 typedef struct PointLightUniform {

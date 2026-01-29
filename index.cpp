@@ -83,7 +83,7 @@ int main(int argc, char** argv)
 
     DirectionalLight directional_light = {
         .color = { .r = 0.5f, .g = 0.5f, .b = 0.5f},
-        .rotation = { .x = 0.0f, .y = -1.0f, .z = -1.0f},  // pointing down and forward at 45 degrees
+        .direction = { .x = 0.0f, .y = -1.0f, .z = -1.0f},  // pointing down and forward at 45 degrees
     };
 
     PointLight point_light = {
