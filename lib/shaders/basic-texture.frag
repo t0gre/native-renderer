@@ -3,13 +3,11 @@
 
     uniform vec3 u_view_position; 
 
-    struct Material {
-      vec3 color;
-      vec3 specular_color;
-      float shininess;
+    struct BasicTextureMaterial {
+        float shininess;
     };
 
-    uniform Material u_material;
+    uniform BasicTextureMaterial u_material;
      
     struct AmbientLight {
       vec3 color;
@@ -30,33 +28,37 @@
 
     struct LightColorComponents {
       vec3 diffuse;
-      vec3 specular;
     };
 
     uniform AmbientLight u_ambient_light;
     uniform DirectionalLight u_directional_light; 
-    uniform PointLight u_point_light;                    
+    uniform PointLight u_point_light; 
+    uniform sampler2D mesh_texture;                   
                                                   
     in vec3 v_normal;     
-    in vec3 frag_world_position;                    
+    in vec3 frag_world_position;  
+    in vec2 tex_coord;
+
+
     out vec4 outColor;                        
 
     LightColorComponents calculateLightComponents(
       vec3 light_color, 
       vec3 light_direction,
       vec3 view_dir,
-      vec3 normal) {    
+      vec3 normal,
+      vec3 base_color) {    
 
         // diffuse
         float light_diff = max(dot(light_direction, normal), 0.0);   
-        vec3 diffuse_color_component = light_color * light_diff * u_material.color;
+        vec3 diffuse_color_component = light_color * light_diff * base_color;
 
         // specular
         vec3 reflect_dir = reflect(-light_direction, normal);  
         float spec = pow(max(dot(view_dir, reflect_dir), 0.0), u_material.shininess);
-        vec3 specular_color_component = u_material.specular_color * spec * u_material.color;
+        
 
-        return LightColorComponents(diffuse_color_component, specular_color_component);
+        return LightColorComponents(diffuse_color_component);
 
     }
 
@@ -81,6 +83,7 @@
     void main()                                  
     {                
 
+        vec3 base_color = texture(mesh_texture, tex_coord).rgb;
         vec3 normal = normalize(v_normal);  
         vec3 view_dir = normalize(u_view_position - frag_world_position);
 
@@ -90,33 +93,33 @@
         float shadow = getShadow(frag_world_position);
         
         // ambient
-        vec3 ambient_color = u_ambient_light.color * u_material.color;                           
+        vec3 ambient_color = u_ambient_light.color * base_color;                           
 
         LightColorComponents directional_components = calculateLightComponents(
           u_directional_light.color,
           normalize(-u_directional_light.direction),
           view_dir,
-          normal
+          normal,
+          base_color
         );
 
         LightColorComponents point_components = calculateLightComponents(
           u_point_light.color,
           normalize(u_point_light.position - frag_world_position),
           view_dir,
-          normal
+          normal,
+          base_color
         );
 
         // point light attenuation
         float distance    = length(u_point_light.position - frag_world_position);
         float attenuation = 1.0 / (u_point_light.constant + u_point_light.linear * distance + u_point_light.quadratic * (distance * distance));  
         point_components.diffuse *= attenuation;
-        point_components.specular *= attenuation;
+        
                                                                                                                                      
         outColor = vec4(ambient_color 
                       + directional_components.diffuse * shadow
-                      + directional_components.specular * shadow
-                      + point_components.diffuse / 1000.0 * shadow
-                      + point_components.specular / 1000.0 * shadow, 
+                      + point_components.diffuse / 1000.0 * shadow, 
                       1.0); 
 
          outColor.rgb = min(outColor.rgb, vec3(1.0));
