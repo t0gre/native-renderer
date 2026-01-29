@@ -6,6 +6,11 @@
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
 
+#include <GLES3/gl3.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "../third_party/stb_image.h"
+
 #include "loaders.h"
 #include "mat4.h"
 #include "scene.h"
@@ -98,13 +103,68 @@ static Mat4 mat4FromAiMatrix(const aiMatrix4x4& a) {
 }
 
 
+// Helper: load embedded texture from Assimp and create OpenGL texture object
+// Returns OpenGL texture ID, or 0 if failed
+static GLuint loadEmbeddedTexture(const aiTexture* aiTex) {
+    if (!aiTex) {
+        return 0;
+    }
+
+    // Decode the image using stb_image
+    int width, height, channels;
+    unsigned char* pixels = nullptr;
+
+    if (aiTex->mHeight == 0) {
+        // Compressed format (PNG, JPEG, etc.)
+        pixels = stbi_load_from_memory(
+            (unsigned char*)aiTex->pcData,
+            aiTex->mWidth,  // size in bytes for compressed data
+            &width, &height, &channels, 4  // Force RGBA
+        );
+    } else {
+        // Raw RGBA data
+        width = aiTex->mWidth;
+        height = aiTex->mHeight;
+        channels = 4;
+        pixels = (unsigned char*)aiTex->pcData;
+    }
+
+    if (!pixels) {
+        printf("Failed to decode texture data\n");
+        return 0;
+    }
+
+    // Create OpenGL texture
+    GLuint textureId;
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+
+    // Set texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Upload texture data
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // Free stbi-allocated memory if we loaded from compressed data
+    if (aiTex->mHeight == 0) {
+        stbi_image_free(pixels);
+    }
+
+    return textureId;
+}
+
   // Helper: convert aiMesh -> Mesh (fills Vertices.positions and Vertices.normals using DArray)
-Mesh convertAiMesh(const aiMesh* aMesh) {
+// convert a single aiMesh into our Mesh representation
+Mesh convertAiMesh(const aiMesh* aMesh, const aiScene* scene) {
     Mesh m;
 
-    m.material = BasicColorMaterial{
-        .color = { .r = 0.21f, .g = 0.12f, .b = 0.012f },
-        .specular_color = { .r = 0.2f, .g = 0.2f, .b = 0.2f },
+    m.material = BasicTextureMaterial{
         .shininess = 0.5f
     };
 
@@ -129,6 +189,44 @@ Mesh convertAiMesh(const aiMesh* aMesh) {
       }
     }
 
+    // fill texture coordinates (uv) into the material's uvMap
+    if (aMesh->HasTextureCoords(0)) {
+      // Assimp supports up to 3 components per UV, but we only take u,v
+      for (size_t i = 0; i < vcount; ++i) {
+        const aiVector3D &uv = aMesh->mTextureCoords[0][i];
+        auto &uvmap = std::get<BasicTextureMaterial>(m.material).uvMap;
+        uvmap.push_back(uv.x);
+        uvmap.push_back(uv.y);
+      }
+    }
+
+    // read material texture path (diffuse) if present
+    if (aMesh->mMaterialIndex >= 0 && scene && scene->mMaterials) {
+      const aiMaterial* aiMat = scene->mMaterials[aMesh->mMaterialIndex];
+      if (aiMat->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
+        aiString texPath;
+        if (aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
+          std::string pathStr(texPath.C_Str());
+          std::get<BasicTextureMaterial>(m.material).texture_path = pathStr;
+
+          // Check if it's an embedded texture (path starts with "*")
+          if (pathStr.length() > 0 && pathStr[0] == '*') {
+            int texIndex = std::stoi(pathStr.substr(1));
+            if (texIndex >= 0 && texIndex < static_cast<int>(scene->mNumTextures)) {
+              GLuint texId = loadEmbeddedTexture(scene->mTextures[texIndex]);
+              std::get<BasicTextureMaterial>(m.material).texture_id = texId;
+              if (texId != 0) {
+                printf("Loaded embedded texture %d as OpenGL texture ID %u\n", texIndex, texId);
+              } else {
+                printf("Failed to load embedded texture %d\n", texIndex);
+              }
+            }
+          }
+        }
+      }
+    }
+
+
     // material / id left default (populate if you have material mapping)
     m.id = std::nullopt;
     return m;
@@ -149,7 +247,7 @@ SceneNode* convertNode(const aiNode* ai_node, SceneNode* parent, const aiScene *
     // If this aiNode references meshes, convert the first mesh and move it into the node.
     if (ai_node->mNumMeshes > 0 && scene->mNumMeshes > 0) {
       const aiMesh* aMesh = scene->mMeshes[ ai_node->mMeshes[0] ];
-      Mesh converted = convertAiMesh(aMesh);
+      Mesh converted = convertAiMesh(aMesh, scene);
       node->mesh.emplace(std::move(converted));
     }
 

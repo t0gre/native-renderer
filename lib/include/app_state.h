@@ -24,6 +24,7 @@ typedef struct AppState  {
     Camera camera{};
     InputState input{};
     RenderProgram render_program{};
+    TextureRenderProgram texture_render_program{};
     Scene scene;
     ShadowRenderProgram shadow_render_program{};
     ShadowMap shadow_map{};

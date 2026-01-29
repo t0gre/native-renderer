@@ -8,7 +8,7 @@
     };
 
     uniform BasicTextureMaterial u_material;
-     
+
     struct AmbientLight {
       vec3 color;
     };
@@ -28,6 +28,7 @@
 
     struct LightColorComponents {
       vec3 diffuse;
+      vec3 specular;
     };
 
     uniform AmbientLight u_ambient_light;
@@ -56,9 +57,9 @@
         // specular
         vec3 reflect_dir = reflect(-light_direction, normal);  
         float spec = pow(max(dot(view_dir, reflect_dir), 0.0), u_material.shininess);
-        
+        vec3 specular_color_component = light_color * spec;
 
-        return LightColorComponents(diffuse_color_component);
+        return LightColorComponents(diffuse_color_component, specular_color_component);
 
     }
 
@@ -119,9 +120,11 @@
                                                                                                                                      
         outColor = vec4(ambient_color 
                       + directional_components.diffuse * shadow
-                      + point_components.diffuse / 1000.0 * shadow, 
+                      + directional_components.specular * shadow
+                      + point_components.diffuse / 1000.0 * shadow
+                      + point_components.specular / 1000.0 * shadow, 
                       1.0); 
 
-         outColor.rgb = min(outColor.rgb, vec3(1.0));
-         outColor.rgb = mix(outColor.rgb, vec3(0.05, 0.05, 0.05), fog_factor);              
+        outColor.rgb = min(outColor.rgb, vec3(1.0));
+        outColor.rgb = mix(outColor.rgb, vec3(0.05, 0.05, 0.05), fog_factor);              
     }

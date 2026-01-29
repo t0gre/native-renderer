@@ -35,6 +35,11 @@ typedef struct ShadowUniform {
       GLuint shadow_map_location;
       GLuint light_view_location;
 } ShadowUniform;
+
+typedef struct TextureUniform {
+      GLuint sampler_location;
+} TextureUniform;
+
 typedef struct RenderProgram  {
     GLuint shader_program;
     GLuint world_matrix_uniform_location;
@@ -48,12 +53,28 @@ typedef struct RenderProgram  {
     ShadowUniform shadow_uniform;
 } RenderProgram;
 
+typedef struct TextureRenderProgram {
+    GLuint shader_program;
+    GLuint world_matrix_uniform_location;
+    GLuint view_uniform_location;
+    GLuint projection_uniform_location;
+    GLuint view_position_uniform_location;
+    GLuint material_shininess_location;
+    AmbientLightUniform ambient_light_uniform;
+    DirectionalLightUniform directional_light_uniform;
+    PointLightUniform point_light_uniform;
+    ShadowUniform shadow_uniform;
+    TextureUniform texture_uniform;
+} TextureRenderProgram;
+
 typedef struct AttributeBinding {
       const char* name;
       int location;
 } AttributeBinding;
 
 RenderProgram initShader(void);
+
+TextureRenderProgram initTextureShader(void);
 
 typedef struct GlState {
     DArray<GLuint> vaos;
@@ -80,6 +101,8 @@ typedef struct ShadowRenderProgram {
 ShadowRenderProgram initShadowRenderProgram();
 
 void drawSceneNode(SceneNode* scene_node, RenderProgram render_program);
+
+void drawSceneNodeTexture(SceneNode* scene_node, TextureRenderProgram render_program);
 
 void drawSceneNodeShadow(
     SceneNode* node,

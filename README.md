@@ -45,3 +45,8 @@ Currently, the native code is only tested with Cmake on linux. The cmake config 
 submodule and links it statically so there should be no requirement to install sdl to 
 build or run the app
 
+## copying shaders
+
+the cmake script for copying shaders only works when
+cmake see a change to a cpp or header file, so there's a copy_shaders.sh script 
+as a workaround for when you've only changed the shaders
