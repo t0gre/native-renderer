@@ -70,7 +70,7 @@ void drawGl(
 
 
     // Compute light's view-projection matrix (for directional light)
-    Vec3 lightDirection = scene->directional_light.rotation;
+    Vec3 lightDirection = scene->directional_light.direction;
     float shadowDistance = 10.f;
     Vec3 lightTarget = {0.f, 0.f, 0.f};
     Vec3 lightCameraPosition = {
@@ -122,7 +122,7 @@ void drawGl(
 
     // set directional light
     glUniform3fv(render_program.directional_light_uniform.color_location,1,scene->directional_light.color.data);
-    glUniform3fv(render_program.directional_light_uniform.rotation_location,1,scene->directional_light.rotation.data);
+    glUniform3fv(render_program.directional_light_uniform.direction_location,1,scene->directional_light.direction.data);
 
     // set point light
     glUniform3fv(render_program.point_light_uniform.color_location,1,scene->point_light.color.data);

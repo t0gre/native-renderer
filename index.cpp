@@ -8,8 +8,6 @@
 #include "events.h"
 
 
-
-
 void updateScene(Scene* scene, float dt) {
     Mat4 rotator = m4yRotation(PI / (dt * 10));
     Vec4 oldMatrix = { 
@@ -85,7 +83,7 @@ int main(int argc, char** argv)
 
     DirectionalLight directional_light = {
         .color = { .r = 0.5f, .g = 0.5f, .b = 0.5f},
-        .rotation = { .x = 0.0f, .y = -1.0f, .z = -1.0f},  // pointing down and forward at 45 degrees
+        .direction = { .x = 0.0f, .y = -1.0f, .z = -1.0f},  // pointing down and forward at 45 degrees
     };
 
     PointLight point_light = {
@@ -109,7 +107,7 @@ int main(int argc, char** argv)
         vertices.normals.push_back(normals.data[i]);    
     }
 
-    SceneNode tree_shape = initSceneNode(m4fromPositionAndEuler(
+    SceneNode tree_shape = createSceneNode(m4fromPositionAndEuler(
             (Vec3){ .x = 0.f, .y = 0.f, .z = 0.f }, 
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
@@ -123,7 +121,7 @@ int main(int argc, char** argv)
             "green tree"
         );
     
-    SceneNode tree_shape1 = initSceneNode(m4fromPositionAndEuler(
+    SceneNode tree_shape1 = createSceneNode(m4fromPositionAndEuler(
             (Vec3){ .x = 5.f, .y = 0.f, .z = 0.f }, 
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
@@ -137,7 +135,7 @@ int main(int argc, char** argv)
             "grey tree"
         );
     
-    SceneNode tree_shape2 = initSceneNode(m4fromPositionAndEuler(
+    SceneNode tree_shape2 = createSceneNode(m4fromPositionAndEuler(
             (Vec3){ .x = 5.f, .y = 0.f, .z = 0.f }, 
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
@@ -181,7 +179,7 @@ int main(int argc, char** argv)
 
     floor_vertices.vertex_count = 6;
 
-    SceneNode floor_model = initSceneNode(m4fromPositionAndEuler(
+    SceneNode floor_model = createSceneNode(m4fromPositionAndEuler(
             (Vec3){ .x = 0.f, .y = 0.0f, .z = 0.f }, 
             (Vec3) { .x = 0.f, .y = 0.f, .z = 0.f }),
             (Mesh){

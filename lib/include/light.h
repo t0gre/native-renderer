@@ -13,7 +13,7 @@ typedef struct PointLight {
 
 typedef struct DirectionalLight {
   Vec3 color;
-  Vec3 rotation;
+  Vec3 direction;
 } DirectionalLight;
 
 typedef struct AmbientLight {

@@ -62,7 +62,7 @@ RenderProgram initShader()
         },
         .directional_light_uniform = {
             .color_location = guaranteeUniformLocation(shader_program, "u_directional_light.color"),
-            .rotation_location = guaranteeUniformLocation(shader_program, "u_directional_light.rotation"),
+            .direction_location = guaranteeUniformLocation(shader_program, "u_directional_light.direction"),
         },
         .point_light_uniform = {
             .color_location = guaranteeUniformLocation(shader_program, "u_point_light.color"),

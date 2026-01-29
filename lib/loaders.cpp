@@ -138,7 +138,7 @@ Mesh convertAiMesh(const aiMesh* aMesh) {
 SceneNode* convertNode(const aiNode* ai_node, SceneNode* parent, const aiScene * scene ) {
   
     Mat4 local = mat4FromAiMatrix(ai_node->mTransformation);
-    SceneNode* node = new SceneNode(initSceneNode(local, std::nullopt, std::string(ai_node->mName.C_Str())));
+    SceneNode* node = new SceneNode(createSceneNode(local, std::nullopt, std::string(ai_node->mName.C_Str())));
 
     // attach to parent
     if (parent) {

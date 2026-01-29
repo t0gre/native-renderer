@@ -17,7 +17,7 @@
 
     struct DirectionalLight {
       vec3 color;
-      vec3 rotation;
+      vec3 direction;
     };
 
     struct PointLight {
@@ -94,7 +94,7 @@
 
         LightColorComponents directional_components = calculateLightComponents(
           u_directional_light.color,
-          normalize(-u_directional_light.rotation),
+          normalize(-u_directional_light.direction),
           view_dir,
           normal
         );
