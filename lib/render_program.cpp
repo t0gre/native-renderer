@@ -133,45 +133,55 @@ void drawSceneNode(SceneNode* node, RenderProgram render_program) {
 
     if (node->mesh.has_value()) {
         
+
+        if (std::holds_alternative<BasicColorMaterial>(node->mesh.value().material)) {
+
+        Mesh * mesh = &node->mesh.value();
+        BasicColorMaterial * material = &std::get<BasicColorMaterial>(mesh->material);
+
         // check if the mesh has been initialized and init if not
-        if (node->mesh.value().id.has_value()) {
+        if (mesh->id.has_value()) {
+
+            
             // draw this mesh
             glUseProgram(render_program.shader_program);
         
             glUniformMatrix4fv(render_program.world_matrix_uniform_location,1,0, &node->world_transform.data[0][0]);
             
             glUniform3fv(render_program.material_uniform.color_location,1, 
-                node->mesh.value().material.color.data);
+                material->color.data);
             glUniform3fv(render_program.material_uniform.specular_color_location,1, 
-                node->mesh.value().material.specular_color.data);
+                material->specular_color.data);
             glUniform1f(render_program.material_uniform.shininess_location, 
-                node->mesh.value().material.shininess);
+                material->shininess);
 
 
-            glBindVertexArray(node->mesh.value().id.value());
+            glBindVertexArray(mesh->id.value());
             // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, node->mesh.value().vertices.vertex_count);
+            glDrawArrays(GL_TRIANGLES, 0, mesh->vertices.vertex_count);
         } else {
             // Initialize the mesh and store it back in the node
-            node->mesh = initMesh(node->mesh.value(), &render_program);
+            node->mesh = initMesh(*mesh, &render_program);
             // draw mesh
             glUseProgram(render_program.shader_program);
         
             glUniformMatrix4fv(render_program.world_matrix_uniform_location,1,0, &node->world_transform.data[0][0]);
             
             glUniform3fv(render_program.material_uniform.color_location,1, 
-                node->mesh.value().material.color.data);
+                material->color.data);
             glUniform3fv(render_program.material_uniform.specular_color_location,1, 
-                node->mesh.value().material.specular_color.data);
+                material->specular_color.data);
             glUniform1f(render_program.material_uniform.shininess_location, 
-                node->mesh.value().material.shininess);
+                material->shininess);
 
 
-            glBindVertexArray(node->mesh.value().id.value());
+            glBindVertexArray(mesh->id.value());
             // Draw the vertex buffer
             glDrawArrays(GL_TRIANGLES, 0, node->mesh.value().vertices.vertex_count);
         }
 
+        }
+        
         
         }
     

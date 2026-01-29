@@ -102,7 +102,7 @@ static Mat4 mat4FromAiMatrix(const aiMatrix4x4& a) {
 Mesh convertAiMesh(const aiMesh* aMesh) {
     Mesh m;
 
-    m.material = Material{
+    m.material = BasicColorMaterial{
         .color = { .r = 0.21f, .g = 0.12f, .b = 0.012f },
         .specular_color = { .r = 0.2f, .g = 0.2f, .b = 0.2f },
         .shininess = 0.5f

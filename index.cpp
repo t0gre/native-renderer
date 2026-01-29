@@ -107,50 +107,56 @@ int main(int argc, char** argv)
         vertices.normals.push_back(normals.data[i]);    
     }
 
-    SceneNode tree_shape = createSceneNode(m4fromPositionAndEuler(
+    BasicColorMaterial greenMaterial = {
+                    .color = { .r = 0.1, .g = 0.7, .b = 0.1},
+                    .specular_color = { .r = 0.2, .g = 0.2, .b = 0.2},
+                    .shininess = 0.5f
+                };
+
+    SceneNode green_tree = createSceneNode(m4fromPositionAndEuler(
             (Vec3){ .x = 0.f, .y = 0.f, .z = 0.f }, 
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
                 .vertices =vertices,
-                .material = {
-                    .color = { .r = 0.1, .g = 0.7, .b = 0.1},
-                    .specular_color = { .r = 0.2, .g = 0.2, .b = 0.2},
-                    .shininess = 0.5f
-                },
+                .material = greenMaterial,
             },
             "green tree"
         );
+
+    BasicColorMaterial greyMaterial = {
+                    .color = { .r = 0.8, .g = 0.8, .b = 0.8},
+                    .specular_color = { .r = 0.2, .g = 0.2, .b = 0.2},
+                    .shininess = 0.9f
+                };
     
-    SceneNode tree_shape1 = createSceneNode(m4fromPositionAndEuler(
+    SceneNode grey_tree = createSceneNode(m4fromPositionAndEuler(
             (Vec3){ .x = 5.f, .y = 0.f, .z = 0.f }, 
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
                 .vertices =vertices,
-                .material = {
-                    .color = { .r = 0.8, .g = 0.8, .b = 0.8},
-                    .specular_color = { .r = 0.2, .g = 0.2, .b = 0.2},
-                    .shininess = 0.9f
-                },
+                .material = greyMaterial,
             },
             "grey tree"
         );
     
-    SceneNode tree_shape2 = createSceneNode(m4fromPositionAndEuler(
+    BasicColorMaterial blueMaterial = {
+                    .color = { .r = 0.1, .g = 0.5, .b = 0.8},
+                    .specular_color = { .r = 0.2, .g = 0.2, .b = 0.2},
+                    .shininess = 0.9f
+                };
+
+    SceneNode blue_tree = createSceneNode(m4fromPositionAndEuler(
             (Vec3){ .x = 5.f, .y = 0.f, .z = 0.f }, 
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
                 .vertices =vertices,
-                .material = {
-                    .color = { .r = 0.1, .g = 0.5, .b = 0.8},
-                    .specular_color = { .r = 0.2, .g = 0.2, .b = 0.2},
-                    .shininess = 0.9f
-                }, 
+                .material = blueMaterial,
             },
             "blue tree"
         );
     
-    setParent(tree_shape1, tree_shape2);
-    setParent(tree_shape2, tree_shape);
+    setParent(grey_tree, blue_tree);
+    setParent(blue_tree, green_tree);
 
     float floor_positions_data[18] = {
             -1000.f ,0.f, -1000.f, // back left
@@ -179,22 +185,24 @@ int main(int argc, char** argv)
 
     floor_vertices.vertex_count = 6;
 
+    BasicColorMaterial sandMaterial = {
+                    .color = { .r = 0.9, .g = 0.7, .b = 0.1},
+                    .specular_color = { .r = 0.9, .g = 0.9, .b = 0.9},
+                    .shininess = 1000.f
+                };  
+
     SceneNode floor_model = createSceneNode(m4fromPositionAndEuler(
             (Vec3){ .x = 0.f, .y = 0.0f, .z = 0.f }, 
             (Vec3) { .x = 0.f, .y = 0.f, .z = 0.f }),
             (Mesh){
                 .vertices =floor_vertices,
-                .material = {
-                    .color = { .r = 0.9, .g = 0.7, .b = 0.1},
-                    .specular_color = { .r = 0.9, .g = 0.9, .b = 0.9},
-                    .shininess = 1000.f
-                },  
+                .material = sandMaterial
             },
             "floor"
         );
 
     auto scene_nodes = DArray<SceneNode*>();
-    scene_nodes.push_back(&tree_shape);
+    scene_nodes.push_back(&green_tree);
     scene_nodes.push_back(&floor_model);
 
     std::string gorilla_path = "assets/gorila.glb";

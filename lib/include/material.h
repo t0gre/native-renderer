@@ -2,11 +2,24 @@
 #define MATERIAL_H
 
 #include "vec.h"
+#include <variant>
+#include "mystl.hpp"
 
-typedef struct Material {
+
+
+struct BasicColorMaterial {
       Vec3 color;
       Vec3 specular_color;
       float shininess;
-} Material;
+};
+
+struct BasicTextureMaterial
+{
+      DArray<float> texture;
+      DArray<float> uvMap;
+      float shininess;
+};
+
+using Material = std::variant<BasicColorMaterial, BasicTextureMaterial>;
 
 #endif
