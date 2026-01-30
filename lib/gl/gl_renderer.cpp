@@ -50,7 +50,7 @@ void drawGl(
     WindowState window, 
     Camera camera, 
     Scene* scene, 
-    BasicColorRenderProgram render_program,
+    BasicColorRenderProgram basic_color_render_program,
     TextureRenderProgram texture_render_program,
     ShadowRenderProgram shadow_render_program,
     ShadowMap shadow_map
@@ -92,7 +92,7 @@ void drawGl(
 
     
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glUseProgram(render_program.shader_program);
+    glUseProgram(basic_color_render_program.shader_program);
 
 
     // draw scene with shadows as input
@@ -107,34 +107,34 @@ void drawGl(
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, shadow_map.depthTexture);
 
-    glUniformMatrix4fv(render_program.shadow_uniform.light_view_location, 1,0, &lightViewProj.data[0][0]);
+    glUniformMatrix4fv(basic_color_render_program.shadow_uniform.light_view_location, 1,0, &lightViewProj.data[0][0]);
 
     // update camera uniforms
     const Mat4 projection = getProjectionMatrix(camera);
     const Mat4 view = getViewMatrix(camera);
     const Vec3 camera_position = getPositionVector(camera.transform);
-    glUniformMatrix4fv(render_program.view_uniform_location,1,0, &view.data[0][0]);  
-    glUniform3fv(render_program.view_position_uniform_location,1, &camera_position.data[0]); 
-    glUniformMatrix4fv(render_program.projection_uniform_location,1,0, &projection.data[0][0]);
+    glUniformMatrix4fv(basic_color_render_program.view_uniform_location,1,0, &view.data[0][0]);  
+    glUniform3fv(basic_color_render_program.view_position_uniform_location,1, &camera_position.data[0]); 
+    glUniformMatrix4fv(basic_color_render_program.projection_uniform_location,1,0, &projection.data[0][0]);
 
     // update light uniforms
     // set ambient light
-    glUniform3fv(render_program.ambient_light_uniform.color_location,1,scene->ambient_light.color.data);
+    glUniform3fv(basic_color_render_program.ambient_light_uniform.color_location,1,scene->ambient_light.color.data);
 
     // set directional light
-    glUniform3fv(render_program.directional_light_uniform.color_location,1,scene->directional_light.color.data);
-    glUniform3fv(render_program.directional_light_uniform.direction_location,1,scene->directional_light.direction.data);
+    glUniform3fv(basic_color_render_program.directional_light_uniform.color_location,1,scene->directional_light.color.data);
+    glUniform3fv(basic_color_render_program.directional_light_uniform.direction_location,1,scene->directional_light.direction.data);
 
     // set point light
-    glUniform3fv(render_program.point_light_uniform.color_location,1,scene->point_light.color.data);
-    glUniform3fv(render_program.point_light_uniform.position_location,1,scene->point_light.position.data);
-    glUniform1f(render_program.point_light_uniform.constant_location,scene->point_light.constant);
-    glUniform1f(render_program.point_light_uniform.linear_location,scene->point_light.linear);
-    glUniform1f(render_program.point_light_uniform.quadratic_location,scene->point_light.quadratic); 
+    glUniform3fv(basic_color_render_program.point_light_uniform.color_location,1,scene->point_light.color.data);
+    glUniform3fv(basic_color_render_program.point_light_uniform.position_location,1,scene->point_light.position.data);
+    glUniform1f(basic_color_render_program.point_light_uniform.constant_location,scene->point_light.constant);
+    glUniform1f(basic_color_render_program.point_light_uniform.linear_location,scene->point_light.linear);
+    glUniform1f(basic_color_render_program.point_light_uniform.quadratic_location,scene->point_light.quadratic); 
 
     // Draw color material meshes
     for (size_t i = 0; i < scene->nodes.size(); i++) {
-        drawSceneNodeBasicColor(scene->nodes[i], render_program);
+        drawSceneNodeBasicColor(scene->nodes[i], basic_color_render_program);
     }
 
     // Set up texture render program with same uniforms

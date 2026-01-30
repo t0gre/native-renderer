@@ -52,7 +52,7 @@ void mainLoop(void* mainLoopArg)
         state->window, 
         state->camera, 
         &state->scene, 
-        state->render_program,
+        state->basic_color_render_program,
         state->texture_render_program,
         state->shadow_render_program,
         state->shadow_map
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
     WindowState window = initWindow("Tom");
        
     // Initialize shader and geometry
-    BasicColorRenderProgram render_program = initShader();
+    BasicColorRenderProgram basic_color_render_program = initShader();
     TextureRenderProgram texture_render_program = initTextureShader();
 
     // Shadow map setup
@@ -258,7 +258,7 @@ int main(int argc, char** argv)
         .last_frame_time = now,
         .camera = camera,
         .input = input,
-        .render_program = render_program,
+        .basic_color_render_program = basic_color_render_program,
         .texture_render_program = texture_render_program,
         .scene = scene,
         .shadow_render_program = shadowRenderProgram,

@@ -9,7 +9,7 @@ void drawGl(
     WindowState window, 
     Camera camera, 
     Scene* scene, 
-    BasicColorRenderProgram render_program,
+    BasicColorRenderProgram basic_color_render_program,
     TextureRenderProgram texture_render_program,
     ShadowRenderProgram shadow_render_program,
     ShadowMap shadow_map

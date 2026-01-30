@@ -102,9 +102,9 @@ typedef struct ShadowRenderProgram {
 
 ShadowRenderProgram initShadowRenderProgram();
 
-void drawSceneNodeBasicColor(SceneNode* scene_node, BasicColorRenderProgram render_program);
+void drawSceneNodeBasicColor(SceneNode* scene_node, BasicColorRenderProgram basic_color_render_program);
 
-void drawSceneNodeTexture(SceneNode* scene_node, TextureRenderProgram render_program);
+void drawSceneNodeTexture(SceneNode* scene_node, TextureRenderProgram basic_color_render_program);
 
 void drawSceneNodeShadow(
     SceneNode* node,

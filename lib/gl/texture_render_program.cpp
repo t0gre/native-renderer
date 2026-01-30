@@ -62,7 +62,7 @@ TextureRenderProgram initTextureShader()
 }
 
 
-void drawSceneNodeTexture(SceneNode* node, TextureRenderProgram render_program) {
+void drawSceneNodeTexture(SceneNode* node, TextureRenderProgram basic_color_render_program) {
 
     if (node->mesh.has_value()) {
 
@@ -75,18 +75,18 @@ void drawSceneNodeTexture(SceneNode* node, TextureRenderProgram render_program) 
         if (mesh.id.has_value()) {
 
             // draw this mesh with texture
-            glUseProgram(render_program.shader_program);
+            glUseProgram(basic_color_render_program.shader_program);
         
-            glUniformMatrix4fv(render_program.world_matrix_uniform_location,1,0, &node->world_transform.data[0][0]);
+            glUniformMatrix4fv(basic_color_render_program.world_matrix_uniform_location,1,0, &node->world_transform.data[0][0]);
             
-            glUniform1f(render_program.material_shininess_location, 
+            glUniform1f(basic_color_render_program.material_shininess_location, 
                 material->shininess);
 
             // Bind texture if loaded
             if (material->texture_id != 0) {
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, material->texture_id);
-                glUniform1i(render_program.texture_uniform.sampler_location, 0);
+                glUniform1i(basic_color_render_program.texture_uniform.sampler_location, 0);
             }
 
             glBindVertexArray(mesh.id.value());
@@ -96,18 +96,18 @@ void drawSceneNodeTexture(SceneNode* node, TextureRenderProgram render_program) 
             // Initialize the mesh
             initMesh(mesh);
             // draw mesh with texture
-            glUseProgram(render_program.shader_program);
+            glUseProgram(basic_color_render_program.shader_program);
         
-            glUniformMatrix4fv(render_program.world_matrix_uniform_location,1,0, &node->world_transform.data[0][0]);
+            glUniformMatrix4fv(basic_color_render_program.world_matrix_uniform_location,1,0, &node->world_transform.data[0][0]);
             
-            glUniform1f(render_program.material_shininess_location, 
+            glUniform1f(basic_color_render_program.material_shininess_location, 
                 material->shininess);
 
             // Bind texture if loaded
             if (material->texture_id != 0) {
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, material->texture_id);
-                glUniform1i(render_program.texture_uniform.sampler_location, 0);
+                glUniform1i(basic_color_render_program.texture_uniform.sampler_location, 0);
             }
 
             glBindVertexArray(mesh.id.value());
@@ -119,7 +119,7 @@ void drawSceneNodeTexture(SceneNode* node, TextureRenderProgram render_program) 
     }
     
     for (size_t i = 0; i < node->children.size(); i++) {
-               drawSceneNodeTexture(node->children[i], render_program);
+               drawSceneNodeTexture(node->children[i], basic_color_render_program);
     }
 }
 
