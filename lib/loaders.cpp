@@ -6,14 +6,13 @@
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
 
-#include <GLES3/gl3.h>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "../third_party/stb_image.h"
 
 #include "loaders.h"
 #include "mat4.h"
 #include "scene.h"
+#include "material.h"
 
 
 
@@ -103,66 +102,56 @@ static Mat4 mat4FromAiMatrix(const aiMatrix4x4& a) {
 }
 
 
-// Helper: load embedded texture from Assimp and create OpenGL texture object
-// Returns OpenGL texture ID, or 0 if failed
-static GLuint loadEmbeddedTexture(const aiTexture* aiTex) {
+// Helper: load embedded texture from Assimp and decode it into TextureData
+// Returns TextureData with pixel data, or empty/null data if failed
+static TextureData loadEmbeddedTexture(const aiTexture* aiTex) {
+    TextureData data = {};
+
     if (!aiTex) {
-        return 0;
+        return data;
     }
 
     // Decode the image using stb_image
     int width, height, channels;
     unsigned char* pixels = nullptr;
+    bool needs_free = false;
 
     if (aiTex->mHeight == 0) {
         // Compressed format (PNG, JPEG, etc.)
         pixels = stbi_load_from_memory(
             (unsigned char*)aiTex->pcData,
             aiTex->mWidth,  // size in bytes for compressed data
-            &width, 
-            &height, 
-            &channels, 
-            0 
+            &width,
+            &height,
+            &channels,
+            0
           );
+        needs_free = true;  // stbi allocated this memory
     } else {
-        // Raw RGBA data   
+        // Raw RGBA data
         width = aiTex->mWidth;
         height = aiTex->mHeight;
         channels = 4;
         pixels = (unsigned char*)aiTex->pcData;
+        needs_free = false;  // Assimp owns this memory
     }
 
     if (!pixels) {
         printf("Failed to decode texture data\n");
-        return 0;
+        return data;
     }
 
-    // Create OpenGL texture
-    GLuint textureId;
-    glGenTextures(1, &textureId);
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    // Populate TextureData
+    data.pixels = pixels;
+    data.width = width;
+    data.height = height;
+    data.channels = channels;
+    data.needs_free = needs_free;
+    // Default wrap modes (will be set properly in convertAiMesh based on material settings)
+    data.wrapModeU = WrapMode::Wrap;
+    data.wrapModeV = WrapMode::Wrap;
 
-    // Set texture parameters (use clamping to avoid unintended tiling for glTF textures)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Determine the correct format based on actual channels
-    GLenum format = (channels == 4) ? GL_RGBA : GL_RGB;
-    
-    // Upload texture data
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, pixels);  
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    // Free stbi-allocated memory if we loaded from compressed data
-    if (aiTex->mHeight == 0) {
-        stbi_image_free(pixels);
-    }
-
-    return textureId;
+    return data;
 }
 
   // Helper: convert aiMesh -> Mesh (fills Vertices.positions and Vertices.normals using DArray)
@@ -241,20 +230,27 @@ Mesh convertAiMesh(const aiMesh* aMesh, const aiScene* scene) {
           if (pathStr.length() > 0 && pathStr[0] == '*') {
             int texIndex = std::stoi(pathStr.substr(1));
             if (texIndex >= 0 && texIndex < static_cast<int>(scene->mNumTextures)) {
-              GLuint texId = loadEmbeddedTexture(scene->mTextures[texIndex]);
-              std::get<BasicTextureMaterial>(m.material).texture_id = texId;
-              if (texId != 0) {
-                // apply wrap mode according to Assimp mapModes
-                glBindTexture(GL_TEXTURE_2D, texId);
-                GLenum wrapS = (mapModes[0] == aiTextureMapMode_Wrap) ? GL_REPEAT :
-                               (mapModes[0] == aiTextureMapMode_Mirror) ? GL_MIRRORED_REPEAT : GL_CLAMP_TO_EDGE;
-                GLenum wrapT = (mapModes[1] == aiTextureMapMode_Wrap) ? GL_REPEAT :
-                               (mapModes[1] == aiTextureMapMode_Mirror) ? GL_MIRRORED_REPEAT : GL_CLAMP_TO_EDGE;
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
-                glBindTexture(GL_TEXTURE_2D, 0);
+              TextureData texData = loadEmbeddedTexture(scene->mTextures[texIndex]);
+              if (texData.pixels != nullptr) {
+                // Map Assimp wrap modes to our WrapMode enum
+                auto convertWrapMode = [](aiTextureMapMode mode) -> WrapMode {
+                  switch (mode) {
+                    case aiTextureMapMode_Wrap:   return WrapMode::Wrap;
+                    case aiTextureMapMode_Clamp:  return WrapMode::Clamp;
+                    case aiTextureMapMode_Mirror: return WrapMode::Mirror;
+                    case aiTextureMapMode_Decal:  return WrapMode::Decal;
+                    default:                      return WrapMode::Wrap;
+                  }
+                };
 
-                printf("Loaded embedded texture %d as OpenGL texture ID %u\n", texIndex, texId);
+                texData.wrapModeU = convertWrapMode(mapModes[0]);
+                texData.wrapModeV = convertWrapMode(mapModes[1]);
+
+                // Store texture data on material (GL texture will be created later by renderer)
+                std::get<BasicTextureMaterial>(m.material).texture_data = texData;
+
+                printf("Loaded embedded texture %d data (%dx%d, %d channels)\n",
+                       texIndex, texData.width, texData.height, texData.channels);
               } else {
                 printf("Failed to load embedded texture %d\n", texIndex);
               }

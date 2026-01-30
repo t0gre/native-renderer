@@ -217,7 +217,7 @@ int main(int argc, char** argv)
     gorilla.name = "gorilla";
     gorilla.local_transform = m4translate(gorilla.local_transform, -15.0f, 0.f, 1.f);
     // gorilla.local_transform = m4zRotate(gorilla.local_transform, -PI/2);
-    // gorilla.local_transform = m4scale(gorilla.local_transform, 10.f, 10.f, 10.f);
+    // gorilla.local_transform = m4scale(gorilla.local_transform, 15.f, 15.f, 15.f);
 
     updateWorldTransform(&gorilla);
 

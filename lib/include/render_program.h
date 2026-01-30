@@ -10,6 +10,9 @@
 
 GLuint guaranteeUniformLocation(const GLuint program, const GLchar *name);
 
+// Texture functions
+GLuint createGLTextureFromData(const TextureData& data);
+
 typedef struct MaterialUniform {
       GLuint color_location;
       GLuint specular_color_location;

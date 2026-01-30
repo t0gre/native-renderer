@@ -71,15 +71,20 @@ void drawSceneNodeTexture(SceneNode* node, TextureRenderProgram texture_render_p
         Mesh &mesh = node->mesh.value();
         BasicTextureMaterial * material = &std::get<BasicTextureMaterial>(mesh.material);
 
+        // Create GL texture from texture data if not yet created
+        if (material->texture_id == 0 && material->texture_data.pixels != nullptr) {
+            material->texture_id = createGLTextureFromData(material->texture_data);
+        }
+
         // check if the mesh has been initialized and init if not
         if (mesh.id.has_value()) {
 
             // draw this mesh with texture
             glUseProgram(texture_render_program.shader_program);
-        
+
             glUniformMatrix4fv(texture_render_program.world_matrix_uniform_location,1,0, &node->world_transform.data[0][0]);
-            
-            glUniform1f(texture_render_program.material_shininess_location, 
+
+            glUniform1f(texture_render_program.material_shininess_location,
                 material->shininess);
 
             // Bind texture if loaded
@@ -101,12 +106,18 @@ void drawSceneNodeTexture(SceneNode* node, TextureRenderProgram texture_render_p
         } else {
             // Initialize the mesh
             initMesh(mesh);
+
+            // Create GL texture from texture data if not yet created
+            if (material->texture_id == 0 && material->texture_data.pixels != nullptr) {
+                material->texture_id = createGLTextureFromData(material->texture_data);
+            }
+
             // draw mesh with texture
             glUseProgram(texture_render_program.shader_program);
-        
+
             glUniformMatrix4fv(texture_render_program.world_matrix_uniform_location,1,0, &node->world_transform.data[0][0]);
-            
-            glUniform1f(texture_render_program.material_shininess_location, 
+
+            glUniform1f(texture_render_program.material_shininess_location,
                 material->shininess);
 
             // Bind texture if loaded
@@ -133,5 +144,46 @@ void drawSceneNodeTexture(SceneNode* node, TextureRenderProgram texture_render_p
     for (size_t i = 0; i < node->children.size(); i++) {
                drawSceneNodeTexture(node->children[i], texture_render_program);
     }
+}
+
+GLuint createGLTextureFromData(const TextureData& data) {
+    if (data.pixels == nullptr) {
+        return 0;
+    }
+
+    // Map our WrapMode enum to GL constants
+    auto toGLWrapMode = [](WrapMode mode) -> GLenum {
+        switch (mode) {
+            case WrapMode::Wrap:   return GL_REPEAT;
+            case WrapMode::Clamp:  return GL_CLAMP_TO_EDGE;
+            case WrapMode::Mirror: return GL_MIRRORED_REPEAT;
+            case WrapMode::Decal:  return GL_CLAMP_TO_EDGE;  // GL_CLAMP_TO_BORDER not in GLES3
+            default:               return GL_REPEAT;
+        }
+    };
+
+    // Create OpenGL texture
+    GLuint textureId;
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+
+    // Set texture wrap modes
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, toGLWrapMode(data.wrapModeU));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, toGLWrapMode(data.wrapModeV));
+
+    // Set texture filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Determine the correct format based on channels
+    GLenum format = (data.channels == 4) ? GL_RGBA : GL_RGB;
+
+    // Upload texture data
+    glTexImage2D(GL_TEXTURE_2D, 0, format, data.width, data.height, 0, format, GL_UNSIGNED_BYTE, data.pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return textureId;
 }
 
