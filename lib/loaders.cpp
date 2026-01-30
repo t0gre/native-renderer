@@ -119,10 +119,13 @@ static GLuint loadEmbeddedTexture(const aiTexture* aiTex) {
         pixels = stbi_load_from_memory(
             (unsigned char*)aiTex->pcData,
             aiTex->mWidth,  // size in bytes for compressed data
-            &width, &height, &channels, 4  // Force RGBA
-        );
+            &width, 
+            &height, 
+            &channels, 
+            0 
+          );
     } else {
-        // Raw RGBA data
+        // Raw RGBA data   
         width = aiTex->mWidth;
         height = aiTex->mHeight;
         channels = 4;
@@ -139,14 +142,17 @@ static GLuint loadEmbeddedTexture(const aiTexture* aiTex) {
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_2D, textureId);
 
-    // Set texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // Set texture parameters (use clamping to avoid unintended tiling for glTF textures)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    // Determine the correct format based on actual channels
+    GLenum format = (channels == 4) ? GL_RGBA : GL_RGB;
+    
     // Upload texture data
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, pixels);  
     glGenerateMipmap(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -170,6 +176,9 @@ Mesh convertAiMesh(const aiMesh* aMesh, const aiScene* scene) {
 
     const size_t vcount = aMesh->mNumVertices;
     m.vertices.vertex_count = vcount;
+
+    // initialize index count to 0
+    m.vertices.index_count = 0;
 
     // fill positions (3 floats per vertex)
     for (size_t i = 0; i < vcount; ++i) {
@@ -199,15 +208,34 @@ Mesh convertAiMesh(const aiMesh* aMesh, const aiScene* scene) {
         uvmap.push_back(uv.y);
       }
     }
+    // fill indices from faces
+    if (aMesh->mNumFaces > 0) {
+      for (unsigned f = 0; f < aMesh->mNumFaces; ++f) {
+        const aiFace &face = aMesh->mFaces[f];
+        for (unsigned j = 0; j < face.mNumIndices; ++j) {
+          m.vertices.indices.push_back(face.mIndices[j]);
+        }
+      }
+      m.vertices.index_count = m.vertices.indices.size();
+    }
 
     // read material texture path (diffuse) if present
     if (aMesh->mMaterialIndex >= 0 && scene && scene->mMaterials) {
       const aiMaterial* aiMat = scene->mMaterials[aMesh->mMaterialIndex];
       if (aiMat->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
         aiString texPath;
-        if (aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
+        // retrieve mapping and map modes as well
+        aiTextureMapping mapping;
+        unsigned int uvIndex = 0;
+        float blend = 0.0f;
+        aiTextureOp op = aiTextureOp_Add;
+        aiTextureMapMode mapModes[2] = { aiTextureMapMode_Wrap, aiTextureMapMode_Wrap };
+        if (aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &texPath, &mapping, &uvIndex, &blend, &op, &mapModes[0]) == AI_SUCCESS) {
           std::string pathStr(texPath.C_Str());
           std::get<BasicTextureMaterial>(m.material).texture_path = pathStr;
+
+          // Debug mapping info
+          printf("[DEBUG] Material diffuse mapping: mapping=%d uvIndex=%u mapU=%d mapV=%d\n", (int)mapping, uvIndex, (int)mapModes[0], (int)mapModes[1]);
 
           // Check if it's an embedded texture (path starts with "*")
           if (pathStr.length() > 0 && pathStr[0] == '*') {
@@ -216,11 +244,23 @@ Mesh convertAiMesh(const aiMesh* aMesh, const aiScene* scene) {
               GLuint texId = loadEmbeddedTexture(scene->mTextures[texIndex]);
               std::get<BasicTextureMaterial>(m.material).texture_id = texId;
               if (texId != 0) {
+                // apply wrap mode according to Assimp mapModes
+                glBindTexture(GL_TEXTURE_2D, texId);
+                GLenum wrapS = (mapModes[0] == aiTextureMapMode_Wrap) ? GL_REPEAT :
+                               (mapModes[0] == aiTextureMapMode_Mirror) ? GL_MIRRORED_REPEAT : GL_CLAMP_TO_EDGE;
+                GLenum wrapT = (mapModes[1] == aiTextureMapMode_Wrap) ? GL_REPEAT :
+                               (mapModes[1] == aiTextureMapMode_Mirror) ? GL_MIRRORED_REPEAT : GL_CLAMP_TO_EDGE;
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
+                glBindTexture(GL_TEXTURE_2D, 0);
+
                 printf("Loaded embedded texture %d as OpenGL texture ID %u\n", texIndex, texId);
               } else {
                 printf("Failed to load embedded texture %d\n", texIndex);
               }
             }
+          } else {
+            // external textures could be handled here (not currently used for embedded glb)
           }
         }
       }

@@ -87,11 +87,17 @@ void drawSceneNodeTexture(SceneNode* node, TextureRenderProgram texture_render_p
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, material->texture_id);
                 glUniform1i(texture_render_program.texture_uniform.sampler_location, 0);
+            } else {
+                // printf("[DEBUG] Warning: texture_id is 0, no texture will be bound\n");
             }
 
             glBindVertexArray(mesh.id.value());
-            // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.vertex_count);
+            // Draw the vertex buffer using indices if available
+            if (mesh.vertices.index_count > 0) {
+                glDrawElements(GL_TRIANGLES, (GLsizei)mesh.vertices.index_count, GL_UNSIGNED_INT, 0);
+            } else {
+                glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.vertex_count);
+            }
         } else {
             // Initialize the mesh
             initMesh(mesh);
@@ -108,11 +114,17 @@ void drawSceneNodeTexture(SceneNode* node, TextureRenderProgram texture_render_p
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, material->texture_id);
                 glUniform1i(texture_render_program.texture_uniform.sampler_location, 0);
+            } else {
+                // printf("[DEBUG] Warning: texture_id is 0 (init path), no texture will be bound\n");
             }
 
             glBindVertexArray(mesh.id.value());
-            // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.vertex_count);
+            // Draw the vertex buffer using indices if available
+            if (mesh.vertices.index_count > 0) {
+                glDrawElements(GL_TRIANGLES, (GLsizei)mesh.vertices.index_count, GL_UNSIGNED_INT, 0);
+            } else {
+                glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.vertex_count);
+            }
         }
 
         }

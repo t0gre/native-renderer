@@ -71,7 +71,16 @@ void initMesh(Mesh  &mesh) {
         }
     }
 
-    // unbind VAO and array buffer to avoid accidental state changes
+    // If we have indices, create an element array buffer bound to the VAO
+    if (mesh.vertices.index_count > 0) {
+        GLuint ebo;
+        glGenBuffers(1, &ebo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.vertices.index_count,
+                     mesh.vertices.indices.begin(), GL_STATIC_DRAW);
+    }
+
+    // unbind array buffer (but keep EBO bound to VAO) and VAO to avoid accidental state changes
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
@@ -185,8 +194,12 @@ void drawSceneNodeShadow(
             glUniformMatrix4fv(shadowProgram.u_lightViewProj,1,0, &lightViewProj.data[0][0]);
 
             glBindVertexArray(mesh.id.value());
-            // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.vertex_count);
+            // Draw the vertex buffer using indices if available
+            if (mesh.vertices.index_count > 0) {
+                glDrawElements(GL_TRIANGLES, (GLsizei)mesh.vertices.index_count, GL_UNSIGNED_INT, 0);
+            } else {
+                glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.vertex_count);
+            }
         } else {
             // Initialize the mesh and store it back in the node
             initMesh(mesh);
@@ -197,8 +210,12 @@ void drawSceneNodeShadow(
             glUniformMatrix4fv(shadowProgram.u_lightViewProj,1,0, &lightViewProj.data[0][0]);
   
             glBindVertexArray(mesh.id.value());
-            // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.vertex_count);
+            // Draw the vertex buffer using indices if available
+            if (mesh.vertices.index_count > 0) {
+                glDrawElements(GL_TRIANGLES, (GLsizei)mesh.vertices.index_count, GL_UNSIGNED_INT, 0);
+            } else {
+                glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.vertex_count);
+            }
         }
     }
     

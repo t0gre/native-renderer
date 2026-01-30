@@ -95,8 +95,12 @@ void drawSceneNodeBasicColor(SceneNode* node, BasicColorRenderProgram render_pro
 
 
             glBindVertexArray(mesh.id.value());
-            // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.vertex_count);
+            // Draw the vertex buffer using indices if available
+            if (mesh.vertices.index_count > 0) {
+                glDrawElements(GL_TRIANGLES, (GLsizei)mesh.vertices.index_count, GL_UNSIGNED_INT, 0);
+            } else {
+                glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.vertex_count);
+            }
         } else {
             // Initialize the mesh 
             initMesh(mesh);
@@ -114,8 +118,12 @@ void drawSceneNodeBasicColor(SceneNode* node, BasicColorRenderProgram render_pro
 
 
             glBindVertexArray(mesh.id.value());
-            // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, node->mesh.value().vertices.vertex_count);
+            // Draw the vertex buffer using indices if available
+            if (node->mesh.value().vertices.index_count > 0) {
+                glDrawElements(GL_TRIANGLES, (GLsizei)node->mesh.value().vertices.index_count, GL_UNSIGNED_INT, 0);
+            } else {
+                glDrawArrays(GL_TRIANGLES, 0, node->mesh.value().vertices.vertex_count);
+            }
         }
 
         }

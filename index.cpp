@@ -104,6 +104,9 @@ int main(int argc, char** argv)
 
     vertices.vertex_count = positions.count / 3;
 
+    // non-indexed mesh: ensure index_count is zero
+    vertices.index_count = 0;
+
     for (size_t i = 0; i < positions.count; i ++) {
         vertices.positions.push_back(positions.data[i]);
         vertices.normals.push_back(normals.data[i]);    
@@ -186,6 +189,7 @@ int main(int argc, char** argv)
     }
 
     floor_vertices.vertex_count = 6;
+    floor_vertices.index_count = 0;
 
     BasicColorMaterial sandMaterial = {
                     .color = { .r = 0.9, .g = 0.7, .b = 0.1},
@@ -207,10 +211,13 @@ int main(int argc, char** argv)
     scene_nodes.push_back(&green_tree);
     scene_nodes.push_back(&floor_model);
 
+    // striped_seabream_fbx
     std::string gorilla_path = "assets/gorila.glb";
     SceneNode gorilla = load_glb(gorilla_path);
     gorilla.name = "gorilla";
-    gorilla.local_transform = m4translate(gorilla.local_transform, -5.0f, 0.f, 0.f);
+    gorilla.local_transform = m4translate(gorilla.local_transform, -15.0f, 0.f, 1.f);
+    // gorilla.local_transform = m4zRotate(gorilla.local_transform, -PI/2);
+    // gorilla.local_transform = m4scale(gorilla.local_transform, 10.f, 10.f, 10.f);
 
     updateWorldTransform(&gorilla);
 

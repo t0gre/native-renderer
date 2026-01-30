@@ -102,10 +102,10 @@ void drawGl(
     glViewport(0, 0, window.width, window.height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Bind shadow map texture to texture unit 0
-    // bind the shadowmap
-    glActiveTexture(GL_TEXTURE0);
+    // Bind shadow map texture to texture unit 1
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, shadow_map.depthTexture);
+    glUniform1i(basic_color_render_program.shadow_uniform.shadow_map_location, 1);
 
     glUniformMatrix4fv(basic_color_render_program.shadow_uniform.light_view_location, 1,0, &lightViewProj.data[0][0]);
 
@@ -139,11 +139,13 @@ void drawGl(
 
     // Set up texture render program with same uniforms
     glUseProgram(texture_render_program.shader_program);
+    glActiveTexture(GL_TEXTURE0);
     glUniformMatrix4fv(texture_render_program.view_uniform_location,1,0, &view.data[0][0]);  
     glUniform3fv(texture_render_program.view_position_uniform_location,1, &camera_position.data[0]); 
     glUniformMatrix4fv(texture_render_program.projection_uniform_location,1,0, &projection.data[0][0]);
 
     glUniformMatrix4fv(texture_render_program.shadow_uniform.light_view_location, 1,0, &lightViewProj.data[0][0]);
+    glUniform1i(texture_render_program.shadow_uniform.shadow_map_location, 1);
 
     glUniform3fv(texture_render_program.ambient_light_uniform.color_location,1,scene->ambient_light.color.data);
     glUniform3fv(texture_render_program.directional_light_uniform.color_location,1,scene->directional_light.color.data);
