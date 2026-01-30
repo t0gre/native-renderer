@@ -108,7 +108,6 @@ void drawSceneNodeTexture(SceneNode* scene_node, TextureRenderProgram render_pro
 
 void drawSceneNodeShadow(
     SceneNode* node,
-    BasicColorRenderProgram renderProgram,
     ShadowRenderProgram shadowProgram,
     Mat4 lightViewProj
 );

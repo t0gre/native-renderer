@@ -87,7 +87,7 @@ void drawGl(
 
 
     for (size_t i = 0; i < scene->nodes.size(); i++) {
-        drawSceneNodeShadow(scene->nodes[i], render_program, shadow_render_program, lightViewProj);
+        drawSceneNodeShadow(scene->nodes[i], shadow_render_program, lightViewProj);
     }
 
     

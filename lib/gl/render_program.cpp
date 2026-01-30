@@ -168,7 +168,6 @@ ShadowRenderProgram initShadowRenderProgram() {
 
 void drawSceneNodeShadow(
     SceneNode* node,
-    BasicColorRenderProgram renderProgram,
     const ShadowRenderProgram shadowProgram,
     Mat4 lightViewProj
 ) {
@@ -204,7 +203,7 @@ void drawSceneNodeShadow(
     }
     
     for (size_t i = 0; i < node->children.size(); i++) {
-               drawSceneNodeShadow(node->children[i], renderProgram, shadowProgram, lightViewProj);
+               drawSceneNodeShadow(node->children[i], shadowProgram, lightViewProj);
     }
 
 }
