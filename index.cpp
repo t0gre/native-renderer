@@ -68,7 +68,7 @@ int main(int argc, char** argv)
         .pointer_position = { 0 }
     };
 
-    GlWindowState window = initWindow("Tom");
+    WindowState window = initWindow("Tom");
        
     // Initialize shader and geometry
     BasicColorRenderProgram render_program = initShader();

@@ -67,56 +67,6 @@ BasicColorRenderProgram initShader()
 
 
 
-Mesh initMesh(Mesh mesh, BasicColorRenderProgram* render_program) {
-
-    if (mesh.id.has_value()) {
-        printf("mesh is already init, you shouldn't be trying to reinit it\n");
-        return mesh;
-    }
-
-     // sanity check
-    assert(mesh.vertices.vertex_count >= 3 && "vertex_count must be >= 3");
-
-    // setup vao
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-
-    // Create vertex buffer object and copy vertex data into it
-    GLuint vbo;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mesh.vertices.vertex_count*3, 
-                 mesh.vertices.positions.begin(), GL_STATIC_DRAW);
-
-    // Specify the layout of the shader vertex data (positions only, 3 floats)
-    GLint posAttrib = 0;
-    glEnableVertexAttribArray(posAttrib);
-    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    GLuint vbo_norm;
-    glGenBuffers(1, &vbo_norm);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_norm);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mesh.vertices.vertex_count*3, 
-                 mesh.vertices.normals.begin(), GL_STATIC_DRAW);
-
-    // Specify the layout of the shader vertex data (normals only, 3 floats)
-    
-    GLint normAttrib = 1;
-    glEnableVertexAttribArray(normAttrib);
-    glVertexAttribPointer(normAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // unbind VAO and array buffer to avoid accidental state changes
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    mesh.id = vao;
-
-    return mesh;
-}
-
-
 void drawSceneNodeBasicColor(SceneNode* node, BasicColorRenderProgram render_program) {
 
     if (node->mesh.has_value()) {
@@ -124,11 +74,11 @@ void drawSceneNodeBasicColor(SceneNode* node, BasicColorRenderProgram render_pro
 
         if (std::holds_alternative<BasicColorMaterial>(node->mesh.value().material)) {
 
-        Mesh * mesh = &node->mesh.value();
-        BasicColorMaterial * material = &std::get<BasicColorMaterial>(mesh->material);
+        Mesh &mesh = node->mesh.value();
+        BasicColorMaterial * material = &std::get<BasicColorMaterial>(mesh.material);
 
         // check if the mesh has been initialized and init if not
-        if (mesh->id.has_value()) {
+        if (mesh.id.has_value()) {
 
             
             // draw this mesh
@@ -144,12 +94,12 @@ void drawSceneNodeBasicColor(SceneNode* node, BasicColorRenderProgram render_pro
                 material->shininess);
 
 
-            glBindVertexArray(mesh->id.value());
+            glBindVertexArray(mesh.id.value());
             // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, mesh->vertices.vertex_count);
+            glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.vertex_count);
         } else {
-            // Initialize the mesh and store it back in the node
-            node->mesh = initMesh(*mesh, &render_program);
+            // Initialize the mesh 
+            initMesh(mesh);
             // draw mesh
             glUseProgram(render_program.shader_program);
         
@@ -163,7 +113,7 @@ void drawSceneNodeBasicColor(SceneNode* node, BasicColorRenderProgram render_pro
                 material->shininess);
 
 
-            glBindVertexArray(mesh->id.value());
+            glBindVertexArray(mesh.id.value());
             // Draw the vertex buffer
             glDrawArrays(GL_TRIANGLES, 0, node->mesh.value().vertices.vertex_count);
         }

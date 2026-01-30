@@ -8,18 +8,18 @@
 #include "scene.h"
 #include "input.h"
 
-typedef struct GlWindowState  {
+typedef struct WindowState  {
     SDL_Window* object;
     Uint32 id;
     bool should_close;
     size_t width;
     size_t height;
 
-} GlWindowState;
+} WindowState;
 
 
 typedef struct AppState  {
-    GlWindowState window{};
+    WindowState window{};
     Uint64 last_frame_time{};
     Camera camera{};
     InputState input{};

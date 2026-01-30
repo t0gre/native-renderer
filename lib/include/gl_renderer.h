@@ -3,10 +3,10 @@
 
 #include "app_state.h"
 
-GlWindowState initWindow(const char* title);
+WindowState initWindow(const char* title);
 
 void drawGl(
-    GlWindowState window, 
+    WindowState window, 
     Camera camera, 
     Scene* scene, 
     BasicColorRenderProgram render_program,

@@ -16,6 +16,72 @@ GLuint guaranteeUniformLocation(const GLuint program, const GLchar *name) {
 
 
 
+void initMesh(Mesh  &mesh) {
+
+    if (mesh.id.has_value()) {
+        printf("mesh is already init, you shouldn't be trying to reinit it\n");
+        
+    } else {
+
+     // sanity check
+    assert(mesh.vertices.vertex_count >= 3 && "vertex_count must be >= 3");
+
+    // setup vao
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+
+    // Create vertex buffer object and copy vertex data into it
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mesh.vertices.vertex_count*3, 
+                 mesh.vertices.positions.begin(), GL_STATIC_DRAW);
+
+    // Specify the layout of the shader vertex data (positions only, 3 floats)
+    GLint posAttrib = 0;
+    glEnableVertexAttribArray(posAttrib);
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    GLuint vbo_norm;
+    glGenBuffers(1, &vbo_norm);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_norm);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mesh.vertices.vertex_count*3, 
+                 mesh.vertices.normals.begin(), GL_STATIC_DRAW);
+
+    // Specify the layout of the shader vertex data (normals only, 3 floats)
+    
+    GLint normAttrib = 1;
+    glEnableVertexAttribArray(normAttrib);
+    glVertexAttribPointer(normAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    if (std::holds_alternative<BasicTextureMaterial>(mesh.material)) {
+        BasicTextureMaterial& texMat = std::get<BasicTextureMaterial>(mesh.material);
+        if (texMat.uvMap.size() > 0) {
+            GLuint vbo_uv;
+            glGenBuffers(1, &vbo_uv);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * texMat.uvMap.size(), 
+                        texMat.uvMap.begin(), GL_STATIC_DRAW);
+
+            GLint uvAttrib = 2;
+            glEnableVertexAttribArray(uvAttrib);
+            glVertexAttribPointer(uvAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+        }
+    }
+
+    // unbind VAO and array buffer to avoid accidental state changes
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    mesh.id = vao;
+
+    }
+
+}
+
+
 ///////// shadows
 
 ShadowMap createShadowMap() {
@@ -110,30 +176,30 @@ void drawSceneNodeShadow(
    
     if (node->mesh.has_value()) {
 
-        
+        Mesh &mesh = node->mesh.value();
         // check if the mesh has been initialized and init if not
-        if (node->mesh.value().id.has_value()) {
+        if (mesh.id.has_value()) {
             // draw this mesh
             glUseProgram(shadowProgram.program);
         
             glUniformMatrix4fv(shadowProgram.u_model,1,0, &node->world_transform.data[0][0]);
             glUniformMatrix4fv(shadowProgram.u_lightViewProj,1,0, &lightViewProj.data[0][0]);
 
-            glBindVertexArray(node->mesh.value().id.value());
+            glBindVertexArray(mesh.id.value());
             // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, node->mesh.value().vertices.vertex_count);
+            glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.vertex_count);
         } else {
             // Initialize the mesh and store it back in the node
-            node->mesh = initMesh(node->mesh.value(), &renderProgram);
+            initMesh(mesh);
             // draw mesh
             glUseProgram(shadowProgram.program);
         
             glUniformMatrix4fv(shadowProgram.u_model,1,0, &node->world_transform.data[0][0]);
             glUniformMatrix4fv(shadowProgram.u_lightViewProj,1,0, &lightViewProj.data[0][0]);
   
-            glBindVertexArray(node->mesh.value().id.value());
+            glBindVertexArray(mesh.id.value());
             // Draw the vertex buffer
-            glDrawArrays(GL_TRIANGLES, 0, node->mesh.value().vertices.vertex_count);
+            glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.vertex_count);
         }
     }
     

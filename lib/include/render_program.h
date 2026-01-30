@@ -83,7 +83,7 @@ typedef struct GlState {
 } GlState;
 
 
-Mesh initMesh(Mesh mesh, BasicColorRenderProgram* render_program);
+void initMesh(Mesh &mesh);
 
 typedef struct ShadowMap {
       GLuint depthTexture;

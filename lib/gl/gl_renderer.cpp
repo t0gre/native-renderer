@@ -1,6 +1,6 @@
 #include "gl_renderer.h"
 
-GlWindowState initWindow(const char* title)
+WindowState initWindow(const char* title)
 {
     
     SDL_Init(SDL_INIT_VIDEO < 0);
@@ -34,7 +34,7 @@ GlWindowState initWindow(const char* title)
     // Initialize viewport
     glViewport(0,0, initial_window_width, initial_window_height);
 
-    const GlWindowState window = {
+    const WindowState window = {
         .object = window_object, 
         .id = window_id,
         .width = static_cast<size_t>(initial_window_width),
@@ -47,7 +47,7 @@ GlWindowState initWindow(const char* title)
 
 
 void drawGl(
-    GlWindowState window, 
+    WindowState window, 
     Camera camera, 
     Scene* scene, 
     BasicColorRenderProgram render_program,
