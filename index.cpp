@@ -212,7 +212,10 @@ int main(int argc, char** argv)
     scene_nodes.push_back(&floor_model);
 
     // striped_seabream_fbx
-    std::string gorilla_path = "assets/gorila.glb";
+    // bowl_from_nazca_culture_peru.glb
+    // gorila.glb
+
+    std::string gorilla_path = "assets/gorilla.glb";
     SceneNode gorilla = load_glb(gorilla_path);
     gorilla.name = "gorilla";
     gorilla.local_transform = m4translate(gorilla.local_transform, -15.0f, 0.f, 1.f);

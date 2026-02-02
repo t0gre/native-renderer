@@ -118,6 +118,8 @@ static TextureData loadEmbeddedTexture(const aiTexture* aiTex) {
 
     if (aiTex->mHeight == 0) {
         // Compressed format (PNG, JPEG, etc.)
+        // Flip vertically because glTF UVs have V=0 at top, but OpenGL textures have V=0 at bottom
+        stbi_set_flip_vertically_on_load(true);
         pixels = stbi_load_from_memory(
             (unsigned char*)aiTex->pcData,
             aiTex->mWidth,  // size in bytes for compressed data
@@ -126,14 +128,22 @@ static TextureData loadEmbeddedTexture(const aiTexture* aiTex) {
             &channels,
             0
           );
+        stbi_set_flip_vertically_on_load(false);  // Reset for any future non-glTF loads
         needs_free = true;  // stbi allocated this memory
     } else {
-        // Raw RGBA data
+        // Raw RGBA data - need to flip vertically for OpenGL
         width = aiTex->mWidth;
         height = aiTex->mHeight;
         channels = 4;
-        pixels = (unsigned char*)aiTex->pcData;
-        needs_free = false;  // Assimp owns this memory
+        size_t row_bytes = width * channels;
+        pixels = (unsigned char*)malloc(row_bytes * height);
+        // Copy rows in reverse order to flip vertically
+        for (int y = 0; y < height; y++) {
+            memcpy(pixels + y * row_bytes,
+                   (unsigned char*)aiTex->pcData + (height - 1 - y) * row_bytes,
+                   row_bytes);
+        }
+        needs_free = true;  // We allocated this memory
     }
 
     if (!pixels) {
