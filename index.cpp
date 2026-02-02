@@ -218,13 +218,21 @@ int main(int argc, char** argv)
     std::string gorilla_path = "assets/gorilla.glb";
     SceneNode gorilla = load_glb(gorilla_path);
     gorilla.name = "gorilla";
-    gorilla.local_transform = m4translate(gorilla.local_transform, -15.0f, 0.f, 1.f);
-    // gorilla.local_transform = m4zRotate(gorilla.local_transform, -PI/2);
-    // gorilla.local_transform = m4scale(gorilla.local_transform, 15.f, 15.f, 15.f);
+    gorilla.local_transform = m4translate(gorilla.local_transform, -10.0f, 0.f, 0.f);
+    gorilla.local_transform = m4scale(gorilla.local_transform, 2.0f, 2.f, 2.f);
 
     updateWorldTransform(&gorilla);
-
     scene_nodes.push_back(&gorilla);
+
+    std::string bowl_path = "assets/bowl_from_nazca_culture_peru.glb";
+    SceneNode bowl = load_glb(bowl_path);
+    bowl.name = "bowl";
+    bowl.local_transform = m4translate(bowl.local_transform, -10.0f, 0.35f, -3.f);
+    bowl.local_transform = m4scale(bowl.local_transform, 10.f, 10.f, 10.f);
+        
+    updateWorldTransform(&bowl);
+    scene_nodes.push_back(&bowl);
+
     
     Scene scene =  { 
         .nodes = scene_nodes,
