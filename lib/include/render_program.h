@@ -8,6 +8,11 @@
 #include <string>
 #include "mystl.hpp"
 
+GLuint guaranteeUniformLocation(const GLuint program, const GLchar *name);
+
+// Texture functions
+GLuint createGLTextureFromData(const TextureData& data);
+
 typedef struct MaterialUniform {
       GLuint color_location;
       GLuint specular_color_location;
@@ -35,7 +40,12 @@ typedef struct ShadowUniform {
       GLuint shadow_map_location;
       GLuint light_view_location;
 } ShadowUniform;
-typedef struct RenderProgram  {
+
+typedef struct TextureUniform {
+      GLuint sampler_location;
+} TextureUniform;
+
+typedef struct BasicColorRenderProgram  {
     GLuint shader_program;
     GLuint world_matrix_uniform_location;
     GLuint view_uniform_location;
@@ -46,21 +56,37 @@ typedef struct RenderProgram  {
     DirectionalLightUniform directional_light_uniform;
     PointLightUniform point_light_uniform;
     ShadowUniform shadow_uniform;
-} RenderProgram;
+} BasicColorRenderProgram;
+
+typedef struct TextureRenderProgram {
+    GLuint shader_program;
+    GLuint world_matrix_uniform_location;
+    GLuint view_uniform_location;
+    GLuint projection_uniform_location;
+    GLuint view_position_uniform_location;
+    GLuint material_shininess_location;
+    AmbientLightUniform ambient_light_uniform;
+    DirectionalLightUniform directional_light_uniform;
+    PointLightUniform point_light_uniform;
+    ShadowUniform shadow_uniform;
+    TextureUniform texture_uniform;
+} TextureRenderProgram;
 
 typedef struct AttributeBinding {
       const char* name;
       int location;
 } AttributeBinding;
 
-RenderProgram initShader(void);
+BasicColorRenderProgram initShader(void);
+
+TextureRenderProgram initTextureShader(void);
 
 typedef struct GlState {
     DArray<GLuint> vaos;
 } GlState;
 
 
-Mesh initMesh(Vertices vertices, RenderProgram* render_program);
+void initMesh(Mesh &mesh);
 
 typedef struct ShadowMap {
       GLuint depthTexture;
@@ -79,11 +105,12 @@ typedef struct ShadowRenderProgram {
 
 ShadowRenderProgram initShadowRenderProgram();
 
-void drawSceneNode(SceneNode* scene_node, RenderProgram render_program);
+void drawSceneNodeBasicColor(SceneNode* scene_node, BasicColorRenderProgram basic_color_render_program);
+
+void drawSceneNodeTexture(SceneNode* scene_node, TextureRenderProgram basic_color_render_program);
 
 void drawSceneNodeShadow(
     SceneNode* node,
-    RenderProgram renderProgram,
     ShadowRenderProgram shadowProgram,
     Mat4 lightViewProj
 );

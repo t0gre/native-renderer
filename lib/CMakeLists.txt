@@ -17,8 +17,10 @@ add_library(lib SHARED
     raycast.cpp    
     vec.cpp
     loaders.cpp
-    render_program.cpp
-    gl_renderer.cpp
+    gl/render_program.cpp
+    gl/gl_renderer.cpp
+    gl/basic_color_render_program.cpp
+    gl/texture_render_program.cpp
     include/mystl.hpp 
 )
 

@@ -2,6 +2,7 @@
 #include <SDL3/SDL.h>
 #include <GLES3/gl3.h>
 #include "math.h"
+#include <variant>
 
 #include "events.h"
 #include "mat4.h"
@@ -112,7 +113,10 @@ void processEvents(AppState* state)
                     for (auto& node: state->scene.nodes) {
                         if (node->name == "floor") {
                             const auto floor = node;
-                            floor->mesh.value().material.color = clicked.meshInfo.value().material.color;
+                            if (std::holds_alternative<BasicColorMaterial>(clicked.meshInfo.value().material)) {
+                                std::get<BasicColorMaterial>(floor->mesh.value().material).color = std::get<BasicColorMaterial>(clicked.meshInfo.value().material).color;
+                            }
+                            
                         }
                     }
                  }

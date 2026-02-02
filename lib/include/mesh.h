@@ -14,6 +14,8 @@ struct Vertices {
   size_t vertex_count;
   DArray<float> positions;
   DArray<float> normals;
+  DArray<unsigned int> indices;
+  size_t index_count;
   // add textcoords and indices
 };
 

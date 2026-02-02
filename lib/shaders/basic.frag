@@ -3,13 +3,13 @@
 
     uniform vec3 u_view_position; 
 
-    struct Material {
+    struct BasicColorMaterial {
       vec3 color;
       vec3 specular_color;
       float shininess;
     };
 
-    uniform Material u_material;
+    uniform BasicColorMaterial u_material;
      
     struct AmbientLight {
       vec3 color;
