@@ -4,6 +4,6 @@
 #include "app_state.h"
 #include "vec.h"
 
-void processEvents(AppState* state);
+void processEvents(AppState& state);
 
 #endif //EVENTS_H

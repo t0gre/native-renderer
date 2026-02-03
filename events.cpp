@@ -48,7 +48,7 @@ Ray getWorldRayFromClipSpaceAndCamera(
     return worldRay;
 }
 
-void processEvents(AppState* state)
+void processEvents(AppState& state)
 {
     // Handle events
     SDL_Event event;
@@ -57,21 +57,21 @@ void processEvents(AppState* state)
         switch (event.type)
         {
             case SDL_EVENT_QUIT:
-                state->window.should_close = true;
+                state.window.should_close = true;
                 break;
 
             case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
             {
-                if (event.window.windowID == state->window.id)
+                if (event.window.windowID == state.window.id)
                 {
                     int width = event.window.data1; 
                     int height = event.window.data2;
                     glViewport(0, 0, width, height);
 
-                    state->camera.aspect = (float)width / (float)height;
+                    state.camera.aspect = (float)width / (float)height;
 
-                    state->window.width = width;
-                    state->window.height = height;
+                    state.window.width = width;
+                    state.window.height = height;
                     
                 }
                 break;
@@ -81,38 +81,38 @@ void processEvents(AppState* state)
             {
                 const auto* e = reinterpret_cast<SDL_MouseButtonEvent *>(&event);
                 if (event.button.button == 1) {
-                    state->input.pointer_down = true;
+                    state.input.pointer_down = true;
                     Vec2 pointer_position = {
                     .x = static_cast<float>(e->x),
                     .y = static_cast<float>(e->y)
                     };
                     
-                    state->input.pointer_position = pointer_position;
+                    state.input.pointer_position = pointer_position;
 
                     // get mouse position ndc
                     const Vec2 pointer_clip = getPointerClickInClipSpace(
-                        e->x, e->y, state->window.width, state->window.height
+                        e->x, e->y, state.window.width, state.window.height
                     );
                     
 
                     // create ray
                     const Ray worldRay = getWorldRayFromClipSpaceAndCamera(
                         pointer_clip,
-                        state->camera
+                        state.camera
                     );
 
                     // intersect scene
-                    auto hits = rayIntersectsScene(worldRay, state->scene);
+                    auto hits = rayIntersectsScene(worldRay, state.scene);
 
                     if (hits.size() == 0) break;
                         
                     // update floor with color of first hit
-                    sortBySceneDepth(hits, state->camera);
+                    sortBySceneDepth(hits, state.camera);
 
                     const auto& clicked = hits[0];
 
                     // set the floor node to have the same color at the clicked thing
-                    for (auto& node: state->scene.nodes) {
+                    for (auto& node: state.scene.nodes) {
                         if (node->name == "floor") {
                             const auto floor = node;
                             if (std::holds_alternative<BasicColorMaterial>(clicked.meshInfo.value().material)) {
@@ -127,30 +127,30 @@ void processEvents(AppState* state)
             case SDL_EVENT_MOUSE_MOTION:
             {
                 const auto *e = reinterpret_cast<SDL_MouseMotionEvent *>(&event);
-                if (state->input.pointer_down) {
+                if (state.input.pointer_down) {
                     
-                    const float orbitSensitivity = state->camera.orbit.sensitivity;
-                    const Vec3 orbitTarget = state->camera.orbit.target;
-                    const float orbitRadius = state->camera.orbit.radius;
+                    const float orbitSensitivity = state.camera.orbit.sensitivity;
+                    const Vec3 orbitTarget = state.camera.orbit.target;
+                    const float orbitRadius = state.camera.orbit.radius;
 
-                    state->camera.orbit.azimuth -= e->xrel * orbitSensitivity;
-                    state->camera.orbit.elevation -= e->yrel * orbitSensitivity;
+                    state.camera.orbit.azimuth -= e->xrel * orbitSensitivity;
+                    state.camera.orbit.elevation -= e->yrel * orbitSensitivity;
 
                     const Vec3 newCameraPosition = calculateOrbitPosition(
-                        state->camera.orbit.azimuth,
-                        state->camera.orbit.elevation,
+                        state.camera.orbit.azimuth,
+                        state.camera.orbit.elevation,
                         orbitTarget,
                         orbitRadius
                     );
 
-                    state->camera.transform = lookAt(newCameraPosition, orbitTarget, state->camera.up);
+                    state.camera.transform = lookAt(newCameraPosition, orbitTarget, state.camera.up);
 
                     const Vec2 pointer_position = {
                     .x = static_cast<float>(e->x),
                     .y = static_cast<float>(e->y)
                     };
                     
-                    state->input.pointer_position = pointer_position;
+                    state.input.pointer_position = pointer_position;
                     
                 }
                 break;
@@ -159,9 +159,9 @@ void processEvents(AppState* state)
             case SDL_EVENT_MOUSE_BUTTON_UP:
             {
                 if (event.button.button == 1) {
-                    state->input.pointer_down = false;
+                    state.input.pointer_down = false;
                     constexpr Vec2 pointer_position ={ .x = 0, .y = 0 } ;
-                    state->input.pointer_position = pointer_position;
+                    state.input.pointer_position = pointer_position;
                 }
                 break;
             }

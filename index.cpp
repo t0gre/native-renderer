@@ -26,17 +26,17 @@ void updateScene(Scene* scene, float dt) {
     
 }
 
-void mainLoop(void* mainLoopArg) 
+void mainLoop(AppState& state) 
 {   
    
-    AppState* state = (AppState*)mainLoopArg;
+    
 
     // calculate deltaTime
     const Uint64 now = SDL_GetPerformanceCounter();
-    const Uint64 last = state->last_frame_time;
+    const Uint64 last = state.last_frame_time;
 
     const double deltaTime = ((now - last)*1000 / (double)SDL_GetPerformanceFrequency() );
-    state->last_frame_time = now;
+    state.last_frame_time = now;
 
     // log errors
     const char* error = SDL_GetError();
@@ -45,18 +45,18 @@ void mainLoop(void* mainLoopArg)
         SDL_ClearError();
     }
    
-    updateScene(&state->scene, deltaTime);
+    updateScene(&state.scene, deltaTime);
 
     processEvents(state);
      
     drawGl(
-        state->window, 
-        state->camera, 
-        &state->scene, 
-        state->basic_color_render_program,
-        state->texture_render_program,
-        state->shadow_render_program,
-        state->shadow_map
+        state.window, 
+        state.camera, 
+        &state.scene, 
+        state.basic_color_render_program,
+        state.texture_render_program,
+        state.shadow_render_program,
+        state.shadow_map
     );
 
 }
@@ -283,7 +283,7 @@ int main(int argc, char** argv)
     };
 
     while(!state.window.should_close) {
-        mainLoop(&state);
+        mainLoop(state);
     }
 
     return 0;
