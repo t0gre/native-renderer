@@ -8,6 +8,8 @@
 #include "mat4.h"
 #include "raycast.h"
 
+using namespace mym;
+
 Vec2 getPointerClickInClipSpace(const int mouse_x, const int mouse_y, const int canvas_width, const int canvas_height) {
     // Convert from window coordinates to normalized device coordinates (clip space)
     const float x = static_cast<float>(mouse_x) / static_cast<float>(canvas_width) * 2.0f - 1.0f;
@@ -25,12 +27,12 @@ Ray getWorldRayFromClipSpaceAndCamera(
     Vec3 nearPoint  = {x, y, -1.f};
     Vec3 farPoint  = {x, y,  1};
 
-    const Mat4 viewMatrix = m4inverse(camera.transform);
+    const Mat4 viewMatrix = inverse(camera.transform);
     const Mat4 projectionMatrix = getProjectionMatrix(camera);
-    const Mat4 viewProjInverse = m4inverse(m4multiply(projectionMatrix, viewMatrix));
+    const Mat4 viewProjInverse = inverse(multiply(projectionMatrix, viewMatrix));
 
-    const Vec3 worldNear = m4PositionMultiply(nearPoint, viewProjInverse);
-    const Vec3 worldFar  = m4PositionMultiply(farPoint, viewProjInverse);
+    const Vec3 worldNear = positionMultiply(nearPoint, viewProjInverse);
+    const Vec3 worldFar  = positionMultiply(farPoint, viewProjInverse);
 
     auto rayOrigin = worldNear;
 
@@ -141,7 +143,7 @@ void processEvents(AppState* state)
                         orbitRadius
                     );
 
-                    state->camera.transform = m4lookAt(newCameraPosition, orbitTarget, state->camera.up);
+                    state->camera.transform = lookAt(newCameraPosition, orbitTarget, state->camera.up);
 
                     const Vec2 pointer_position = {
                     .x = static_cast<float>(e->x),

@@ -7,19 +7,20 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(OpenGL REQUIRED)
 
 add_subdirectory(lib lib)
+add_subdirectory(mym mym)
+add_subdirectory(mygl mygl)
 
 # executable
-add_executable(native index.cpp)
+add_executable(native index.cpp events.cpp)
 target_link_libraries(native PRIVATE 
+    mym
+    mygl
     lib
     SDL3::SDL3
     ${OPENGL_LIBRARIES}
 )
 
-target_include_directories(native PUBLIC 
-    lib/include
-    third_party/SDL/include
-)
+target_include_directories(native PUBLIC include)
 
 
 # shaders copy on configure

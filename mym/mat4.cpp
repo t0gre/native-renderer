@@ -1,8 +1,9 @@
 #include "vec.h"
 #include "mat4.h"
 
+namespace mym {
 
-Mat4 m4lookAt(const Vec3 camera_position, const Vec3 target, const Vec3 up) {
+Mat4 lookAt(const Vec3 camera_position, const Vec3 target, const Vec3 up) {
         const Vec3 z_axis = normalize(
             subtractVectors(camera_position, target));
         const Vec3 x_axis = normalize(cross(up, z_axis));
@@ -19,7 +20,7 @@ Mat4 m4lookAt(const Vec3 camera_position, const Vec3 target, const Vec3 up) {
         };
     }
 
-Mat4 m4perspective(const float field_of_view_in_radians, const float aspect, const float near, const float far) {
+Mat4 perspective(const float field_of_view_in_radians, const float aspect, const float near, const float far) {
         const float f = tan(PI * 0.5 - 0.5 * field_of_view_in_radians);
         const float range_inv = 1.0 / (near - far);
 
@@ -31,7 +32,7 @@ Mat4 m4perspective(const float field_of_view_in_radians, const float aspect, con
         };
     }
 
-Mat4 m4orthographic(const int left, const int right, const int bottom, const int top, const int near, const int far) {
+Mat4 orthographic(const int left, const int right, const int bottom, const int top, const int near, const int far) {
     const float lr = 1.f / (left - right);
     const float bt = 1.f / (bottom - top);
     const float nf = 1.f / (near - far);
@@ -44,7 +45,7 @@ Mat4 m4orthographic(const int left, const int right, const int bottom, const int
     };
 }
 
-Mat4 m4projection(const float width, const float height, const float depth) {
+Mat4 projection(const float width, const float height, const float depth) {
         // Note: This matrix flips the Y axis so 0 is at the top.
         return (Mat4){
             2.f / width, 0.f, 0.f, 0.f,
@@ -54,7 +55,7 @@ Mat4 m4projection(const float width, const float height, const float depth) {
         };
     }
 
-Mat4 m4multiply(Mat4 a, Mat4 b) {
+Mat4 multiply(Mat4 a, Mat4 b) {
         
         return (Mat4){
             b.m00 * a.m00 + b.m01 * a.m10 + b.m02 * a.m20 + b.m03 * a.m30,
@@ -76,7 +77,7 @@ Mat4 m4multiply(Mat4 a, Mat4 b) {
         };
     }
 
-Mat4 m4translation(const float tx, const float ty, const float tz) {
+Mat4 translation(const float tx, const float ty, const float tz) {
        
         return  (Mat4){
             1.f, 0.f, 0.f, 0.f,
@@ -86,7 +87,7 @@ Mat4 m4translation(const float tx, const float ty, const float tz) {
         };
     }
 
-Mat4 m4xRotation(const float angle_in_radians) {
+Mat4 xRotation(const float angle_in_radians) {
         const float c = cos(angle_in_radians);
         const float s = sin(angle_in_radians);
 
@@ -99,7 +100,7 @@ Mat4 m4xRotation(const float angle_in_radians) {
         };
     }
 
-Mat4 m4yRotation(const float angle_in_radians) {
+Mat4 yRotation(const float angle_in_radians) {
         const float c = cos(angle_in_radians);
         const float s = sin(angle_in_radians);
 
@@ -112,7 +113,7 @@ Mat4 m4yRotation(const float angle_in_radians) {
         };
     }
 
-Mat4 m4zRotation(const float angle_in_radians) {
+Mat4 zRotation(const float angle_in_radians) {
         const float c = cos(angle_in_radians);
         const float s = sin(angle_in_radians);
 
@@ -125,7 +126,7 @@ Mat4 m4zRotation(const float angle_in_radians) {
         };
     }
 
-Mat4 m4scaling(const float sx, const float sy, const float sz) {
+Mat4 scaling(const float sx, const float sy, const float sz) {
         
         return (Mat4){
             sx, 0.f, 0.f, 0.f,
@@ -135,29 +136,29 @@ Mat4 m4scaling(const float sx, const float sy, const float sz) {
         };
     }
 
-Mat4 m4translate(Mat4 m, const float tx, const float ty, const float tz) {
-        return m4multiply(m, m4translation(tx, ty, tz));
+Mat4 translate(Mat4 m, const float tx, const float ty, const float tz) {
+        return multiply(m, translation(tx, ty, tz));
     }
 
-Mat4 m4xRotate(Mat4 m, const float angle_in_radians) {
-        return m4multiply(m, m4xRotation(angle_in_radians));
+Mat4 xRotate(Mat4 m, const float angle_in_radians) {
+        return multiply(m, xRotation(angle_in_radians));
     }
 
-Mat4 m4yRotate(Mat4 m, const float angle_in_radians) {
-        return m4multiply(m, m4yRotation(angle_in_radians));
+Mat4 yRotate(Mat4 m, const float angle_in_radians) {
+        return multiply(m, yRotation(angle_in_radians));
     }
 
-Mat4 m4zRotate(Mat4 m, const float angle_in_radians) {
-        return m4multiply(m, m4zRotation(angle_in_radians));
+Mat4 zRotate(Mat4 m, const float angle_in_radians) {
+        return multiply(m, zRotation(angle_in_radians));
     }
 
-Mat4 m4scale(Mat4 m, const float sx, const float sy, const float sz) {
-        return m4multiply(m, m4scaling(sx, sy, sz));
+Mat4 scale(Mat4 m, const float sx, const float sy, const float sz) {
+        return multiply(m, scaling(sx, sy, sz));
     
     }
     
 
-Mat4 m4transpose(Mat4 m) {
+Mat4 transpose(Mat4 m) {
    
     return (Mat4){
         .m00 = m.m00,
@@ -179,7 +180,7 @@ Mat4 m4transpose(Mat4 m) {
     };
   }
 
-Mat4 m4inverse(Mat4 m) {
+Mat4 inverse(Mat4 m) {
  
 
         const float tmp_0 = m.m22 * m.m33;
@@ -250,7 +251,7 @@ Mat4 m4inverse(Mat4 m) {
         };
     }
 
-Vec4 m4vectorMultiply(const Vec4 v, Mat4 m) {
+Vec4 vectorMultiply(const Vec4 v, Mat4 m) {
        return (Vec4){
            .x = m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
            .y = m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13 * v.w,
@@ -259,11 +260,11 @@ Vec4 m4vectorMultiply(const Vec4 v, Mat4 m) {
         };
     }
 
-Mat4 m4fromPositionAndEuler(const Vec3 position, const Vec3 euler) {
-    Mat4 mat4 = m4translate(m4yRotation(0), position.x, position.y, position.z) ;
-    mat4 = m4xRotate(mat4, euler.x);
-    mat4 = m4yRotate(mat4, euler.y);
-    mat4 = m4zRotate(mat4, euler.z);
+Mat4 fromPositionAndEuler(const Vec3 position, const Vec3 euler) {
+    Mat4 mat4 = translate(yRotation(0), position.x, position.y, position.z) ;
+    mat4 = xRotate(mat4, euler.x);
+    mat4 = yRotate(mat4, euler.y);
+    mat4 = zRotate(mat4, euler.z);
     return mat4;
 }
 
@@ -271,7 +272,7 @@ Vec3 getPositionVector(Mat4 transform) {
     return (Vec3){ .x = transform.m30, .y = transform.m31, .z = transform.m32};
 }
 
-Vec3 m4PositionMultiply(const Vec3 v, Mat4 m) {
+Vec3 positionMultiply(const Vec3 v, Mat4 m) {
         const Vec4 v1 = {
             .x = v.x,
             .y = v.y,
@@ -288,7 +289,7 @@ Vec3 m4PositionMultiply(const Vec3 v, Mat4 m) {
         return (Vec3){ dst.x/dst.w,dst.y/dst.w,dst.z/dst.w};
     }
 
-Vec3 m4DirectionMultiply(const Vec3 v, const Mat4 m) {
+Vec3 directionMultiply(const Vec3 v, const Mat4 m) {
          const Vec4 v1 = {
             .x = v.x,
             .y = v.y,
@@ -307,3 +308,4 @@ Vec3 m4DirectionMultiply(const Vec3 v, const Mat4 m) {
         return (Vec3){dst.x,dst.y,dst.z};
     }
 
+}

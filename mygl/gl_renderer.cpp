@@ -1,5 +1,7 @@
 #include "gl_renderer.h"
 
+using namespace mym;
+
 WindowState initWindow(const char* title)
 {
     
@@ -82,9 +84,9 @@ void drawGl(
     };
     Vec3 up = {0.f, 1.f, 0.f};
 
-    Mat4 lightView = m4inverse(m4lookAt(lightCameraPosition, lightTarget, up));
-    Mat4 lightProj = m4orthographic(-20, 20, -20, 20, 1, 100);
-    Mat4 lightViewProj = m4multiply(lightProj, lightView);
+    Mat4 lightView = inverse(lookAt(lightCameraPosition, lightTarget, up));
+    Mat4 lightProj = orthographic(-20, 20, -20, 20, 1, 100);
+    Mat4 lightViewProj = multiply(lightProj, lightView);
 
 
     for (size_t i = 0; i < scene->nodes.size(); i++) {

@@ -7,16 +7,17 @@
 #include "scene.h"
 #include "events.h"
 
+using namespace mym;
 
 void updateScene(Scene* scene, float dt) {
-    Mat4 rotator = m4yRotation(PI / (dt * 10));
+    Mat4 rotator = yRotation(PI / (dt * 10));
     Vec4 oldMatrix = { 
         .x = scene->point_light.position.x,
         .y = scene->point_light.position.y,
         .z = scene->point_light.position.z,
         .w = 0.0
     };
-    Vec4 newMatrix = m4vectorMultiply(oldMatrix, rotator);
+    Vec4 newMatrix = vectorMultiply(oldMatrix, rotator);
     scene->point_light.position = (Vec3){
         .x = newMatrix.x,
         .y = newMatrix.y,
@@ -118,7 +119,7 @@ int main(int argc, char** argv)
                     .shininess = 0.5f
                 };
 
-    SceneNode green_tree = createSceneNode(m4fromPositionAndEuler(
+    SceneNode green_tree = createSceneNode(fromPositionAndEuler(
             (Vec3){ .x = 0.f, .y = 0.f, .z = 0.f }, 
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
@@ -134,7 +135,7 @@ int main(int argc, char** argv)
                     .shininess = 0.9f
                 };
     
-    SceneNode grey_tree = createSceneNode(m4fromPositionAndEuler(
+    SceneNode grey_tree = createSceneNode(fromPositionAndEuler(
             (Vec3){ .x = 5.f, .y = 0.f, .z = 0.f }, 
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
@@ -150,7 +151,7 @@ int main(int argc, char** argv)
                     .shininess = 0.9f
                 };
 
-    SceneNode blue_tree = createSceneNode(m4fromPositionAndEuler(
+    SceneNode blue_tree = createSceneNode(fromPositionAndEuler(
             (Vec3){ .x = 5.f, .y = 0.f, .z = 0.f }, 
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
@@ -197,7 +198,7 @@ int main(int argc, char** argv)
                     .shininess = 1000.f
                 };  
 
-    SceneNode floor_model = createSceneNode(m4fromPositionAndEuler(
+    SceneNode floor_model = createSceneNode(fromPositionAndEuler(
             (Vec3){ .x = 0.f, .y = 0.0f, .z = 0.f }, 
             (Vec3) { .x = 0.f, .y = 0.f, .z = 0.f }),
             (Mesh){
@@ -218,8 +219,8 @@ int main(int argc, char** argv)
     std::string gorilla_path = "assets/gorilla.glb";
     SceneNode gorilla = load_glb(gorilla_path);
     gorilla.name = "gorilla";
-    gorilla.local_transform = m4translate(gorilla.local_transform, -10.0f, 0.f, 0.f);
-    gorilla.local_transform = m4scale(gorilla.local_transform, 2.0f, 2.f, 2.f);
+    gorilla.local_transform = translate(gorilla.local_transform, -10.0f, 0.f, 0.f);
+    gorilla.local_transform = scale(gorilla.local_transform, 2.0f, 2.f, 2.f);
 
     updateWorldTransform(&gorilla);
     scene_nodes.push_back(&gorilla);
@@ -227,8 +228,8 @@ int main(int argc, char** argv)
     std::string bowl_path = "assets/bowl_from_nazca_culture_peru.glb";
     SceneNode bowl = load_glb(bowl_path);
     bowl.name = "bowl";
-    bowl.local_transform = m4translate(bowl.local_transform, -10.0f, 0.35f, -3.f);
-    bowl.local_transform = m4scale(bowl.local_transform, 10.f, 10.f, 10.f);
+    bowl.local_transform = translate(bowl.local_transform, -10.0f, 0.35f, -3.f);
+    bowl.local_transform = scale(bowl.local_transform, 10.f, 10.f, 10.f);
         
     updateWorldTransform(&bowl);
     scene_nodes.push_back(&bowl);
@@ -265,7 +266,7 @@ int main(int argc, char** argv)
         .near = 1.f,
         .far = 2000.f, 
         .up = up, 
-        .transform = m4lookAt(cameraPosition, orbit.target, up),
+        .transform = lookAt(cameraPosition, orbit.target, up),
         .orbit = orbit
         };
 

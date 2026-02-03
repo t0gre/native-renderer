@@ -9,8 +9,8 @@
 
 Ray m4RayMultiply(Ray ray, Mat4 m) {
     return (Ray){
-        .origin = m4PositionMultiply(ray.origin, m),
-        .direction = m4DirectionMultiply(ray.direction, m)
+        .origin = positionMultiply(ray.origin, m),
+        .direction = directionMultiply(ray.direction, m)
         
     };
 }
@@ -103,12 +103,12 @@ DArray<Intersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
         
         if (nodeUnderTest->mesh) {
             // transform the ray into mesh space
-            auto inverseTransform = m4inverse(nodeUnderTest->world_transform);
-            auto meshSpaceOrigin = m4PositionMultiply(
+            auto inverseTransform = inverse(nodeUnderTest->world_transform);
+            auto meshSpaceOrigin = positionMultiply(
                 ray.origin, 
                 inverseTransform);
 
-            auto meshSpaceDirection = m4DirectionMultiply(
+            auto meshSpaceDirection = directionMultiply(
                 ray.direction, 
                 inverseTransform);
 
@@ -125,7 +125,7 @@ DArray<Intersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
             if (rayNodeIntersections.size() > 0) {
                 for (const auto& intersection : rayNodeIntersections) {
                     // transform the intersection back into world space
-                    auto worldSpaceIntersection = m4PositionMultiply(
+                    auto worldSpaceIntersection = positionMultiply(
                         intersection.point, 
                         nodeUnderTest->world_transform);
 
@@ -175,11 +175,11 @@ void sortBySceneDepth(
 
 
     std::sort(intersections.begin(),intersections.end(), [camera](Intersection &a, Intersection &b){
-        const auto viewMatrix = m4inverse(camera.transform);
+        const auto viewMatrix = inverse(camera.transform);
         const auto projectionMatrix = getProjectionMatrix(camera);
-        const auto viewProj = m4multiply(projectionMatrix, viewMatrix);
-        const auto glPosA = m4PositionMultiply(a.point, viewProj);
-        const auto glPosB = m4PositionMultiply(b.point, viewProj);
+        const auto viewProj = multiply(projectionMatrix, viewMatrix);
+        const auto glPosA = positionMultiply(a.point, viewProj);
+        const auto glPosB = positionMultiply(b.point, viewProj);
 
         return   glPosA.z < glPosB.z;
 

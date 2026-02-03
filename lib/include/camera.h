@@ -4,6 +4,8 @@
 #include "vec.h"
 #include "mat4.h"
 
+using namespace mym;
+
 typedef struct Orbit {
   float azimuth;
   float elevation;

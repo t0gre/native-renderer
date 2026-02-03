@@ -15,7 +15,6 @@ target_link_libraries(tests PRIVATE
 )
 
 target_include_directories(tests PUBLIC 
-    lib/include 
     ${OPENGL_INCLUDE_DIRS}
 )
 
