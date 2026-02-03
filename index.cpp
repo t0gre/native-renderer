@@ -9,16 +9,16 @@
 
 using namespace mym;
 
-void updateScene(Scene* scene, float dt) {
+void updateScene(Scene& scene, float dt) {
     Mat4 rotator = yRotation(PI / (dt * 10));
     Vec4 oldMatrix = { 
-        .x = scene->point_light.position.x,
-        .y = scene->point_light.position.y,
-        .z = scene->point_light.position.z,
+        .x = scene.point_light.position.x,
+        .y = scene.point_light.position.y,
+        .z = scene.point_light.position.z,
         .w = 0.0
     };
     Vec4 newMatrix = vectorMultiply(oldMatrix, rotator);
-    scene->point_light.position = (Vec3){
+    scene.point_light.position = (Vec3){
         .x = newMatrix.x,
         .y = newMatrix.y,
         .z = newMatrix.z
@@ -218,7 +218,7 @@ int main(int argc, char** argv)
     );
 
     // create a camera
-    const Camera camera = {
+    Camera camera = {
         .field_of_view_radians = 1.f,
         .aspect = (float)window.width / (float)window.height, 
         .near = 1.f,
@@ -230,22 +230,17 @@ int main(int argc, char** argv)
 
     Uint64 now = SDL_GetPerformanceCounter();
     
-    AppState state = {
-        .window = window,
-        .last_frame_time = now,
-        .camera = camera,
-        .input = input,
-        .scene = scene,
-    };
+    Uint64 last_frame_time = now;
+    
 
-    while(!state.window.should_close) {
+    while(!window.should_close) {
 
         // calculate deltaTime
         const Uint64 now = SDL_GetPerformanceCounter();
-        const Uint64 last = state.last_frame_time;
+        const Uint64 last = last_frame_time;
 
-        const double deltaTime = ((now - last)*1000 / (double)SDL_GetPerformanceFrequency() );
-        state.last_frame_time = now;
+        const double deltaTime = ((now - last)*1000 / (double)SDL_GetPerformanceFrequency());
+        last_frame_time = now;
 
         // log errors
         const char* error = SDL_GetError();
@@ -254,14 +249,14 @@ int main(int argc, char** argv)
             SDL_ClearError();
         }
     
-        updateScene(&state.scene, deltaTime);
+        updateScene(scene, deltaTime);
 
-        processEvents(state);
+        processEvents(window, camera, input, scene);
         
         renderer.drawGl(
-            state.window, 
-            state.camera, 
-            &state.scene
+            window, 
+            camera, 
+            scene
         );
     }
 

@@ -21,7 +21,7 @@ class GlRenderer {
         void drawGl(
                 WindowState window, 
                 Camera camera, 
-                Scene* scene 
+                Scene scene 
             );
 
 };

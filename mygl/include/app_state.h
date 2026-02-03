@@ -17,12 +17,4 @@ struct WindowState  {
 };
 
 
-struct AppState  {
-    WindowState window;
-    Uint64 last_frame_time;
-    Camera camera;
-    InputState input;
-    Scene scene;
-};
-
 #endif //APP_STATE_H
