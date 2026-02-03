@@ -26,40 +26,6 @@ void updateScene(Scene* scene, float dt) {
     
 }
 
-void mainLoop(AppState& state) 
-{   
-   
-    
-
-    // calculate deltaTime
-    const Uint64 now = SDL_GetPerformanceCounter();
-    const Uint64 last = state.last_frame_time;
-
-    const double deltaTime = ((now - last)*1000 / (double)SDL_GetPerformanceFrequency() );
-    state.last_frame_time = now;
-
-    // log errors
-    const char* error = SDL_GetError();
-    if (error[0] != '\0') {
-        puts(error);
-        SDL_ClearError();
-    }
-   
-    updateScene(&state.scene, deltaTime);
-
-    processEvents(state);
-     
-    drawGl(
-        state.window, 
-        state.camera, 
-        &state.scene, 
-        state.basic_color_render_program,
-        state.texture_render_program,
-        state.shadow_render_program,
-        state.shadow_map
-    );
-
-}
 
 int main(int argc, char** argv)
 {
@@ -71,13 +37,7 @@ int main(int argc, char** argv)
 
     WindowState window = initWindow("Tom");
        
-    // Initialize shader and geometry
-    BasicColorRenderProgram basic_color_render_program = initShader();
-    TextureRenderProgram texture_render_program = initTextureShader();
-
-    // Shadow map setup
-    ShadowMap shadowMap = createShadowMap();
-    ShadowRenderProgram shadowRenderProgram = initShadowRenderProgram();
+    GlRenderer renderer;
 
     // create lights
     AmbientLight ambient_light = {
@@ -275,15 +235,34 @@ int main(int argc, char** argv)
         .last_frame_time = now,
         .camera = camera,
         .input = input,
-        .basic_color_render_program = basic_color_render_program,
-        .texture_render_program = texture_render_program,
         .scene = scene,
-        .shadow_render_program = shadowRenderProgram,
-        .shadow_map = shadowMap
     };
 
     while(!state.window.should_close) {
-        mainLoop(state);
+
+        // calculate deltaTime
+        const Uint64 now = SDL_GetPerformanceCounter();
+        const Uint64 last = state.last_frame_time;
+
+        const double deltaTime = ((now - last)*1000 / (double)SDL_GetPerformanceFrequency() );
+        state.last_frame_time = now;
+
+        // log errors
+        const char* error = SDL_GetError();
+        if (error[0] != '\0') {
+            puts(error);
+            SDL_ClearError();
+        }
+    
+        updateScene(&state.scene, deltaTime);
+
+        processEvents(state);
+        
+        renderer.drawGl(
+            state.window, 
+            state.camera, 
+            &state.scene
+        );
     }
 
     return 0;

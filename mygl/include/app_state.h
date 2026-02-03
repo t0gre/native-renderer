@@ -22,11 +22,7 @@ struct AppState  {
     Uint64 last_frame_time;
     Camera camera;
     InputState input;
-    BasicColorRenderProgram basic_color_render_program;
-    TextureRenderProgram texture_render_program;
     Scene scene;
-    ShadowRenderProgram shadow_render_program;
-    ShadowMap shadow_map;
 };
 
 #endif //APP_STATE_H

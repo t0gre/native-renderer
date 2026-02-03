@@ -47,16 +47,21 @@ WindowState initWindow(const char* title)
     return window;
 }
 
+GlRenderer::GlRenderer() {
+        // Initialize shader and geometry
+        basic_color_render_program = initShader();
+        texture_render_program = initTextureShader();
+
+        // Shadow map setup
+        shadow_map = createShadowMap();
+        shadow_render_program = initShadowRenderProgram();
+    }
 
 
-void drawGl(
+void GlRenderer::drawGl(
     WindowState window, 
     Camera camera, 
-    Scene* scene, 
-    BasicColorRenderProgram basic_color_render_program,
-    TextureRenderProgram texture_render_program,
-    ShadowRenderProgram shadow_render_program,
-    ShadowMap shadow_map
+    Scene* scene 
 )
 {
     // Clear screen
@@ -166,3 +171,6 @@ void drawGl(
 
     SDL_GL_SwapWindow(window.object);
 }
+
+
+
