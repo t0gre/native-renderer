@@ -5,7 +5,6 @@
 #include <string>
 
 #include "light.h"
-#include "data_structures.h"
 #include "camera.h"
 #include "mesh.h"
 #include "mystl.hpp"

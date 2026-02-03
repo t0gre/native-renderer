@@ -6,7 +6,6 @@
 #include "camera.h"
 #include "light.h"
 #include "vec.h"
-#include "data_structures.h"
 #include "material.h"
 #include "mystl.hpp"
 

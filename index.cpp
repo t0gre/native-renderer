@@ -98,20 +98,18 @@ int main(int argc, char** argv)
     };
 
     // TODO do these need to be cleaned up?
-    FloatData normals = read_csv("assets/normals.txt");
-    FloatData positions = read_csv("assets/positions.txt");
+    auto normals = read_csv("assets/normals.txt");
+    auto positions = read_csv("assets/positions.txt");
 
     Vertices vertices;
 
-    vertices.vertex_count = positions.count / 3;
+    vertices.vertex_count = positions.size() / 3;
 
     // non-indexed mesh: ensure index_count is zero
     vertices.index_count = 0;
-
-    for (size_t i = 0; i < positions.count; i ++) {
-        vertices.positions.push_back(positions.data[i]);
-        vertices.normals.push_back(normals.data[i]);    
-    }
+    vertices.positions = positions;
+    vertices.normals = normals;    
+    
 
     BasicColorMaterial greenMaterial = {
                     .color = { .r = 0.1, .g = 0.7, .b = 0.1},
