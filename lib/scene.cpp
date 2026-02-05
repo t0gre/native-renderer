@@ -40,7 +40,7 @@ void updateWorldTransform(SceneNode * node) {
     parentWorldTransform = fromPositionAndEuler({0.f,0.f,0.f}, {0.f,0.f,0.f});
    }
    
-   node->world_transform = multiply(parentWorldTransform, node->local_transform);
+   node->world_transform = multiplied(parentWorldTransform, node->local_transform);
 
    for (auto& child: node->children) {
     child->parent = node;

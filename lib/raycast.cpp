@@ -177,7 +177,7 @@ void sortBySceneDepth(
     std::sort(intersections.begin(),intersections.end(), [camera](Intersection &a, Intersection &b){
         const auto viewMatrix = inverse(camera.transform);
         const auto projectionMatrix = getProjectionMatrix(camera);
-        const auto viewProj = multiply(projectionMatrix, viewMatrix);
+        const auto viewProj = multiplied(projectionMatrix, viewMatrix);
         const auto glPosA = positionMultiply(a.point, viewProj);
         const auto glPosB = positionMultiply(b.point, viewProj);
 

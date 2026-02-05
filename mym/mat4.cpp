@@ -55,7 +55,7 @@ Mat4 projection(const float width, const float height, const float depth) {
         };
     }
 
-Mat4 multiply(Mat4 a, Mat4 b) {
+Mat4 multiplied(Mat4 a, Mat4 b) {
         
         return (Mat4){
             b.m00 * a.m00 + b.m01 * a.m10 + b.m02 * a.m20 + b.m03 * a.m30,
@@ -75,6 +75,40 @@ Mat4 multiply(Mat4 a, Mat4 b) {
             b.m30 * a.m02 + b.m31 * a.m12 + b.m32 * a.m22 + b.m33 * a.m32,
             b.m30 * a.m03 + b.m31 * a.m13 + b.m32 * a.m23 + b.m33 * a.m33,
         };
+    }
+
+void multiply(Mat4& a, const Mat4& b) {
+        
+        float temp_m00 = b.m00 * a.m00 + b.m01 * a.m10 + b.m02 * a.m20 + b.m03 * a.m30;        
+        float temp_m01 = b.m00 * a.m01 + b.m01 * a.m11 + b.m02 * a.m21 + b.m03 * a.m31;
+        float temp_m02 = b.m00 * a.m02 + b.m01 * a.m12 + b.m02 * a.m22 + b.m03 * a.m32;
+        float temp_m03 = b.m00 * a.m03 + b.m01 * a.m13 + b.m02 * a.m23 + b.m03 * a.m33;
+        float temp_m10 = b.m10 * a.m00 + b.m11 * a.m10 + b.m12 * a.m20 + b.m13 * a.m30;
+        float temp_m11 = b.m10 * a.m01 + b.m11 * a.m11 + b.m12 * a.m21 + b.m13 * a.m31;
+        float temp_m12 = b.m10 * a.m02 + b.m11 * a.m12 + b.m12 * a.m22 + b.m13 * a.m32;
+        float temp_m13 = b.m10 * a.m03 + b.m11 * a.m13 + b.m12 * a.m23 + b.m13 * a.m33;
+        float temp_m20 = b.m20 * a.m00 + b.m21 * a.m10 + b.m22 * a.m20 + b.m23 * a.m30;
+        float temp_m21 = b.m20 * a.m01 + b.m21 * a.m11 + b.m22 * a.m21 + b.m23 * a.m31;
+        float temp_m22 = b.m20 * a.m02 + b.m21 * a.m12 + b.m22 * a.m22 + b.m23 * a.m32;
+        float temp_m23 = b.m20 * a.m03 + b.m21 * a.m13 + b.m22 * a.m23 + b.m23 * a.m33;
+
+        a.m00 = temp_m00;
+        a.m01 = temp_m01;
+        a.m02 = temp_m02;
+        a.m03 = temp_m03;
+        a.m10 = temp_m10;
+        a.m11 = temp_m11;
+        a.m12 = temp_m12;
+        a.m13 = temp_m13;
+        a.m20 = temp_m20;
+        a.m21 = temp_m21;
+        a.m22 = temp_m22;
+        a.m23 = temp_m23;
+        a.m30 = b.m30 * a.m00 + b.m31 * a.m10 + b.m32 * a.m20 + b.m33 * a.m30;
+        a.m31 = b.m30 * a.m01 + b.m31 * a.m11 + b.m32 * a.m21 + b.m33 * a.m31;
+        a.m32 = b.m30 * a.m02 + b.m31 * a.m12 + b.m32 * a.m22 + b.m33 * a.m32;
+        a.m33 = b.m30 * a.m03 + b.m31 * a.m13 + b.m32 * a.m23 + b.m33 * a.m33;
+
     }
 
 Mat4 translation(const float tx, const float ty, const float tz) {
@@ -136,24 +170,45 @@ Mat4 scaling(const float sx, const float sy, const float sz) {
         };
     }
 
-Mat4 translate(Mat4 m, const float tx, const float ty, const float tz) {
-        return multiply(m, translation(tx, ty, tz));
+void translate(Mat4& m, const float tx, const float ty, const float tz) {
+        multiply(m, translation(tx, ty, tz));
     }
 
-Mat4 xRotate(Mat4 m, const float angle_in_radians) {
-        return multiply(m, xRotation(angle_in_radians));
+void xRotate(Mat4& m, const float angle_in_radians) {
+        multiply(m, xRotation(angle_in_radians));
     }
 
-Mat4 yRotate(Mat4 m, const float angle_in_radians) {
-        return multiply(m, yRotation(angle_in_radians));
+void yRotate(Mat4& m, const float angle_in_radians) {
+        multiply(m, yRotation(angle_in_radians));
     }
 
-Mat4 zRotate(Mat4 m, const float angle_in_radians) {
-        return multiply(m, zRotation(angle_in_radians));
+void zRotate(Mat4& m, const float angle_in_radians) {
+        multiply(m, zRotation(angle_in_radians));
     }
 
-Mat4 scale(Mat4 m, const float sx, const float sy, const float sz) {
-        return multiply(m, scaling(sx, sy, sz));
+void scale(Mat4& m, const float sx, const float sy, const float sz) {
+        multiply(m, scaling(sx, sy, sz));
+    
+    }
+
+Mat4 translated(Mat4 m, const float tx, const float ty, const float tz) {
+        return multiplied(m, translation(tx, ty, tz));
+    }
+
+Mat4 xRotated(Mat4 m, const float angle_in_radians) {
+        return multiplied(m, xRotation(angle_in_radians));
+    }
+
+Mat4 yRotated(Mat4 m, const float angle_in_radians) {
+        return multiplied(m, yRotation(angle_in_radians));
+    }
+
+Mat4 zRotated(Mat4 m, const float angle_in_radians) {
+        return multiplied(m, zRotation(angle_in_radians));
+    }
+
+Mat4 scaled(Mat4 m, const float sx, const float sy, const float sz) {
+        return multiplied(m, scaling(sx, sy, sz));
     
     }
     
@@ -261,10 +316,10 @@ Vec4 vectorMultiply(const Vec4 v, Mat4 m) {
     }
 
 Mat4 fromPositionAndEuler(const Vec3 position, const Vec3 euler) {
-    Mat4 mat4 = translate(yRotation(0), position.x, position.y, position.z) ;
-    mat4 = xRotate(mat4, euler.x);
-    mat4 = yRotate(mat4, euler.y);
-    mat4 = zRotate(mat4, euler.z);
+    Mat4 mat4 = translated(yRotation(0), position.x, position.y, position.z) ;
+    xRotate(mat4, euler.x);
+    yRotate(mat4, euler.y);
+    zRotate(mat4, euler.z);
     return mat4;
 }
 

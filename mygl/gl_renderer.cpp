@@ -91,7 +91,7 @@ void GlRenderer::drawGl(
 
     Mat4 lightView = inverse(lookAt(lightCameraPosition, lightTarget, up));
     Mat4 lightProj = orthographic(-20, 20, -20, 20, 1, 100);
-    Mat4 lightViewProj = multiply(lightProj, lightView);
+    Mat4 lightViewProj = multiplied(lightProj, lightView);
 
 
     for (size_t i = 0; i < scene.nodes.size(); i++) {

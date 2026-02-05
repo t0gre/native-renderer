@@ -29,7 +29,7 @@ Ray getWorldRayFromClipSpaceAndCamera(
 
     const Mat4 viewMatrix = inverse(camera.transform);
     const Mat4 projectionMatrix = getProjectionMatrix(camera);
-    const Mat4 viewProjInverse = inverse(multiply(projectionMatrix, viewMatrix));
+    const Mat4 viewProjInverse = inverse(multiplied(projectionMatrix, viewMatrix));
 
     const Vec3 worldNear = positionMultiply(nearPoint, viewProjInverse);
     const Vec3 worldFar  = positionMultiply(farPoint, viewProjInverse);

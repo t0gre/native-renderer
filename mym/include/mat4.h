@@ -21,17 +21,28 @@ Mat4 lookAt(Vec3 camera_position, Vec3 target, Vec3 up);
 Mat4 perspective(float field_of_view_in_radians, float aspect, float near, float far);
 Mat4 orthographic(int left, int right, int bottom, int top, int near, int far);
 Mat4 projection(float width, float height, float depth);
-Mat4 multiply(Mat4 a, Mat4 b);
+
+void multiply(Mat4& a, const Mat4& b);
+Mat4 multiplied(Mat4 a, Mat4 b);
+
 Mat4 translation(float tx, float ty, float tz);
 Mat4 xRotation(float angle_in_radians);
 Mat4 yRotation(float angle_in_radians);
 Mat4 zRotation(float angle_in_radians);
 Mat4 scaling(float sx, float sy, float sz);
-Mat4 translate(Mat4 m, float tx, float ty, float tz);
-Mat4 xRotate(Mat4 m, float angle_in_radians);
-Mat4 yRotate(Mat4 m, float angle_in_radians);
-Mat4 zRotate(Mat4 m, float angle_in_radians);
-Mat4 scale(Mat4 m, float sx, float sy, float sz);
+
+void translate(Mat4& m, float tx, float ty, float tz);
+void xRotate(Mat4& m, float angle_in_radians);
+void yRotate(Mat4& m, float angle_in_radians);
+void zRotate(Mat4& m, float angle_in_radians);
+void scale(Mat4& m, float sx, float sy, float sz);
+
+Mat4 translated(Mat4 m, float tx, float ty, float tz);
+Mat4 xRotated(Mat4 m, float angle_in_radians);
+Mat4 yRotated(Mat4 m, float angle_in_radians);
+Mat4 zRotated(Mat4 m, float angle_in_radians);
+Mat4 scaled(Mat4 m, float sx, float sy, float sz);
+
 Mat4 transpose(Mat4 m);
 Mat4 inverse(Mat4 m);
 Vec4 vectorMultiply(Vec4 v, Mat4 m);
