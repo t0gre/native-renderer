@@ -2,34 +2,45 @@
 #include "test_helpers.cpp"
 #include <raycast.h>
 
-float pos_dat[18] = {
-    -10.f, 0.f, -10.f, // back left
-    -10.f, 0.f, 10.f, // front left
-     10.f, 0.f, -10.f, // back right
-    -10.f, 0.f, 10.f, // front left
-     10.f, 0.f, 10.f, // front right
-     10.f, 0.f, -10.f, // back right
-     };
-     
-float norm_dat[18] = {
-        0.f,1.f, 0.f,
-        0.f,1.f, 0.f,
-        0.f,1.f, 0.f,
-        0.f,1.f, 0.f,
-        0.f,1.f, 0.f,
-        0.f,1.f, 0.f,
-};
-
-const Vertices meshVertices = {
-    .vertex_count = 6,
-    .positions = pos_dat,
-    .normals = norm_dat,
-  
-}; 
+Vertices setupData() {
+    
+    float pos_dat[18] = {
+        -10.f, 0.f, -10.f, // back left
+        -10.f, 0.f, 10.f, // front left
+        10.f, 0.f, -10.f, // back right
+        -10.f, 0.f, 10.f, // front left
+        10.f, 0.f, 10.f, // front right
+        10.f, 0.f, -10.f, // back right
+        };
         
+    float norm_dat[18] = {
+            0.f,1.f, 0.f,
+            0.f,1.f, 0.f,
+            0.f,1.f, 0.f,
+            0.f,1.f, 0.f,
+            0.f,1.f, 0.f,
+            0.f,1.f, 0.f,
+    };
+
+    Vertices data = {
+        .vertex_count = 6,
+        .index_count = 0
+    };
+
+
+    for (size_t i = 0; i < 18; i++) {
+        data.positions.push_back(pos_dat[i]);
+        data.normals.push_back(norm_dat[i]);
+    }
+
+    return data;
+
+}
+
 
 TestResult intersect_vertices_first() {
    
+    auto meshVertices = setupData();
     // triangle is symmetrical x-y and just a bit back from origin z
    
     const Ray ray = {
@@ -70,6 +81,8 @@ TestResult intersect_vertices_first() {
 
 TestResult intersect_vertices_last() {
    
+    auto meshVertices = setupData();
+
     // triangle is symmetrical x-y and just a bit back from origin z
    
     const Ray ray = {
