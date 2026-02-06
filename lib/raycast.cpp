@@ -7,13 +7,6 @@
 #include <algorithm>
 #include "mystl.hpp"
 
-Ray m4RayMultiply(Ray ray, Mat4 m) {
-    return (Ray){
-        .origin = positionMultiply(ray.origin, m),
-        .direction = directionMultiply(ray.direction, m)
-        
-    };
-}
 
 Vec3Result rayIntersectsTriangle(Ray ray, Triangle triangle) {
 
@@ -33,8 +26,7 @@ Vec3Result rayIntersectsTriangle(Ray ray, Triangle triangle) {
 
     if ((u < 0 && fabs(u) > FLT_EPSILON) || (u > 1 && fabs(u-1) > FLT_EPSILON)) {
          return (Vec3Result){.valid = false};
-    }
-       
+    }     
 
     const Vec3 sCrossEdge1 = cross(s, edge1);
     const float v = invDet * dot(ray.direction, sCrossEdge1);
@@ -104,11 +96,11 @@ DArray<Intersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
         if (nodeUnderTest->mesh) {
             // transform the ray into mesh space
             auto inverseTransform = inverse(nodeUnderTest->world_transform);
-            auto meshSpaceOrigin = positionMultiply(
+            auto meshSpaceOrigin = positionMultiplied(
                 ray.origin, 
                 inverseTransform);
 
-            auto meshSpaceDirection = directionMultiply(
+            auto meshSpaceDirection = directionMultiplied(
                 ray.direction, 
                 inverseTransform);
 
@@ -125,7 +117,7 @@ DArray<Intersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
             if (rayNodeIntersections.size() > 0) {
                 for (const auto& intersection : rayNodeIntersections) {
                     // transform the intersection back into world space
-                    auto worldSpaceIntersection = positionMultiply(
+                    auto worldSpaceIntersection = positionMultiplied(
                         intersection.point, 
                         nodeUnderTest->world_transform);
 
@@ -178,8 +170,8 @@ void sortBySceneDepth(
         const auto viewMatrix = inverse(camera.transform);
         const auto projectionMatrix = getProjectionMatrix(camera);
         const auto viewProj = multiplied(projectionMatrix, viewMatrix);
-        const auto glPosA = positionMultiply(a.point, viewProj);
-        const auto glPosB = positionMultiply(b.point, viewProj);
+        const auto glPosA = positionMultiplied(a.point, viewProj);
+        const auto glPosB = positionMultiplied(b.point, viewProj);
 
         return   glPosA.z < glPosB.z;
 

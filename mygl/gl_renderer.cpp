@@ -120,7 +120,7 @@ void GlRenderer::drawGl(
     // update camera uniforms
     const Mat4 projection = getProjectionMatrix(camera);
     const Mat4 view = getViewMatrix(camera);
-    const Vec3 camera_position = getPositionVector(camera.transform);
+    const Vec3 camera_position = getPosition(camera.transform);
     glUniformMatrix4fv(basic_color_render_program.view_uniform_location,1,0, &view.data[0][0]);  
     glUniform3fv(basic_color_render_program.view_position_uniform_location,1, &camera_position.data[0]); 
     glUniformMatrix4fv(basic_color_render_program.projection_uniform_location,1,0, &projection.data[0][0]);

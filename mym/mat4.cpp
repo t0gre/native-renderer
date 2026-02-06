@@ -213,7 +213,31 @@ Mat4 scaled(Mat4 m, const float sx, const float sy, const float sz) {
     }
     
 
-Mat4 transpose(Mat4 m) {
+void transpose(Mat4& m) {
+   
+        float temp_m01 = m.m10;
+        float temp_m02 = m.m20;
+        float temp_m03 = m.m30;
+        m.m10 = m.m01;
+        float temp_m12 = m.m21;
+        float temp_m13 = m.m31;
+        m.m20 = m.m02;
+        m.m21 = m.m12;
+        float temp_m23 = m.m32;
+        m.m30 = m.m03;
+        m.m31 = m.m13;
+        m.m32 = m.m23;    
+    
+        m.m01 = temp_m01;
+        m.m02 = temp_m02;
+        m.m03 = temp_m03;
+        m.m12 = temp_m12;
+        m.m13 = temp_m13;
+        m.m23 = temp_m23;
+
+    }
+
+  Mat4 transposed(Mat4 m) {
    
     return (Mat4){
         .m00 = m.m00,
@@ -306,14 +330,7 @@ Mat4 inverse(Mat4 m) {
         };
     }
 
-Vec4 vectorMultiply(const Vec4 v, Mat4 m) {
-       return (Vec4){
-           .x = m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
-           .y = m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13 * v.w,
-           .z = m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23 * v.w,
-           .w = m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33 * v.w
-        };
-    }
+
 
 Mat4 fromPositionAndEuler(const Vec3 position, const Vec3 euler) {
     Mat4 mat4 = translated(yRotation(0), position.x, position.y, position.z) ;
@@ -323,11 +340,20 @@ Mat4 fromPositionAndEuler(const Vec3 position, const Vec3 euler) {
     return mat4;
 }
 
-Vec3 getPositionVector(Mat4 transform) {
+Vec3 getPosition(Mat4 transform) {
     return (Vec3){ .x = transform.m30, .y = transform.m31, .z = transform.m32};
 }
 
-Vec3 positionMultiply(const Vec3 v, Mat4 m) {
+Vec4 vectorMultiplied(const Vec4& v, const Mat4& m) {
+       return (Vec4){
+           .x = m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
+           .y = m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13 * v.w,
+           .z = m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23 * v.w,
+           .w = m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33 * v.w
+        };
+    }
+
+Vec3 positionMultiplied(const Vec3& v, const Mat4& m) {
         const Vec4 v1 = {
             .x = v.x,
             .y = v.y,
@@ -344,7 +370,7 @@ Vec3 positionMultiply(const Vec3 v, Mat4 m) {
         return (Vec3){ dst.x/dst.w,dst.y/dst.w,dst.z/dst.w};
     }
 
-Vec3 directionMultiply(const Vec3 v, const Mat4 m) {
+Vec3 directionMultiplied(const Vec3& v, const Mat4& m) {
          const Vec4 v1 = {
             .x = v.x,
             .y = v.y,
@@ -361,6 +387,56 @@ Vec3 directionMultiply(const Vec3 v, const Mat4 m) {
         }
 
         return (Vec3){dst.x,dst.y,dst.z};
+    }
+
+
+
+
+void vectorMultiply(Vec4& v, const Mat4& m) {
+       
+    float temp_x = m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w;
+    float temp_y = m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13 * v.w;
+    float temp_z = m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23 * v.w;
+
+    v.w = m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33 * v.w;
+    v.z = temp_z;
+    v.y = temp_y;
+    v.x = temp_x;
+
+    }
+
+void positionMultiply(Vec3& v, const Mat4& m) {
+        
+    Vec4 v1 = {
+        .x = v.x,
+        .y = v.y,
+        .z = v.z,
+        .w = 1.f
+    };
+
+    vectorMultiply(v1, m);
+
+    v.x = v1.x/v1.w,
+    v.y = v1.y/v1.w,
+    v.z = v1.z/v1.w;
+
+    }
+
+void directionMultiply(Vec3& v, const Mat4& m) {
+    
+    Vec4 v1 = {
+        .x = v.x,
+        .y = v.y,
+        .z = v.z,
+        .w = 0.f
+    };
+
+    vectorMultiply(v1, m);
+
+    v.x = v1.x;
+    v.y = v1.y;
+    v.z = v1.z;
+
     }
 
 }

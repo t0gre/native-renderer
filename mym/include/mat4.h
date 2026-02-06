@@ -21,6 +21,7 @@ Mat4 lookAt(Vec3 camera_position, Vec3 target, Vec3 up);
 Mat4 perspective(float field_of_view_in_radians, float aspect, float near, float far);
 Mat4 orthographic(int left, int right, int bottom, int top, int near, int far);
 Mat4 projection(float width, float height, float depth);
+Mat4 fromPositionAndEuler(Vec3 position, Vec3 euler);
 
 void multiply(Mat4& a, const Mat4& b);
 Mat4 multiplied(Mat4 a, Mat4 b);
@@ -43,13 +44,20 @@ Mat4 yRotated(Mat4 m, float angle_in_radians);
 Mat4 zRotated(Mat4 m, float angle_in_radians);
 Mat4 scaled(Mat4 m, float sx, float sy, float sz);
 
-Mat4 transpose(Mat4 m);
+void transpose(Mat4& m);
+Mat4 transposed(Mat4 m);
+
 Mat4 inverse(Mat4 m);
-Vec4 vectorMultiply(Vec4 v, Mat4 m);
-Vec3 positionMultiply(Vec3 v, Mat4 m);
-Vec3 directionMultiply(Vec3 v, Mat4 m);
-Mat4 fromPositionAndEuler(Vec3 position, Vec3 euler);
-Vec3 getPositionVector(Mat4 transform);
+
+Vec3 getPosition(Mat4 transform);
+
+void vectorMultiply(Vec4& v, const Mat4& m);
+void positionMultiply(Vec3& v, const Mat4& m);
+void directionMultiply(Vec3& v, const Mat4& m);
+
+Vec4 vectorMultiplied(const Vec4& v, const Mat4& m);
+Vec3 positionMultiplied(const Vec3& v, const Mat4& m);
+Vec3 directionMultiplied(const Vec3& v, const Mat4& m);
 
 }
 #endif //MAT_4_H

@@ -17,13 +17,9 @@ void updateScene(Scene& scene, float dt) {
         .z = scene.point_light.position.z,
         .w = 0.0
     };
-    Vec4 newMatrix = vectorMultiply(oldMatrix, rotator);
-    scene.point_light.position = (Vec3){
-        .x = newMatrix.x,
-        .y = newMatrix.y,
-        .z = newMatrix.z
-    };
     
+    positionMultiply(scene.point_light.position, rotator);
+
 }
 
 
