@@ -13,6 +13,20 @@
             "cppStandard": "gnu++17",
             "intelliSenseMode": "gcc-x64",
             "compileCommands": "Debug/compile_commands.json"
+        },
+        {
+            "name": "Linux tests",
+            
+            "compilerArgs": [
+                "-Wall",
+                "-Werror",
+                "-Wno-missing-braces"
+            ],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "c11",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "gcc-x64",
+            "compileCommands": "tests/Debug/compile_commands.json"
         }
     ],
     "version": 4

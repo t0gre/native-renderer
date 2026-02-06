@@ -7,58 +7,21 @@
 #include "scene.h"
 #include "events.h"
 
+using namespace mym;
 
-void updateScene(Scene* scene, float dt) {
-    Mat4 rotator = m4yRotation(PI / (dt * 10));
+void updateScene(Scene& scene, float dt) {
+    Mat4 rotator = yRotation(PI / (dt * 10));
     Vec4 oldMatrix = { 
-        .x = scene->point_light.position.x,
-        .y = scene->point_light.position.y,
-        .z = scene->point_light.position.z,
+        .x = scene.point_light.position.x,
+        .y = scene.point_light.position.y,
+        .z = scene.point_light.position.z,
         .w = 0.0
     };
-    Vec4 newMatrix = m4vectorMultiply(oldMatrix, rotator);
-    scene->point_light.position = (Vec3){
-        .x = newMatrix.x,
-        .y = newMatrix.y,
-        .z = newMatrix.z
-    };
     
-}
-
-void mainLoop(void* mainLoopArg) 
-{   
-   
-    AppState* state = (AppState*)mainLoopArg;
-
-    // calculate deltaTime
-    const Uint64 now = SDL_GetPerformanceCounter();
-    const Uint64 last = state->last_frame_time;
-
-    const double deltaTime = ((now - last)*1000 / (double)SDL_GetPerformanceFrequency() );
-    state->last_frame_time = now;
-
-    // log errors
-    const char* error = SDL_GetError();
-    if (error[0] != '\0') {
-        puts(error);
-        SDL_ClearError();
-    }
-   
-    updateScene(&state->scene, deltaTime);
-
-    processEvents(state);
-     
-    drawGl(
-        state->window, 
-        state->camera, 
-        &state->scene, 
-        state->basic_color_render_program,
-        state->texture_render_program,
-        state->shadow_render_program,
-        state->shadow_map
-    );
+    positionMultiply(scene.point_light.position, rotator);
 
 }
+
 
 int main(int argc, char** argv)
 {
@@ -70,13 +33,7 @@ int main(int argc, char** argv)
 
     WindowState window = initWindow("Tom");
        
-    // Initialize shader and geometry
-    BasicColorRenderProgram basic_color_render_program = initShader();
-    TextureRenderProgram texture_render_program = initTextureShader();
-
-    // Shadow map setup
-    ShadowMap shadowMap = createShadowMap();
-    ShadowRenderProgram shadowRenderProgram = initShadowRenderProgram();
+    GlRenderer renderer;
 
     // create lights
     AmbientLight ambient_light = {
@@ -97,20 +54,18 @@ int main(int argc, char** argv)
     };
 
     // TODO do these need to be cleaned up?
-    FloatData normals = read_csv("assets/normals.txt");
-    FloatData positions = read_csv("assets/positions.txt");
+    auto normals = read_csv("assets/normals.txt");
+    auto positions = read_csv("assets/positions.txt");
 
     Vertices vertices;
 
-    vertices.vertex_count = positions.count / 3;
+    vertices.vertex_count = positions.size() / 3;
 
     // non-indexed mesh: ensure index_count is zero
     vertices.index_count = 0;
-
-    for (size_t i = 0; i < positions.count; i ++) {
-        vertices.positions.push_back(positions.data[i]);
-        vertices.normals.push_back(normals.data[i]);    
-    }
+    vertices.positions = positions;
+    vertices.normals = normals;    
+    
 
     BasicColorMaterial greenMaterial = {
                     .color = { .r = 0.1, .g = 0.7, .b = 0.1},
@@ -118,7 +73,7 @@ int main(int argc, char** argv)
                     .shininess = 0.5f
                 };
 
-    SceneNode green_tree = createSceneNode(m4fromPositionAndEuler(
+    SceneNode green_tree = createSceneNode(fromPositionAndEuler(
             (Vec3){ .x = 0.f, .y = 0.f, .z = 0.f }, 
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
@@ -134,7 +89,7 @@ int main(int argc, char** argv)
                     .shininess = 0.9f
                 };
     
-    SceneNode grey_tree = createSceneNode(m4fromPositionAndEuler(
+    SceneNode grey_tree = createSceneNode(fromPositionAndEuler(
             (Vec3){ .x = 5.f, .y = 0.f, .z = 0.f }, 
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
@@ -150,7 +105,7 @@ int main(int argc, char** argv)
                     .shininess = 0.9f
                 };
 
-    SceneNode blue_tree = createSceneNode(m4fromPositionAndEuler(
+    SceneNode blue_tree = createSceneNode(fromPositionAndEuler(
             (Vec3){ .x = 5.f, .y = 0.f, .z = 0.f }, 
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
@@ -197,7 +152,7 @@ int main(int argc, char** argv)
                     .shininess = 1000.f
                 };  
 
-    SceneNode floor_model = createSceneNode(m4fromPositionAndEuler(
+    SceneNode floor_model = createSceneNode(fromPositionAndEuler(
             (Vec3){ .x = 0.f, .y = 0.0f, .z = 0.f }, 
             (Vec3) { .x = 0.f, .y = 0.f, .z = 0.f }),
             (Mesh){
@@ -218,8 +173,8 @@ int main(int argc, char** argv)
     std::string gorilla_path = "assets/gorilla.glb";
     SceneNode gorilla = load_glb(gorilla_path);
     gorilla.name = "gorilla";
-    gorilla.local_transform = m4translate(gorilla.local_transform, -10.0f, 0.f, 0.f);
-    gorilla.local_transform = m4scale(gorilla.local_transform, 2.0f, 2.f, 2.f);
+    translate(gorilla.local_transform, -10.0f, 0.f, 0.f);
+    scale(gorilla.local_transform, 2.0f, 2.f, 2.f);
 
     updateWorldTransform(&gorilla);
     scene_nodes.push_back(&gorilla);
@@ -227,8 +182,8 @@ int main(int argc, char** argv)
     std::string bowl_path = "assets/bowl_from_nazca_culture_peru.glb";
     SceneNode bowl = load_glb(bowl_path);
     bowl.name = "bowl";
-    bowl.local_transform = m4translate(bowl.local_transform, -10.0f, 0.35f, -3.f);
-    bowl.local_transform = m4scale(bowl.local_transform, 10.f, 10.f, 10.f);
+    translate(bowl.local_transform, -10.0f, 0.35f, -3.f);
+    scale(bowl.local_transform, 10.f, 10.f, 10.f);
         
     updateWorldTransform(&bowl);
     scene_nodes.push_back(&bowl);
@@ -259,32 +214,46 @@ int main(int argc, char** argv)
     );
 
     // create a camera
-    const Camera camera = {
+    Camera camera = {
         .field_of_view_radians = 1.f,
         .aspect = (float)window.width / (float)window.height, 
         .near = 1.f,
         .far = 2000.f, 
         .up = up, 
-        .transform = m4lookAt(cameraPosition, orbit.target, up),
+        .transform = lookAt(cameraPosition, orbit.target, up),
         .orbit = orbit
         };
 
     Uint64 now = SDL_GetPerformanceCounter();
     
-    AppState state = {
-        .window = window,
-        .last_frame_time = now,
-        .camera = camera,
-        .input = input,
-        .basic_color_render_program = basic_color_render_program,
-        .texture_render_program = texture_render_program,
-        .scene = scene,
-        .shadow_render_program = shadowRenderProgram,
-        .shadow_map = shadowMap
-    };
+    Uint64 last_frame_time = now;
+    
 
-    while(!state.window.should_close) {
-        mainLoop(&state);
+    while(!window.should_close) {
+
+        // calculate deltaTime
+        const Uint64 now = SDL_GetPerformanceCounter();
+        const Uint64 last = last_frame_time;
+
+        const double deltaTime = ((now - last)*1000 / (double)SDL_GetPerformanceFrequency());
+        last_frame_time = now;
+
+        // log errors
+        const char* error = SDL_GetError();
+        if (error[0] != '\0') {
+            puts(error);
+            SDL_ClearError();
+        }
+    
+        updateScene(scene, deltaTime);
+
+        processEvents(window, camera, input, scene);
+        
+        renderer.drawGl(
+            window, 
+            camera, 
+            scene
+        );
     }
 
     return 0;

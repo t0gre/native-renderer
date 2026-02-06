@@ -3,6 +3,7 @@
 #include "math_utils.h"
 #include <algorithm>
 
+namespace mym {
 Vec3 scaleVector(const Vec3 vec, const float scalar) {
    
     return (Vec3){
@@ -70,4 +71,6 @@ Vec3 calculateOrbitPosition(
     const float z = orbitTarget.z + orbitRadius * sin(elevation) * cos(azimuth);
 
     return {x,y,z};
+}
+
 }

@@ -37,10 +37,10 @@ void updateWorldTransform(SceneNode * node) {
    if (node->parent.has_value()) {
     parentWorldTransform = node->parent.value()->world_transform;
    } else {
-    parentWorldTransform = m4fromPositionAndEuler({0.f,0.f,0.f}, {0.f,0.f,0.f});
+    parentWorldTransform = fromPositionAndEuler({0.f,0.f,0.f}, {0.f,0.f,0.f});
    }
    
-   node->world_transform = m4multiply(parentWorldTransform, node->local_transform);
+   node->world_transform = multiplied(parentWorldTransform, node->local_transform);
 
    for (auto& child: node->children) {
     child->parent = node;

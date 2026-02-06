@@ -2,6 +2,9 @@
 #define VEC_H
 #include <math.h>
 #include <stdbool.h>
+
+namespace mym {
+
 typedef union Vec2 { 
   struct {
     float x;
@@ -24,7 +27,6 @@ typedef union Vec3 {
   };
 
   float data[3];
-
 } Vec3;
 
 typedef union Vec4 {
@@ -36,7 +38,6 @@ typedef union Vec4 {
   };
 
   float data[4];
-
 } Vec4;
 
 // result type for vec3
@@ -65,5 +66,7 @@ Vec3 calculateOrbitPosition(
     Vec3 orbitTarget,
     float orbitRadius
 );
+
+}
 
 #endif //VEC_H 

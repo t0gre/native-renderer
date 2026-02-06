@@ -1,5 +1,7 @@
 #include "gl_renderer.h"
 
+using namespace mym;
+
 WindowState initWindow(const char* title)
 {
     
@@ -45,16 +47,21 @@ WindowState initWindow(const char* title)
     return window;
 }
 
+GlRenderer::GlRenderer() {
+        // Initialize shader and geometry
+        basic_color_render_program = initShader();
+        texture_render_program = initTextureShader();
+
+        // Shadow map setup
+        shadow_map = createShadowMap();
+        shadow_render_program = initShadowRenderProgram();
+    }
 
 
-void drawGl(
+void GlRenderer::drawGl(
     WindowState window, 
     Camera camera, 
-    Scene* scene, 
-    BasicColorRenderProgram basic_color_render_program,
-    TextureRenderProgram texture_render_program,
-    ShadowRenderProgram shadow_render_program,
-    ShadowMap shadow_map
+    Scene scene 
 )
 {
     // Clear screen
@@ -72,7 +79,7 @@ void drawGl(
 
 
     // Compute light's view-projection matrix (for directional light)
-    Vec3 lightDirection = scene->directional_light.direction;
+    Vec3 lightDirection = scene.directional_light.direction;
     float shadowDistance = 10.f;
     Vec3 lightTarget = {0.f, 0.f, 0.f};
     Vec3 lightCameraPosition = {
@@ -82,13 +89,13 @@ void drawGl(
     };
     Vec3 up = {0.f, 1.f, 0.f};
 
-    Mat4 lightView = m4inverse(m4lookAt(lightCameraPosition, lightTarget, up));
-    Mat4 lightProj = m4orthographic(-20, 20, -20, 20, 1, 100);
-    Mat4 lightViewProj = m4multiply(lightProj, lightView);
+    Mat4 lightView = inverse(lookAt(lightCameraPosition, lightTarget, up));
+    Mat4 lightProj = orthographic(-20, 20, -20, 20, 1, 100);
+    Mat4 lightViewProj = multiplied(lightProj, lightView);
 
 
-    for (size_t i = 0; i < scene->nodes.size(); i++) {
-        drawSceneNodeShadow(scene->nodes[i], shadow_render_program, lightViewProj);
+    for (size_t i = 0; i < scene.nodes.size(); i++) {
+        drawSceneNodeShadow(scene.nodes[i], shadow_render_program, lightViewProj);
     }
 
     
@@ -113,29 +120,29 @@ void drawGl(
     // update camera uniforms
     const Mat4 projection = getProjectionMatrix(camera);
     const Mat4 view = getViewMatrix(camera);
-    const Vec3 camera_position = getPositionVector(camera.transform);
+    const Vec3 camera_position = getPosition(camera.transform);
     glUniformMatrix4fv(basic_color_render_program.view_uniform_location,1,0, &view.data[0][0]);  
     glUniform3fv(basic_color_render_program.view_position_uniform_location,1, &camera_position.data[0]); 
     glUniformMatrix4fv(basic_color_render_program.projection_uniform_location,1,0, &projection.data[0][0]);
 
     // update light uniforms
     // set ambient light
-    glUniform3fv(basic_color_render_program.ambient_light_uniform.color_location,1,scene->ambient_light.color.data);
+    glUniform3fv(basic_color_render_program.ambient_light_uniform.color_location,1,scene.ambient_light.color.data);
 
     // set directional light
-    glUniform3fv(basic_color_render_program.directional_light_uniform.color_location,1,scene->directional_light.color.data);
-    glUniform3fv(basic_color_render_program.directional_light_uniform.direction_location,1,scene->directional_light.direction.data);
+    glUniform3fv(basic_color_render_program.directional_light_uniform.color_location,1,scene.directional_light.color.data);
+    glUniform3fv(basic_color_render_program.directional_light_uniform.direction_location,1,scene.directional_light.direction.data);
 
     // set point light
-    glUniform3fv(basic_color_render_program.point_light_uniform.color_location,1,scene->point_light.color.data);
-    glUniform3fv(basic_color_render_program.point_light_uniform.position_location,1,scene->point_light.position.data);
-    glUniform1f(basic_color_render_program.point_light_uniform.constant_location,scene->point_light.constant);
-    glUniform1f(basic_color_render_program.point_light_uniform.linear_location,scene->point_light.linear);
-    glUniform1f(basic_color_render_program.point_light_uniform.quadratic_location,scene->point_light.quadratic); 
+    glUniform3fv(basic_color_render_program.point_light_uniform.color_location,1,scene.point_light.color.data);
+    glUniform3fv(basic_color_render_program.point_light_uniform.position_location,1,scene.point_light.position.data);
+    glUniform1f(basic_color_render_program.point_light_uniform.constant_location,scene.point_light.constant);
+    glUniform1f(basic_color_render_program.point_light_uniform.linear_location,scene.point_light.linear);
+    glUniform1f(basic_color_render_program.point_light_uniform.quadratic_location,scene.point_light.quadratic); 
 
     // Draw color material meshes
-    for (size_t i = 0; i < scene->nodes.size(); i++) {
-        drawSceneNodeBasicColor(scene->nodes[i], basic_color_render_program);
+    for (size_t i = 0; i < scene.nodes.size(); i++) {
+        drawSceneNodeBasicColor(scene.nodes[i], basic_color_render_program);
     }
 
     // Set up texture render program with same uniforms
@@ -148,19 +155,22 @@ void drawGl(
     glUniformMatrix4fv(texture_render_program.shadow_uniform.light_view_location, 1,0, &lightViewProj.data[0][0]);
     glUniform1i(texture_render_program.shadow_uniform.shadow_map_location, 1);
 
-    glUniform3fv(texture_render_program.ambient_light_uniform.color_location,1,scene->ambient_light.color.data);
-    glUniform3fv(texture_render_program.directional_light_uniform.color_location,1,scene->directional_light.color.data);
-    glUniform3fv(texture_render_program.directional_light_uniform.direction_location,1,scene->directional_light.direction.data);
-    glUniform3fv(texture_render_program.point_light_uniform.color_location,1,scene->point_light.color.data);
-    glUniform3fv(texture_render_program.point_light_uniform.position_location,1,scene->point_light.position.data);
-    glUniform1f(texture_render_program.point_light_uniform.constant_location,scene->point_light.constant);
-    glUniform1f(texture_render_program.point_light_uniform.linear_location,scene->point_light.linear);
-    glUniform1f(texture_render_program.point_light_uniform.quadratic_location,scene->point_light.quadratic); 
+    glUniform3fv(texture_render_program.ambient_light_uniform.color_location,1,scene.ambient_light.color.data);
+    glUniform3fv(texture_render_program.directional_light_uniform.color_location,1,scene.directional_light.color.data);
+    glUniform3fv(texture_render_program.directional_light_uniform.direction_location,1,scene.directional_light.direction.data);
+    glUniform3fv(texture_render_program.point_light_uniform.color_location,1,scene.point_light.color.data);
+    glUniform3fv(texture_render_program.point_light_uniform.position_location,1,scene.point_light.position.data);
+    glUniform1f(texture_render_program.point_light_uniform.constant_location,scene.point_light.constant);
+    glUniform1f(texture_render_program.point_light_uniform.linear_location,scene.point_light.linear);
+    glUniform1f(texture_render_program.point_light_uniform.quadratic_location,scene.point_light.quadratic); 
 
     // Draw texture material meshes
-    for (size_t i = 0; i < scene->nodes.size(); i++) {
-        drawSceneNodeTexture(scene->nodes[i], texture_render_program);
+    for (size_t i = 0; i < scene.nodes.size(); i++) {
+        drawSceneNodeTexture(scene.nodes[i], texture_render_program);
     }
 
     SDL_GL_SwapWindow(window.object);
 }
+
+
+

@@ -3,6 +3,8 @@
 
 #include "vec.h"
 
+using namespace mym;
+
 typedef struct PointLight {
   Vec3 color;
   Vec3 position;

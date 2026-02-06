@@ -41,7 +41,7 @@ char* get_shader_content(const char* fileName)
 }
 
 // reads something that is not really a csv, because it has no line endings
-FloatData read_csv(const char* filename) {
+DArray<float> read_csv(const char* filename) {
 
   FILE* fptr = fopen(filename, "r");
 
@@ -55,7 +55,7 @@ FloatData read_csv(const char* filename) {
     
   number_of_floats++;
   const size_t number = number_of_floats;
-  auto* floats = (float *)malloc(sizeof(float)*number);
+  DArray<float> floats;
 
   size_t float_cursor = 0;
   char number_string[10] = { 0 }; // it wont be longer than this
@@ -71,7 +71,7 @@ FloatData read_csv(const char* filename) {
         digit_cursor++;
     } else {
         // convert the number string into a float
-        floats[float_cursor] = atof(number_string);
+        floats.push_back(atof(number_string));
         // zero the number string
         memset(number_string,0,strlen(number_string));
         // reset digit cusor
@@ -82,12 +82,9 @@ FloatData read_csv(const char* filename) {
    } 
 
     // at EOF add the last float in
-    floats[float_cursor] = atof(number_string);
+    floats.push_back(atof(number_string));
 
-    return (FloatData){
-        .data = floats,
-        .count = number
-    };
+    return floats;
 
 }
 

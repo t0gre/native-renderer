@@ -6,7 +6,6 @@
 #include "camera.h"
 #include "light.h"
 #include "vec.h"
-#include "data_structures.h"
 #include "material.h"
 #include "mystl.hpp"
 
@@ -16,7 +15,6 @@ struct Vertices {
   DArray<float> normals;
   DArray<unsigned int> indices;
   size_t index_count;
-  // add textcoords and indices
 };
 
 
