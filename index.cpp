@@ -6,6 +6,7 @@
 #include "gl_renderer.h"
 #include "scene.h"
 #include "events.h"
+#include "tracy/Tracy.hpp"
 
 using namespace mym;
 
@@ -26,6 +27,8 @@ void updateScene(Scene& scene, float dt) {
 int main(int argc, char** argv)
 {
 
+    ZoneScoped("main");
+    
     InputState input = {
         .pointer_down = false,
         .pointer_position = { 0 }
