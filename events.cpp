@@ -7,6 +7,7 @@
 #include "events.h"
 #include "mat4.h"
 #include "raycast.h"
+#include "tracy/Tracy.hpp"
 
 using namespace mym;
 
@@ -50,6 +51,7 @@ Ray getWorldRayFromClipSpaceAndCamera(
 
 void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene)
 {
+    ZoneScoped;
     // Handle events
     SDL_Event event;
     while (SDL_PollEvent(&event))

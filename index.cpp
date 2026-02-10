@@ -6,10 +6,12 @@
 #include "gl_renderer.h"
 #include "scene.h"
 #include "events.h"
+#include "tracy/Tracy.hpp"
 
 using namespace mym;
 
 void updateScene(Scene& scene, float dt) {
+    ZoneScoped;
     Mat4 rotator = yRotation(PI / (dt * 10));
     Vec4 oldMatrix = { 
         .x = scene.point_light.position.x,
@@ -25,7 +27,7 @@ void updateScene(Scene& scene, float dt) {
 
 int main(int argc, char** argv)
 {
-
+    
     InputState input = {
         .pointer_down = false,
         .pointer_position = { 0 }
@@ -245,15 +247,17 @@ int main(int argc, char** argv)
             SDL_ClearError();
         }
     
+        
         updateScene(scene, deltaTime);
-
+        
         processEvents(window, camera, input, scene);
         
         renderer.drawGl(
             window, 
             camera, 
             scene
-        );
+            );
+
     }
 
     return 0;

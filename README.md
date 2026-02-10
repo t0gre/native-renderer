@@ -50,3 +50,22 @@ build or run the app
 the cmake script for copying shaders only works when
 cmake see a change to a cpp or header file, so there's a copy_shaders.sh script 
 as a workaround for when you've only changed the shaders
+
+## profiling with tracy
+
+While the main project cmake takes care of most of the tracy setup, building the profiler
+is done by cd-ing into third_party/tracy and running. 
+
+`cmake -B profiler/build -S profiler -DCMAKE_BUILD_TYPE=Release` or, since Tracy assumes you're on wayland, but you can tell it to use X11 by setting LEGACY=1
+`cmake -B profiler/build -S profiler -DCMAKE_BUILD_TYPE=Release -DLEGACY=1` if you're on X11
+
+to generate the build files, followed by 
+
+`cmake --build profiler/build --config Release --parallel`
+
+to build, and then, finally
+
+`./profiler/build/tracy-profiler` to run
+
+also, you might need to run cmake on the main app with `DCMAKE_BUILD_TYPE=RelWithDebIndo`. I don't know why but the profile doesn't seem to find
+the app if it's set to the normal dev-mode `Debug`  
