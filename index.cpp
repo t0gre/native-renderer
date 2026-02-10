@@ -24,15 +24,6 @@ void updateScene(Scene& scene, float dt) {
 
 }
 
-void draw(GlRenderer& renderer, const WindowState& window, const Camera& camera, const Scene& scene) {
-    // ZoneScoped;
-    renderer.drawGl(
-            window, 
-            camera, 
-            scene
-            );
-}
-
 
 int main(int argc, char** argv)
 {
@@ -261,7 +252,11 @@ int main(int argc, char** argv)
         
         processEvents(window, camera, input, scene);
         
-        draw(renderer, window, camera, scene);
+        renderer.drawGl(
+            window, 
+            camera, 
+            scene
+            );
 
     }
 
