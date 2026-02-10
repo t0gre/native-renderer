@@ -66,3 +66,6 @@ to generate the build files, followed by
 to build, and then, finally
 
 `./profiler/build/tracy-profiler` to run
+
+also, you might need to run cmake on the main app with `DCMAKE_BUILD_TYPE=RelWithDebIndo`. I don't know why but the profile doesn't seem to find
+the app if it's set to the normal dev-mode `Debug`  

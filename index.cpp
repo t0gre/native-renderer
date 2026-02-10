@@ -11,6 +11,7 @@
 using namespace mym;
 
 void updateScene(Scene& scene, float dt) {
+    ZoneScoped;
     Mat4 rotator = yRotation(PI / (dt * 10));
     Vec4 oldMatrix = { 
         .x = scene.point_light.position.x,
@@ -23,11 +24,18 @@ void updateScene(Scene& scene, float dt) {
 
 }
 
+void draw(GlRenderer& renderer, const WindowState& window, const Camera& camera, const Scene& scene) {
+    // ZoneScoped;
+    renderer.drawGl(
+            window, 
+            camera, 
+            scene
+            );
+}
+
 
 int main(int argc, char** argv)
 {
-
-    ZoneScoped("main");
     
     InputState input = {
         .pointer_down = false,
@@ -248,15 +256,13 @@ int main(int argc, char** argv)
             SDL_ClearError();
         }
     
+        
         updateScene(scene, deltaTime);
-
+        
         processEvents(window, camera, input, scene);
         
-        renderer.drawGl(
-            window, 
-            camera, 
-            scene
-        );
+        draw(renderer, window, camera, scene);
+
     }
 
     return 0;
