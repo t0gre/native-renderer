@@ -23,7 +23,7 @@ WindowState initWindow(const char* title)
     
     const Uint32 window_id = SDL_GetWindowID(window_object);
 
-    SDL_GL_CreateContext(window_object);
+    SDL_GLContext context = SDL_GL_CreateContext(window_object);
     
     // Enable VSync (try 1, fallback to -1)
     if (SDL_GL_SetSwapInterval(1) != 0) {
@@ -39,9 +39,11 @@ WindowState initWindow(const char* title)
 
     const WindowState window = {
         .object = window_object, 
+        .context = context,
         .id = window_id,
         .width = static_cast<size_t>(initial_window_width),
-        .height = static_cast<size_t>(initial_window_height)
+        .height = static_cast<size_t>(initial_window_height),
+       
         };
         
     return window;
@@ -64,8 +66,7 @@ void GlRenderer::drawGl(
     Scene scene 
 )
 {
-    // Clear screen
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
 
     // draw shadows
     // 1. Render to shadow map
@@ -169,7 +170,7 @@ void GlRenderer::drawGl(
         drawSceneNodeTexture(scene.nodes[i], texture_render_program);
     }
 
-    SDL_GL_SwapWindow(window.object);
+   
 }
 
 

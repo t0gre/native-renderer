@@ -9,6 +9,8 @@
 #include "raycast.h"
 #include "tracy/Tracy.hpp"
 
+#include "backends/imgui_impl_sdl3.h"
+
 using namespace mym;
 
 Vec2 getPointerClickInClipSpace(const int mouse_x, const int mouse_y, const int canvas_width, const int canvas_height) {
@@ -56,6 +58,7 @@ void processEvents(WindowState& window, Camera& camera, InputState& input, Scene
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
+        ImGui_ImplSDL3_ProcessEvent(&event);
         switch (event.type)
         {
             case SDL_EVENT_QUIT:
