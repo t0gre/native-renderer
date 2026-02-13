@@ -12,6 +12,19 @@ add_subdirectory(lib lib)
 add_subdirectory(mym mym)
 add_subdirectory(mygl mygl)
 
+# imgui 
+set(IMGUI_PATH  "${CMAKE_SOURCE_DIR}/third_party/imgui")
+
+file(GLOB IMGUI_SOURCES 
+        ${IMGUI_PATH}/*.cpp 
+        ${IMGUI_PATH}/backends/imgui_impl_sdl3.cpp
+        ${IMGUI_PATH}/backends/imgui_impl_opengl3.cpp
+        )
+
+add_library(ImGui STATIC ${IMGUI_SOURCES})
+target_include_directories(ImGui PUBLIC ${IMGUI_PATH} ${IMGUI_PATH}/backends/)
+target_link_libraries(ImGui PRIVATE SDL3::SDL3)
+
 # executable
 add_executable(native index.cpp events.cpp)
 
@@ -22,6 +35,7 @@ target_link_libraries(native PRIVATE
     SDL3::SDL3
     ${OPENGL_LIBRARIES}
     Tracy::TracyClient
+    ImGui
 )
 
 target_include_directories(native PUBLIC include)

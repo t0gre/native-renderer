@@ -8,6 +8,10 @@
 #include "events.h"
 #include "tracy/Tracy.hpp"
 
+#include "imgui.h"
+#include "backends/imgui_impl_sdl3.h"
+#include "backends/imgui_impl_opengl3.h"
+
 using namespace mym;
 
 void updateScene(Scene& scene, float dt) {
@@ -27,7 +31,8 @@ void updateScene(Scene& scene, float dt) {
 
 int main(int argc, char** argv)
 {
-    
+    AppState app_state;
+
     InputState input = {
         .pointer_down = false,
         .pointer_position = { 0 }
@@ -229,9 +234,19 @@ int main(int argc, char** argv)
     Uint64 now = SDL_GetPerformanceCounter();
     
     Uint64 last_frame_time = now;
-    
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    ImGui::StyleColorsDark();
+    ImGui_ImplSDL3_InitForOpenGL(window.object, window.context);
+    ImGui_ImplOpenGL3_Init("#version 300 es");
 
     while(!window.should_close) {
+
+
 
         // calculate deltaTime
         const Uint64 now = SDL_GetPerformanceCounter();
@@ -250,13 +265,42 @@ int main(int argc, char** argv)
         
         updateScene(scene, deltaTime);
         
-        processEvents(window, camera, input, scene);
+        // even is forwarded to imgui in here
+        processEvents(window, camera, input, scene, app_state);
+
+
+        // Clear screen
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         renderer.drawGl(
             window, 
             camera, 
             scene
             );
+
+        
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::Begin("Info Panel");                
+        ImGui::Text("Scene info");               
+
+        if (app_state.selected_entity.has_value()) {
+            ImGui::Text("Selected Entity"); 
+            ImGui::Text("id = %zu", app_state.selected_entity.value().id);
+            ImGui::SameLine();
+            ImGui::Text("name = %s", app_state.selected_entity.value().name.value_or("").c_str());
+        }
+       
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        ImGui::End();
+
+        // Rendering
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        SDL_GL_SwapWindow(window.object);
 
     }
 

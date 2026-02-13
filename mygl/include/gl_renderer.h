@@ -1,7 +1,7 @@
 #ifndef GL_RENDERER_H
 #define GL_RENDERER_H
 
-#include "app_state.h"
+#include "sdl_state.h"
 
 WindowState initWindow(const char* title);
 

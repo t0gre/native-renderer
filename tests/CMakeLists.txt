@@ -9,14 +9,18 @@ add_subdirectory(../lib lib)
 add_subdirectory(../mym mym)
 
 # executable
-add_executable(tests tests.cpp)
+add_executable(tests 
+    tests.cpp 
+    test_helpers.cpp
+    raycast_scene_tests.cpp
+    raycast_triangle_tests.cpp
+    raycast_vertices_tests.cpp
+    )
+
 target_link_libraries(tests PRIVATE 
     mym
     lib 
-    # ${OPENGL_LIBRARIES}
 )
 
-target_include_directories(tests PUBLIC 
-    # ${OPENGL_INCLUDE_DIRS}
-)
+target_include_directories(tests PUBLIC include)
 

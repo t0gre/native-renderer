@@ -10,41 +10,48 @@
 #include "mystl.hpp"
 
 
-typedef struct Triangle {
+struct Triangle {
     Vec3 a;
     Vec3 b;
     Vec3 c;
-} Triangle;
+};
 
-typedef struct Ray {
+struct Ray {
     Vec3 origin;
     Vec3 direction; 
-} Ray;
+};
 
-typedef struct MeshInfo {
+struct MeshInfo {
     Material material;
     std::optional<int> id;
-} MeshInfo;
+};
 
-
-typedef struct Intersection {
-    std::string nodeName; // empty if none
+struct VertexIntersection {
     Vec3 point;
     size_t triangleIdx;
-    std::optional<MeshInfo> meshInfo;
+};
 
-} Intersection;
+struct MeshIntersection {
+    MeshInfo meshInfo;
+    VertexIntersection vertexIntersection;
+};
+
+struct NodeIntersection {
+    size_t id;
+    std::string nodeName; // empty if none
+    MeshIntersection meshIntersection;
+};
 
 Vec3Result rayIntersectsTriangle(Ray ray, Triangle triangle);
 
-DArray<Intersection> rayIntersectsVertices(Ray ray, Vertices vertices);
+DArray<VertexIntersection> rayIntersectsVertices(Ray ray, Vertices vertices);
 
-DArray<Intersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node);
+DArray<NodeIntersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node);
 
-DArray<Intersection> rayIntersectsScene(const Ray &ray, const Scene& scene);
+DArray<NodeIntersection> rayIntersectsScene(const Ray &ray, const Scene& scene);
 
 void sortBySceneDepth(
-    DArray<Intersection>& intersections,
+    DArray<NodeIntersection>& intersections,
     Camera camera
 );
 

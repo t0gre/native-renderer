@@ -9,6 +9,8 @@
 #include "raycast.h"
 #include "tracy/Tracy.hpp"
 
+#include "backends/imgui_impl_sdl3.h"
+
 using namespace mym;
 
 Vec2 getPointerClickInClipSpace(const int mouse_x, const int mouse_y, const int canvas_width, const int canvas_height) {
@@ -49,14 +51,18 @@ Ray getWorldRayFromClipSpaceAndCamera(
     return worldRay;
 }
 
-void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene)
+void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene, AppState& appState)
 {
     ZoneScoped;
     // Handle events
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
-        switch (event.type)
+        ImGui_ImplSDL3_ProcessEvent(&event);
+
+        if(const auto& io = ImGui::GetIO(); !io.WantCaptureMouse && !io.WantCaptureKeyboard) {
+        
+            switch (event.type)
         {
             case SDL_EVENT_QUIT:
                 window.should_close = true;
@@ -117,12 +123,17 @@ void processEvents(WindowState& window, Camera& camera, InputState& input, Scene
                     for (auto& node: scene.nodes) {
                         if (node->name == "floor") {
                             const auto floor = node;
-                            if (std::holds_alternative<BasicColorMaterial>(clicked.meshInfo.value().material)) {
-                                std::get<BasicColorMaterial>(floor->mesh.value().material).color = std::get<BasicColorMaterial>(clicked.meshInfo.value().material).color;
+                            if (std::holds_alternative<BasicColorMaterial>(clicked.meshIntersection.meshInfo.material)) {
+                                std::get<BasicColorMaterial>(floor->mesh.value().material).color = std::get<BasicColorMaterial>(clicked.meshIntersection.meshInfo.material).color;
                             }
                             
                         }
                     }
+
+                    appState.selected_entity = {
+                        .id = clicked.id,
+                        .name = clicked.nodeName,
+                    };
                  }
                 break;
             }
@@ -167,8 +178,6 @@ void processEvents(WindowState& window, Camera& camera, InputState& input, Scene
                 }
                 break;
             }
-        }
-
-        
+        }}    
     }
 }

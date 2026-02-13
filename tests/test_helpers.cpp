@@ -1,15 +1,5 @@
-#ifndef TEST_HELPERS_H
-#define TEST_HELPERS_H
-
 #include "stdbool.h"
 #include "vec.h"
-
-
-typedef struct TestResult {
-    bool pass;
-    const char * message;
-} TestResult;
-
 
 bool floatsAreClose(float a, float b) {
     return fabs(a - b) < 0.00001f;
@@ -21,4 +11,3 @@ bool vec3sAreEqual(mym::Vec3 a, mym::Vec3 b) {
             floatsAreClose(a.z, b.z));
 }
 
-#endif

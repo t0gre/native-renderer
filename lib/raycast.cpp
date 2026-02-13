@@ -47,9 +47,9 @@ Vec3Result rayIntersectsTriangle(Ray ray, Triangle triangle) {
 }
 
 
-DArray<Intersection> rayIntersectsVertices(Ray ray, Vertices vertices) {
+DArray<VertexIntersection> rayIntersectsVertices(Ray ray, Vertices vertices) {
     
-    DArray<Intersection> intersections;
+    DArray<VertexIntersection> intersections;
 
     float * positions = vertices.positions.begin();
 
@@ -66,7 +66,7 @@ DArray<Intersection> rayIntersectsVertices(Ray ray, Vertices vertices) {
 
         if (intersectionPoint.valid) {
             
-           Intersection intersection = { 
+           VertexIntersection intersection = { 
             .point = intersectionPoint.value,
             .triangleIdx = i / 9
             };
@@ -80,9 +80,9 @@ DArray<Intersection> rayIntersectsVertices(Ray ray, Vertices vertices) {
 }
 
 
-DArray<Intersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
+DArray<NodeIntersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
     
-    DArray<Intersection> intersections;
+    DArray<NodeIntersection> intersections;
     std::stack<const SceneNode*> node_stack;
     
     
@@ -122,17 +122,21 @@ DArray<Intersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
                         nodeUnderTest->world_transform);
 
                  
-                    intersections.push_back((Intersection){ 
+                    intersections.push_back((NodeIntersection){ 
+                        .id = nodeUnderTest->id,
                         .nodeName = nodeUnderTest->name.value_or(""),
-                        .point = worldSpaceIntersection, 
-                        .triangleIdx = intersection.triangleIdx,
-                        .meshInfo = (MeshInfo){ 
-                            .material = nodeUnderTest->mesh.value().material,
-                            .id = nodeUnderTest->mesh.value().id
+                        .meshIntersection = {
+                            .meshInfo = (MeshInfo){ 
+                                .material = nodeUnderTest->mesh.value().material,
+                                .id = nodeUnderTest->mesh.value().id
+                            },
+                            .vertexIntersection = {
+                                .point = worldSpaceIntersection, 
+                                .triangleIdx = intersection.triangleIdx,
+                            }
                         }
                     });
-                }
-                
+                } 
             }
         }
         
@@ -144,8 +148,8 @@ DArray<Intersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
     return intersections;
 }
 
-DArray<Intersection> rayIntersectsScene(const Ray &ray, const Scene& scene) {
-    DArray<Intersection> intersections;
+DArray<NodeIntersection> rayIntersectsScene(const Ray &ray, const Scene& scene) {
+    DArray<NodeIntersection> intersections;
     
     for (const auto& node: scene.nodes) {
         auto rayNodeIntersections = rayIntersectsSceneNode(ray, *node);
@@ -161,17 +165,17 @@ DArray<Intersection> rayIntersectsScene(const Ray &ray, const Scene& scene) {
 
 
 void sortBySceneDepth(
-    DArray<Intersection>& intersections,
+    DArray<NodeIntersection>& intersections,
     Camera camera
 ) {
 
 
-    std::sort(intersections.begin(),intersections.end(), [camera](Intersection &a, Intersection &b){
+    std::sort(intersections.begin(),intersections.end(), [camera](NodeIntersection &a, NodeIntersection &b){
         const auto viewMatrix = inverse(camera.transform);
         const auto projectionMatrix = getProjectionMatrix(camera);
         const auto viewProj = multiplied(projectionMatrix, viewMatrix);
-        const auto glPosA = positionMultiplied(a.point, viewProj);
-        const auto glPosB = positionMultiplied(b.point, viewProj);
+        const auto glPosA = positionMultiplied(a.meshIntersection.vertexIntersection.point, viewProj);
+        const auto glPosB = positionMultiplied(b.meshIntersection.vertexIntersection.point, viewProj);
 
         return   glPosA.z < glPosB.z;
 
