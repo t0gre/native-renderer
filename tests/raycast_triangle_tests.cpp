@@ -1,5 +1,5 @@
 #include "raycast.h"
-#include "test_helpers.cpp"
+#include "test_helpers.h"
 
 const Triangle triangle = {
         { 1.f, 0.f, 0.1f }, 
@@ -95,4 +95,14 @@ TestResult dont_intersect_because_direction() {
         };
     }
 
+}
+
+std::vector<TestResult> runTriangleTests() {
+     
+    std::vector<TestResult> results;
+    results.push_back(intersect_triangle());
+    results.push_back(dont_intersect_because_origin());
+    results.push_back(dont_intersect_because_direction());
+
+    return results;
 }

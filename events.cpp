@@ -51,7 +51,7 @@ Ray getWorldRayFromClipSpaceAndCamera(
     return worldRay;
 }
 
-void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene)
+void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene, AppState& appState)
 {
     ZoneScoped;
     // Handle events
@@ -120,12 +120,17 @@ void processEvents(WindowState& window, Camera& camera, InputState& input, Scene
                     for (auto& node: scene.nodes) {
                         if (node->name == "floor") {
                             const auto floor = node;
-                            if (std::holds_alternative<BasicColorMaterial>(clicked.meshInfo.value().material)) {
-                                std::get<BasicColorMaterial>(floor->mesh.value().material).color = std::get<BasicColorMaterial>(clicked.meshInfo.value().material).color;
+                            if (std::holds_alternative<BasicColorMaterial>(clicked.meshIntersection.meshInfo.material)) {
+                                std::get<BasicColorMaterial>(floor->mesh.value().material).color = std::get<BasicColorMaterial>(clicked.meshIntersection.meshInfo.material).color;
                             }
                             
                         }
                     }
+
+                    appState.selected_entity = {
+                        .id = clicked.id,
+                        .name = clicked.nodeName,
+                    };
                  }
                 break;
             }

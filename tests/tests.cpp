@@ -3,28 +3,25 @@
 
 #include "mystl.hpp"
 
-#include "test_helpers.cpp" // include before tests
-#include "raycast_triangle_tests.cpp"
-#include "raycast_vertices_tests.cpp"
-#include "raycast_scene_tests.cpp"
-
+#include "test_helpers.h" 
     
 int main(int argc, char** argv) {
     DArray<TestResult> results;
 
     // triangle tests
-    results.push_back(intersect_triangle());
-    results.push_back(dont_intersect_because_origin());
-    results.push_back(dont_intersect_because_direction());
+    for (const auto &result : runTriangleTests()) {
+        results.push_back(result);
+    }
     
     // mesh tests
-    results.push_back(intersect_vertices_first());
-    results.push_back(intersect_vertices_last());
+     for (const auto &result : runVerticesTests()) {
+        results.push_back(result);
+    }
 
     // scene tests
-    results.push_back(intersect_node_with_position_transform());
-    results.push_back(intersect_node_with_multiple_position_transform());
-    results.push_back(intersect_node_with_roation_transform());
+    for (const auto &result : runSceneTests()) {
+        results.push_back(result);
+    }
 
     int total = 0;
     int passed = 0;

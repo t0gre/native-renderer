@@ -1,5 +1,5 @@
 #include "mesh.h"
-#include "test_helpers.cpp"
+#include "test_helpers.h"
 #include <raycast.h>
 
 Vertices setupData() {
@@ -50,7 +50,7 @@ TestResult intersect_vertices_first() {
 
     auto result = rayIntersectsVertices(ray, meshVertices);
 
-    const Intersection expected = { 
+    const VertexIntersection expected = { 
         .point = { -1.f, 0.f, 0.f}, 
         .triangleIdx = 0 
     };
@@ -61,7 +61,7 @@ TestResult intersect_vertices_first() {
             .message = "no intersection found",
         };
     } else {
-        Intersection intersection_result = result[0];
+        VertexIntersection intersection_result = result[0];
         if (vec3sAreEqual(expected.point, intersection_result.point) &&
             expected.triangleIdx == intersection_result.triangleIdx) {
            return (TestResult){
@@ -92,7 +92,7 @@ TestResult intersect_vertices_last() {
 
     auto result = rayIntersectsVertices(ray, meshVertices);
 
-    const Intersection expected = { 
+    const VertexIntersection expected = { 
         .point = { 1.f, 0.f, 0.f}, 
         .triangleIdx = 1 
     };
@@ -103,7 +103,7 @@ TestResult intersect_vertices_last() {
             .message = "no intersection found",
         };
     } else {
-        Intersection intersection_result = result[0];
+        VertexIntersection intersection_result = result[0];
         if (vec3sAreEqual(expected.point, intersection_result.point) &&
             expected.triangleIdx == intersection_result.triangleIdx) {
            return (TestResult){
@@ -122,4 +122,11 @@ TestResult intersect_vertices_last() {
 }
 
 
+std::vector<TestResult> runVerticesTests() {
+     
+    std::vector<TestResult> results;
+    results.push_back(intersect_vertices_first());
+    results.push_back(intersect_vertices_last());
 
+    return results;
+}

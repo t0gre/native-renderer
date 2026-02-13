@@ -2,7 +2,7 @@
 
 #include "mesh.h"
 #include "scene.h"
-#include "test_helpers.cpp"
+#include "test_helpers.h"
 #include "raycast.h"
 
 using namespace mym;
@@ -49,7 +49,7 @@ const BasicColorMaterial irrelevant = {
 
 TestResult intersect_node_with_position_transform() {
    
-    auto vertices = setupData();
+    auto vertices = setupVertices();
 
     Mat4 transform = fromPositionAndEuler(
             (Vec3){ .x = -2.f, .y = 0.f, .z = 0.f }, 
@@ -71,7 +71,7 @@ TestResult intersect_node_with_position_transform() {
 
     auto result = rayIntersectsSceneNode(ray, node);
 
-    const Intersection expected = { 
+    const VertexIntersection expected = { 
         .point = { -11.f, 0.f, 0.f}, 
         .triangleIdx = 0 
     };
@@ -83,9 +83,9 @@ TestResult intersect_node_with_position_transform() {
            
         };
     } else {
-        Intersection intersection_result = result[0];
-        if (vec3sAreEqual(expected.point, intersection_result.point) &&
-            expected.triangleIdx == intersection_result.triangleIdx) {
+        NodeIntersection intersection_result = result[0];
+        if (vec3sAreEqual(expected.point, intersection_result.meshIntersection.vertexIntersection.point) &&
+            expected.triangleIdx == intersection_result.meshIntersection.vertexIntersection.triangleIdx) {
            return (TestResult){
             .pass = true,
             .message = "correct intersection was found",
@@ -104,7 +104,7 @@ TestResult intersect_node_with_position_transform() {
 
 TestResult intersect_node_with_multiple_position_transform() {
    
-    auto vertices = setupData();
+    auto vertices = setupVertices();
 
     Mat4 transform = fromPositionAndEuler(
             (Vec3){ .x = -2.f, .y = 0.f, .z = 0.f }, 
@@ -136,7 +136,7 @@ TestResult intersect_node_with_multiple_position_transform() {
 
     auto result = rayIntersectsSceneNode(ray, parentNode);
 
-    const Intersection expected = { 
+    const VertexIntersection expected = { 
         .point = { -11.f, 0.f, 0.f}, 
         .triangleIdx = 0 
     };
@@ -148,9 +148,9 @@ TestResult intersect_node_with_multiple_position_transform() {
            
         };
     } else {
-        Intersection intersection_result = result[0];
-        if (vec3sAreEqual(expected.point, intersection_result.point) &&
-            expected.triangleIdx == intersection_result.triangleIdx) {
+        NodeIntersection intersection_result = result[0];
+        if (vec3sAreEqual(expected.point, intersection_result.meshIntersection.vertexIntersection.point) &&
+            expected.triangleIdx == intersection_result.meshIntersection.vertexIntersection.triangleIdx) {
            return (TestResult){
             .pass = true,
             .message = "correct intersection was found",
@@ -169,7 +169,7 @@ TestResult intersect_node_with_multiple_position_transform() {
 
 TestResult intersect_node_with_roation_transform() {
    
-    auto vertices = setupData();
+    auto vertices = setupVertices();
 
     Mat4 transform = fromPositionAndEuler(
             (Vec3){ .x = 0.f, .y = 0.f, .z = 0.f }, 
@@ -191,7 +191,7 @@ TestResult intersect_node_with_roation_transform() {
 
     auto result = rayIntersectsSceneNode(ray, node);
 
-    const Intersection expected = { 
+    const VertexIntersection expected = { 
         .point = { -1.f, -1.f, 0.f}, 
         .triangleIdx = 0 
     };
@@ -203,9 +203,9 @@ TestResult intersect_node_with_roation_transform() {
            
         };
     } else {
-        Intersection intersection_result = result[0];
-        if (vec3sAreEqual(expected.point, intersection_result.point) &&
-            expected.triangleIdx == intersection_result.triangleIdx) {
+        NodeIntersection intersection_result = result[0];
+        if (vec3sAreEqual(expected.point, intersection_result.meshIntersection.vertexIntersection.point) &&
+            expected.triangleIdx == intersection_result.meshIntersection.vertexIntersection.triangleIdx) {
            return (TestResult){
             .pass = true,
             .message = "correct intersection was found",
@@ -220,4 +220,14 @@ TestResult intersect_node_with_roation_transform() {
         }
     }
 
+}
+
+std::vector<TestResult> runSceneTests() {
+     
+    std::vector<TestResult> results;
+    results.push_back(intersect_node_with_position_transform());
+    results.push_back(intersect_node_with_multiple_position_transform());
+    results.push_back(intersect_node_with_roation_transform());
+
+    return results;
 }
