@@ -59,7 +59,10 @@ void processEvents(WindowState& window, Camera& camera, InputState& input, Scene
     while (SDL_PollEvent(&event))
     {
         ImGui_ImplSDL3_ProcessEvent(&event);
-        switch (event.type)
+
+        if(const auto& io = ImGui::GetIO(); !io.WantCaptureMouse && !io.WantCaptureKeyboard) {
+        
+            switch (event.type)
         {
             case SDL_EVENT_QUIT:
                 window.should_close = true;
@@ -175,8 +178,6 @@ void processEvents(WindowState& window, Camera& camera, InputState& input, Scene
                 }
                 break;
             }
-        }
-
-        
+        }}    
     }
 }
