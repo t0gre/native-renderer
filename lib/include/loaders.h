@@ -1,7 +1,6 @@
 #ifndef LOADER_H
 #define LOADER_H
 
-#include "mesh.h"
 #include "scene.h"
 #include "mystl.hpp"
 

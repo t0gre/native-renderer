@@ -2,5 +2,5 @@
 
 typedef struct InputState {
     bool pointer_down;
-    Vec2 pointer_position;
+    mym::Vec2 pointer_position;
 } InputState;

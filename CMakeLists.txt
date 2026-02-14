@@ -50,3 +50,24 @@ add_custom_command(
           ${CMAKE_SOURCE_DIR}/lib/shaders ${CMAKE_BINARY_DIR}/shaders
          COMMENT "Copying shaders to build directory" VERBATIM
          )
+
+
+######################## tests ##############
+
+
+# executable
+add_executable(tests 
+    tests/tests.cpp 
+    tests/test_helpers.cpp
+    tests/raycast_scene_tests.cpp
+    tests/raycast_triangle_tests.cpp
+    tests/raycast_vertices_tests.cpp
+    )
+
+target_link_libraries(tests PRIVATE 
+    mym
+    lib 
+)
+
+target_include_directories(tests PUBLIC tests/include)
+

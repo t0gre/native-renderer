@@ -11,3 +11,6 @@ native
 **/test-run
 Debug
 Release
+
+.cache
+.zed

@@ -40,6 +40,7 @@ Vertices setupVertices() {
 
     return vertices;
 }
+
    
 const BasicColorMaterial irrelevant = {
             .color = { .r = 0.1, .g = 0.7, .b = 0.1},

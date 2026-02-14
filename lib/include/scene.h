@@ -5,9 +5,9 @@
 #include <string>
 
 #include "light.h"
-#include "camera.h"
 #include "mesh.h"
 #include "mystl.hpp"
+#include "mat4.h"
 
 
 struct Entity {

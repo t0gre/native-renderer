@@ -1,7 +1,6 @@
 #ifndef MYSTL_H
 #define MYSTL_H
 
-#include <memory>
 #include <stdexcept>
 
 template<class T>
