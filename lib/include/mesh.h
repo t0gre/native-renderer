@@ -3,9 +3,6 @@
 
 #include <optional>
 #include <assert.h>
-#include "camera.h"
-#include "light.h"
-#include "vec.h"
 #include "material.h"
 #include "mystl.hpp"
 

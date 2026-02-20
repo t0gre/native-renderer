@@ -17,13 +17,13 @@ using namespace mym;
 void updateScene(Scene& scene, float dt) {
     ZoneScoped;
     Mat4 rotator = yRotation(PI / (dt * 10));
-    Vec4 oldMatrix = { 
+    Vec4 oldMatrix = {
         .x = scene.point_light.position.x,
         .y = scene.point_light.position.y,
         .z = scene.point_light.position.z,
         .w = 0.0
     };
-    
+
     positionMultiply(scene.point_light.position, rotator);
 
 }
@@ -39,7 +39,7 @@ int main(int argc, char** argv)
     };
 
     WindowState window = initWindow("Tom");
-       
+
     GlRenderer renderer;
 
     // create lights
@@ -71,8 +71,8 @@ int main(int argc, char** argv)
     // non-indexed mesh: ensure index_count is zero
     vertices.index_count = 0;
     vertices.positions = positions;
-    vertices.normals = normals;    
-    
+    vertices.normals = normals;
+
 
     BasicColorMaterial greenMaterial = {
                     .color = { .r = 0.1, .g = 0.7, .b = 0.1},
@@ -81,7 +81,7 @@ int main(int argc, char** argv)
                 };
 
     SceneNode green_tree = createSceneNode(fromPositionAndEuler(
-            (Vec3){ .x = 0.f, .y = 0.f, .z = 0.f }, 
+            (Vec3){ .x = 0.f, .y = 0.f, .z = 0.f },
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
                 .vertices =vertices,
@@ -95,9 +95,9 @@ int main(int argc, char** argv)
                     .specular_color = { .r = 0.2, .g = 0.2, .b = 0.2},
                     .shininess = 0.9f
                 };
-    
+
     SceneNode grey_tree = createSceneNode(fromPositionAndEuler(
-            (Vec3){ .x = 5.f, .y = 0.f, .z = 0.f }, 
+            (Vec3){ .x = 5.f, .y = 0.f, .z = 0.f },
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
                 .vertices =vertices,
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
             },
             "grey tree"
         );
-    
+
     BasicColorMaterial blueMaterial = {
                     .color = { .r = 0.1, .g = 0.5, .b = 0.8},
                     .specular_color = { .r = 0.2, .g = 0.2, .b = 0.2},
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
                 };
 
     SceneNode blue_tree = createSceneNode(fromPositionAndEuler(
-            (Vec3){ .x = 5.f, .y = 0.f, .z = 0.f }, 
+            (Vec3){ .x = 5.f, .y = 0.f, .z = 0.f },
             (Vec3){  .x = 0.f, .y = PI / 2.f, .z = 0.f }),
             (Mesh){
                 .vertices =vertices,
@@ -121,7 +121,7 @@ int main(int argc, char** argv)
             },
             "blue tree"
         );
-    
+
     setParent(grey_tree, blue_tree);
     setParent(blue_tree, green_tree);
 
@@ -147,7 +147,7 @@ int main(int argc, char** argv)
 
     for (size_t i = 0; i < 18; i ++) {
         floor_vertices.positions.push_back(floor_positions_data[i]);
-        floor_vertices.normals.push_back(floor_normals_data[i]);    
+        floor_vertices.normals.push_back(floor_normals_data[i]);
     }
 
     floor_vertices.vertex_count = 6;
@@ -157,10 +157,10 @@ int main(int argc, char** argv)
                     .color = { .r = 0.9, .g = 0.7, .b = 0.1},
                     .specular_color = { .r = 0.9, .g = 0.9, .b = 0.9},
                     .shininess = 1000.f
-                };  
+                };
 
     SceneNode floor_model = createSceneNode(fromPositionAndEuler(
-            (Vec3){ .x = 0.f, .y = 0.0f, .z = 0.f }, 
+            (Vec3){ .x = 0.f, .y = 0.0f, .z = 0.f },
             (Vec3) { .x = 0.f, .y = 0.f, .z = 0.f }),
             (Mesh){
                 .vertices =floor_vertices,
@@ -191,12 +191,12 @@ int main(int argc, char** argv)
     bowl.name = "bowl";
     translate(bowl.local_transform, -10.0f, 0.35f, -3.f);
     scale(bowl.local_transform, 10.f, 10.f, 10.f);
-        
+
     updateWorldTransform(&bowl);
     scene_nodes.push_back(&bowl);
 
-    
-    Scene scene =  { 
+
+    Scene scene =  {
         .nodes = scene_nodes,
         .ambient_light = ambient_light,
         .directional_light = directional_light,
@@ -214,25 +214,25 @@ int main(int argc, char** argv)
     };
 
     Vec3 cameraPosition = calculateOrbitPosition(
-        orbit.azimuth, 
+        orbit.azimuth,
         orbit.elevation,
-        orbit.target,   
+        orbit.target,
         orbit.radius
     );
 
     // create a camera
     Camera camera = {
         .field_of_view_radians = 1.f,
-        .aspect = (float)window.width / (float)window.height, 
+        .aspect = (float)window.width / (float)window.height,
         .near = 1.f,
-        .far = 2000.f, 
-        .up = up, 
+        .far = 2000.f,
+        .up = up,
         .transform = lookAt(cameraPosition, orbit.target, up),
         .orbit = orbit
         };
 
     Uint64 now = SDL_GetPerformanceCounter();
-    
+
     Uint64 last_frame_time = now;
 
     // Setup Dear ImGui context
@@ -261,38 +261,38 @@ int main(int argc, char** argv)
             puts(error);
             SDL_ClearError();
         }
-    
-        
+
+
         updateScene(scene, deltaTime);
-        
+
         // even is forwarded to imgui in here
         processEvents(window, camera, input, scene, app_state);
 
 
         // Clear screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+
         renderer.drawGl(
-            window, 
-            camera, 
+            window,
+            camera,
             scene
             );
 
-        
+
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::Begin("Info Panel");                
-        ImGui::Text("Scene info");               
+        ImGui::Begin("Info Panel");
+        ImGui::Text("Scene info");
 
         if (app_state.selected_entity.has_value()) {
-            ImGui::Text("Selected Entity"); 
+            ImGui::Text("Selected Entity");
             ImGui::Text("id = %zu", app_state.selected_entity.value().id);
             ImGui::SameLine();
             ImGui::Text("name = %s", app_state.selected_entity.value().name.value_or("").c_str());
         }
-       
+
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
         ImGui::End();
 

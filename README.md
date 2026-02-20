@@ -10,33 +10,25 @@
 
 ## Building the main app with CMake (for dev)
 
-mkdir Debug && cd Debug  
-cmake -DCMAKE_BUILD_TYPE=Debug ..  
-cmake --build .  
+
+cmake --preset debug 
+cmake --build --preset app-debug
+cd build/debug
 ./native  
 
 ## Building the main app with CMake (for release)
 
-mkdir Release && cd Release  
-cmake -DCMAKE_BUILD_TYPE=Release ..  
-cmake --build .  
+cmake --preset release 
+cmake --build --preset app-release 
+cd build/debug
 ./native  
 
 ## Building the tests with CMake (for dev)
 
-cd tests  
-mkdir Debug && cd Debug  
-cmake -DCMAKE_BUILD_TYPE=Debug ..  
-cmake --build .  
+cmake --preset debug 
+cmake --build --preset tests-debug 
+cd build/debug 
 ./tests 
-
-## Building the tests with CMake (for ci)
-
-cd tests  
-mkdir Release && cd Release  
-cmake -DCMAKE_BUILD_TYPE=Release ..  
-cmake --build .  
-./tests  
 
 
 ## Platform support
@@ -49,7 +41,8 @@ build or run the app
 
 the cmake script for copying shaders only works when
 cmake see a change to a cpp or header file, so there's a copy_shaders.sh script 
-as a workaround for when you've only changed the shaders
+as a workaround for when you've only changed the shaders 
+TODO is this still true?
 
 ## profiling with tracy
 
@@ -67,5 +60,10 @@ to build, and then, finally
 
 `./profiler/build/tracy-profiler` to run
 
-also, you might need to run cmake on the main app with `DCMAKE_BUILD_TYPE=RelWithDebIndo`. I don't know why but the profile doesn't seem to find
-the app if it's set to the normal dev-mode `Debug`  
+also, you might need to run cmake on the main app with
+
+cmake --preset profile
+cmake --build --preset app-profile 
+
+I don't know why but the profile doesn't seem to find
+the app if it's set to the normal dev-mode `debug`  

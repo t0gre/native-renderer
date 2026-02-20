@@ -1,13 +1,13 @@
 #ifndef RAYCAST_H
 #define RAYCAST_H
 
-#include <vector>
 #include <string>
 
 #include "vec.h"
 #include "mesh.h"
 #include "scene.h"
 #include "mystl.hpp"
+#include "camera.h"
 
 
 struct Triangle {
