@@ -74,8 +74,7 @@ void processEvents(WindowState& window, Camera& camera, InputState& input, Scene
                 {
                     int width = event.window.data1; 
                     int height = event.window.data2;
-                    glViewport(0, 0, width, height);
-
+                    
                     camera.aspect = (float)width / (float)height;
 
                     window.width = width;

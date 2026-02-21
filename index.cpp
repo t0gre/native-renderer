@@ -244,30 +244,33 @@ int main(int argc, char** argv)
     ImGui_ImplSDL3_InitForOpenGL(window.object, window.context);
     ImGui_ImplOpenGL3_Init("#version 300 es");
 
-    while(!window.should_close) {
+    std::thread gamethread([&scene, &last_frame_time, &window, &camera, &app_state, &input] { 
+            
+        while(!window.should_close) {
 
+            // calculate deltaTime
+            const Uint64 now = SDL_GetPerformanceCounter();
+            const Uint64 last = last_frame_time;
 
+            const double deltaTime = ((now - last)*1000 / (double)SDL_GetPerformanceFrequency());
+            last_frame_time = now;
 
-        // calculate deltaTime
-        const Uint64 now = SDL_GetPerformanceCounter();
-        const Uint64 last = last_frame_time;
+            // log errors
+            const char* error = SDL_GetError();
+            if (error[0] != '\0') {
+                puts(error);
+                SDL_ClearError();
+            }
 
-        const double deltaTime = ((now - last)*1000 / (double)SDL_GetPerformanceFrequency());
-        last_frame_time = now;
-
-        // log errors
-        const char* error = SDL_GetError();
-        if (error[0] != '\0') {
-            puts(error);
-            SDL_ClearError();
+            updateScene(scene, deltaTime);
+            // even is forwarded to imgui in here
+            processEvents(window, camera, input, scene, app_state);
         }
+    });
+    
+        
 
-
-        updateScene(scene, deltaTime);
-
-        // even is forwarded to imgui in here
-        processEvents(window, camera, input, scene, app_state);
-
+    while(!window.should_close) {
 
         // Clear screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -304,5 +307,7 @@ int main(int argc, char** argv)
 
     }
 
+    gamethread.join();
+    
     return 0;
 }

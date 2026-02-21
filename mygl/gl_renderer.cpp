@@ -67,7 +67,7 @@ void GlRenderer::drawGl(
 )
 {
     
-
+    glViewport(0, 0, window.width, window.height);
     // draw shadows
     // 1. Render to shadow map
     glBindFramebuffer(GL_FRAMEBUFFER, shadow_map.framebuffer);
