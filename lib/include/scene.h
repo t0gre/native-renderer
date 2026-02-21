@@ -9,17 +9,6 @@
 #include "mystl.hpp"
 #include "mat4.h"
 
-
-struct Entity {
-    size_t id;
-    std::optional<std::string> name;
-};
-
-struct AppState {
-    std::optional<Entity> selected_entity;
-};
-
-
 typedef struct SceneNode {
     size_t id;
     Mat4 local_transform; 
