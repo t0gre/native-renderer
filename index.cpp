@@ -6,6 +6,7 @@
 #include "gl_renderer.h"
 #include "scene.h"
 #include "events.h"
+#include "input.h"
 #include "tracy/Tracy.hpp"
 
 #include "imgui.h"
@@ -308,6 +309,6 @@ int main(int argc, char** argv)
     }
 
     gamethread.join();
-    
+
     return 0;
 }
