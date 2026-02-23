@@ -1,19 +1,20 @@
 # pragma once
 
 #include "sdl_state.h"
-#include "input.h"
 #include "camera.h"
 #include "scene.h"
-
+#include "vec.h"
 
 struct Entity {
     size_t id;
     std::optional<std::string> name;
 };
 
-struct AppState {
+typedef struct InputState {
+    bool pointer_down;
+    mym::Vec2 pointer_position;
     std::optional<Entity> selected_entity;
-};
+} InputState;
 
 
-void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene, AppState& appState);
+void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene);

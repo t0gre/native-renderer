@@ -51,7 +51,7 @@ Ray getWorldRayFromClipSpaceAndCamera(
     return worldRay;
 }
 
-void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene, AppState& appState)
+void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene)
 {
     ZoneScoped;
     // Handle events
@@ -129,7 +129,7 @@ void processEvents(WindowState& window, Camera& camera, InputState& input, Scene
                         }
                     }
 
-                    appState.selected_entity = {
+                    input.selected_entity = {
                         .id = clicked.id,
                         .name = clicked.nodeName,
                     };

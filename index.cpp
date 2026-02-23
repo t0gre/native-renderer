@@ -6,7 +6,6 @@
 #include "gl_renderer.h"
 #include "scene.h"
 #include "events.h"
-#include "input.h"
 #include "tracy/Tracy.hpp"
 
 #include "imgui.h"
@@ -32,11 +31,11 @@ void updateScene(Scene& scene, float dt) {
 
 int main(int argc, char** argv)
 {
-    AppState app_state;
+   
 
     InputState input = {
         .pointer_down = false,
-        .pointer_position = { 0 }
+        .pointer_position = { 0 },
     };
 
     WindowState window = initWindow("Tom");
@@ -247,7 +246,7 @@ int main(int argc, char** argv)
 
 
     //TODO mutex shared state
-    std::thread gamethread([&scene, &last_frame_time, &window, &camera, &app_state, &input] { 
+    std::thread gamethread([&scene, &last_frame_time, &window, &camera, &input] { 
             
         while(!window.should_close) {
 
@@ -267,7 +266,7 @@ int main(int argc, char** argv)
 
             updateScene(scene, deltaTime);
             // even is forwarded to imgui in here
-            processEvents(window, camera, input, scene, app_state);
+            processEvents(window, camera, input, scene);
         }
     });
     
@@ -292,11 +291,11 @@ int main(int argc, char** argv)
         ImGui::Begin("Info Panel");
         ImGui::Text("Scene info");
 
-        if (app_state.selected_entity.has_value()) {
+        if (input.selected_entity.has_value()) {
             ImGui::Text("Selected Entity");
-            ImGui::Text("id = %zu", app_state.selected_entity.value().id);
+            ImGui::Text("id = %zu", input.selected_entity.value().id);
             ImGui::SameLine();
-            ImGui::Text("name = %s", app_state.selected_entity.value().name.value_or("").c_str());
+            ImGui::Text("name = %s", input.selected_entity.value().name.value_or("").c_str());
         }
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
