@@ -245,6 +245,8 @@ int main(int argc, char** argv)
     ImGui_ImplSDL3_InitForOpenGL(window.object, window.context);
     ImGui_ImplOpenGL3_Init("#version 300 es");
 
+
+    //TODO mutex shared state
     std::thread gamethread([&scene, &last_frame_time, &window, &camera, &app_state, &input] { 
             
         while(!window.should_close) {
