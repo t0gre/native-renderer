@@ -4,6 +4,7 @@
 - scene graph
 - raycasting
 - shadow mapping
+- multi-threading
 
 
 ![screenshot](/docs/screenshot.png "Screenshot")
