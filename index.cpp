@@ -11,6 +11,7 @@
 #include "imgui.h"
 #include "backends/imgui_impl_sdl3.h"
 #include "backends/imgui_impl_opengl3.h"
+#include <mutex>
 
 using namespace mym;
 
@@ -39,6 +40,7 @@ int main(int argc, char** argv)
     };
 
     WindowState window = initWindow("Tom");
+    std::mutex window_mutex;
 
     GlRenderer renderer;
 
@@ -202,6 +204,8 @@ int main(int argc, char** argv)
         .directional_light = directional_light,
         .point_light = point_light,
         };
+    
+    std::mutex scene_mutex;
 
 
     Vec3 up = { .x = 0.f, .y = 1.f, .z = 0.f };
@@ -230,6 +234,7 @@ int main(int argc, char** argv)
         .transform = lookAt(cameraPosition, orbit.target, up),
         .orbit = orbit
         };
+    std::mutex camera_mutex;
 
     Uint64 now = SDL_GetPerformanceCounter();
 
@@ -246,7 +251,16 @@ int main(int argc, char** argv)
 
 
     //TODO mutex shared state
-    std::thread gamethread([&scene, &last_frame_time, &window, &camera, &input] { 
+    std::thread gamethread([
+        &scene, 
+        &last_frame_time, 
+        &window, 
+        &camera, 
+        &input, 
+        &scene_mutex,
+        &camera_mutex,
+        &window_mutex
+    ] { 
             
         while(!window.should_close) {
 
@@ -264,8 +278,12 @@ int main(int argc, char** argv)
                 SDL_ClearError();
             }
 
+            std::lock_guard<std::mutex> scene_guard(scene_mutex);
             updateScene(scene, deltaTime);
-            // even is forwarded to imgui in here
+            
+            std::lock_guard<std::mutex> camera_guard(camera_mutex);
+            std::lock_guard<std::mutex> window_guard(window_mutex);
+            // event is forwarded to imgui in here
             processEvents(window, camera, input, scene);
         }
     });
@@ -274,14 +292,23 @@ int main(int argc, char** argv)
 
     while(!window.should_close) {
 
+
         // Clear screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        
+        scene_mutex.lock();
+        camera_mutex.lock();
+        window_mutex.lock();
         renderer.drawGl(
             window,
             camera,
             scene
             );
+        // reverse order of locking
+        window_mutex.unlock();
+        camera_mutex.unlock();
+        scene_mutex.unlock();
 
 
         ImGui_ImplOpenGL3_NewFrame();
