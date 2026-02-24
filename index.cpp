@@ -14,6 +14,9 @@
 #include <mutex>
 
 using namespace mym;
+#define UPDATE_INTERVAL 10
+
+float  dt = 1.0f/UPDATE_INTERVAL;
 
 void updateScene(Scene& scene, float dt) {
     ZoneScoped;
@@ -236,10 +239,6 @@ int main(int argc, char** argv)
         };
     TracyLockable(std::mutex, camera_mutex);
 
-    Uint64 now = SDL_GetPerformanceCounter();
-
-    Uint64 last_frame_time = now;
-
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -249,14 +248,16 @@ int main(int argc, char** argv)
     ImGui_ImplSDL3_InitForOpenGL(window.object, window.context);
     ImGui_ImplOpenGL3_Init("#version 300 es");
 
+    auto next_update_time = std::chrono::steady_clock::now();
+    
 
     //TODO mutex shared state
     std::thread gamethread([
         &scene, 
-        &last_frame_time, 
         &window, 
         &camera, 
         &input, 
+        &next_update_time,
         &scene_mutex,
         &camera_mutex,
         &window_mutex
@@ -264,27 +265,19 @@ int main(int argc, char** argv)
             
         while(!window.should_close) {
 
-            // calculate deltaTime
-            const Uint64 now = SDL_GetPerformanceCounter();
-            const Uint64 last = last_frame_time;
-
-            const double deltaTime = ((now - last)*1000 / (double)SDL_GetPerformanceFrequency());
-            last_frame_time = now;
-
-            // log errors
-            const char* error = SDL_GetError();
-            if (error[0] != '\0') {
-                puts(error);
-                SDL_ClearError();
+           
+            {
+                std::lock_guard<LockableBase(std::mutex)> scene_guard(scene_mutex);
+                updateScene(scene, dt);
+                
+                std::lock_guard<LockableBase(std::mutex)> camera_guard(camera_mutex);
+                std::lock_guard<LockableBase(std::mutex)> window_guard(window_mutex);
+                // event is forwarded to imgui in here
+                processEvents(window, camera, input, scene);
             }
-
-            std::lock_guard<LockableBase(std::mutex)> scene_guard(scene_mutex);
-            updateScene(scene, deltaTime);
             
-            std::lock_guard<LockableBase(std::mutex)> camera_guard(camera_mutex);
-            std::lock_guard<LockableBase(std::mutex)> window_guard(window_mutex);
-            // event is forwarded to imgui in here
-            processEvents(window, camera, input, scene);
+            next_update_time += std::chrono::milliseconds(UPDATE_INTERVAL);
+            std::this_thread::sleep_until(next_update_time);
         }
     });
     
@@ -295,6 +288,13 @@ int main(int argc, char** argv)
 
         // Clear screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // log errors
+        const char* error = SDL_GetError();
+        if (error[0] != '\0') {
+            puts(error);
+            SDL_ClearError();
+        }
 
         
         scene_mutex.lock();
