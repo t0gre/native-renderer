@@ -40,7 +40,7 @@ int main(int argc, char** argv)
     };
 
     WindowState window = initWindow("Tom");
-    std::mutex window_mutex;
+    TracyLockable(std::mutex, window_mutex);
 
     GlRenderer renderer;
 
@@ -205,7 +205,7 @@ int main(int argc, char** argv)
         .point_light = point_light,
         };
     
-    std::mutex scene_mutex;
+    TracyLockable(std::mutex, scene_mutex);
 
 
     Vec3 up = { .x = 0.f, .y = 1.f, .z = 0.f };
@@ -234,7 +234,7 @@ int main(int argc, char** argv)
         .transform = lookAt(cameraPosition, orbit.target, up),
         .orbit = orbit
         };
-    std::mutex camera_mutex;
+    TracyLockable(std::mutex, camera_mutex);
 
     Uint64 now = SDL_GetPerformanceCounter();
 
@@ -278,11 +278,11 @@ int main(int argc, char** argv)
                 SDL_ClearError();
             }
 
-            std::lock_guard<std::mutex> scene_guard(scene_mutex);
+            std::lock_guard<LockableBase(std::mutex)> scene_guard(scene_mutex);
             updateScene(scene, deltaTime);
             
-            std::lock_guard<std::mutex> camera_guard(camera_mutex);
-            std::lock_guard<std::mutex> window_guard(window_mutex);
+            std::lock_guard<LockableBase(std::mutex)> camera_guard(camera_mutex);
+            std::lock_guard<LockableBase(std::mutex)> window_guard(window_mutex);
             // event is forwarded to imgui in here
             processEvents(window, camera, input, scene);
         }
