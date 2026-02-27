@@ -25,6 +25,7 @@ jobs:
         path: ccache
         key: ccache-cache-${{ github.sha }}  
         restore-keys: |
+          ccache-cache
           ccache-cache-  
 
     - if: ${{ steps.cache-ccache.outputs.cache-hit == 'true' }}
