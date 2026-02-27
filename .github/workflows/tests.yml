@@ -22,10 +22,10 @@ jobs:
       id: cache-ccache
       uses: actions/cache@v4
       with:
-        path: $HOME/.cache
-        key: ccache
+        path: ccache
+        key: ccache-cache  
         restore-keys: |
-          $HOME/.cache/ccache
+          ccache-cache  
 
     - if: ${{ steps.cache-ccache.outputs.cache-hit == 'true' }}
       name: Report on cache
@@ -44,7 +44,7 @@ jobs:
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. 
-      run: cmake --preset debug -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+      run: CCACHE_DIR=$PWD/ccache cmake --preset debug -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
     - name: Build
       # Build your program with the given configuration
