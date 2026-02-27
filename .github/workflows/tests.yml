@@ -28,9 +28,7 @@ jobs:
           ccache-cache
           ccache-cache-  
 
-    - if: ${{ steps.cache-ccache.outputs.cache-hit == 'true' }}
-      name: Report on cache
-      continue-on-error: true
+    - name: Check cache
       run: ls ccache
 
     - name: Deps
