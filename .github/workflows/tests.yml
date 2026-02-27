@@ -4,32 +4,39 @@ on:
   pull_request:
     branches: [ "main" ]
   
-env:
-  SCCACHE_GHA_ENABLED: "true"
-
 jobs:
   tests:
-    
 
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
-
-    
     steps:
+    
+    - name: Checkout this repo
+      uses: actions/checkout@v4
+      
+    - name: Get submodules cache key
+      id: submodules-key
+      uses: ./.github/actions/lstree
+      with:
+        paths: third_party/assimp,third_party/SDL,third_party/tracy
 
-    - name: Run sccache-cache
-      uses: mozilla-actions/sccache-action@v0.0.9
+    - name: Cache Submodules
+      id: cache-submodule
+      uses: actions/cache@v4
+      with:
+        path: |
+          third_party/assimp
+          third_party/SDL
+          third_party/tracy
+        key: ${{ steps.submodules-key.outputs.name }}
 
-    - name: Run sccache stat for check
-      shell: bash
-      run: ${SCCACHE_PATH} --show-stats
-
-    - uses: actions/checkout@v4
+    - name: Checkout submodules
+      if: steps.cache-submodule.outputs.cache-hit != 'true'
+      uses: actions/checkout@v4
       with:
         submodules: recursive
-
 
     - name: Deps
       run: |
@@ -40,9 +47,10 @@ jobs:
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev
+            
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. 
-      run: cmake --preset debug -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+      run: cmake --preset debug
 
     - name: Build
       # Build your program with the given configuration
