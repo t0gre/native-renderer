@@ -22,7 +22,7 @@ jobs:
       id: cache-cmake
       uses: actions/cache/v4
       with:
-      path: build/debug
+        path: build/debug
 
     - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
       name: Report on cache
