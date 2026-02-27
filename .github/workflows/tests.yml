@@ -3,6 +3,9 @@ name: CMake on a single platform
 on:
   pull_request:
     branches: [ "main" ]
+  
+env:
+  SCCACHE_GHA_ENABLED: "true"
 
 jobs:
   tests:
@@ -16,11 +19,12 @@ jobs:
     
     steps:
 
-    - name: Cache git folder
-      uses: actions/cache@v3
-      with:
-        path: checkout_path/.git
-        key: git-folder
+    - name: Run sccache-cache
+      uses: mozilla-actions/sccache-action@v0.0.9
+
+    - name: Run sccache stat for check
+      shell: bash
+      run: ${SCCACHE_PATH} --show-stats
 
     - uses: actions/checkout@v4
       with:
@@ -38,7 +42,7 @@ jobs:
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. 
-      run: cmake --preset debug
+      run: cmake --preset debug -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
     - name: Build
       # Build your program with the given configuration
