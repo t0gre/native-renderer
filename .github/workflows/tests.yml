@@ -24,8 +24,8 @@ jobs:
       with:
         path: $HOME/.cache/ccache
         key: cache-cache
-      restore-keys: |
-        $HOME/.cache/ccache
+        restore-keys: |
+          $HOME/.cache/ccache
 
     - if: ${{ steps.cache-ccache.outputs.cache-hit == 'true' }}
       name: Report on cache
