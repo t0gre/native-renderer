@@ -1,8 +1,5 @@
 #include "scene.h"
 #include "mat4.h"
-#include "camera.h"
-
-
 
 size_t sceneNodeCounter = 0;
 

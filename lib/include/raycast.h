@@ -55,4 +55,8 @@ void sortBySceneDepth(
     Camera camera
 );
 
+Vec2 getPointerClickInClipSpace(const int mouse_x, const int mouse_y, const int canvas_width, const int canvas_height);
+
+Ray getWorldRayFromClipSpaceAndCamera(Vec2 clipSpacePoint, Camera camera);
+
 #endif  

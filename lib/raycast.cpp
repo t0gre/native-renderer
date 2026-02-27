@@ -7,6 +7,43 @@
 #include <algorithm>
 #include "mystl.hpp"
 
+Vec2 getPointerClickInClipSpace(const int mouse_x, const int mouse_y, const int canvas_width, const int canvas_height) {
+    // Convert from window coordinates to normalized device coordinates (clip space)
+    const float x = static_cast<float>(mouse_x) / static_cast<float>(canvas_width) * 2.0f - 1.0f;
+    const float y = static_cast<float>(mouse_y) / static_cast<float>(canvas_height) * -2.0f + 1.0f;
+    return { x, y };
+}
+
+Ray getWorldRayFromClipSpaceAndCamera(
+    Vec2 clipSpacePoint, 
+    Camera camera) {
+
+    float x = clipSpacePoint.x;
+    float y = clipSpacePoint.y;
+
+    Vec3 nearPoint  = {x, y, -1.f};
+    Vec3 farPoint  = {x, y,  1};
+
+    const Mat4 viewMatrix = inverse(camera.transform);
+    const Mat4 projectionMatrix = getProjectionMatrix(camera);
+    const Mat4 viewProjInverse = inverse(multiplied(projectionMatrix, viewMatrix));
+
+    const Vec3 worldNear = positionMultiplied(nearPoint, viewProjInverse);
+    const Vec3 worldFar  = positionMultiplied(farPoint, viewProjInverse);
+
+    auto rayOrigin = worldNear;
+
+    const Vec3 rayDirection = subtractVectors(worldFar, worldNear);
+
+    auto rayDirNorm = normalize(rayDirection);
+
+    Ray worldRay = {
+        .origin = rayOrigin,
+        .direction = rayDirNorm
+    };
+
+    return worldRay;
+}
 
 Vec3Result rayIntersectsTriangle(Ray ray, Triangle triangle) {
 

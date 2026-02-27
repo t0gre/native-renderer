@@ -12,5 +12,6 @@ native
 Debug
 Release
 
+ccache
 .cache
 # .zed
