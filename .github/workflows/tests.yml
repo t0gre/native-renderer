@@ -16,21 +16,12 @@ jobs:
     - name: Checkout this repo
       uses: actions/checkout@v4
       
-    # N.B. this needs updating if deps change
-    - name: Get submodules cache key
-      id: submodules-key
-      run: echo "assimp-sdl-tracy"
-
     - name: Cache Submodules
       id: cache-submodule
       uses: actions/cache@v4
       with:
-        key: ${{ steps.submodules-key.outputs.name }}
-        path: |
-          third_party/assimp
-          third_party/SDL
-          third_party/tracy
-        
+        key: third_party
+        path: third_party
 
     - name: Checkout submodules
       if: steps.cache-submodule.outputs.cache-hit != 'true'
