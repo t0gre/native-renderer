@@ -51,7 +51,7 @@ Ray getWorldRayFromClipSpaceAndCamera(
     return worldRay;
 }
 
-void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene, AppState& appState)
+void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene)
 {
     ZoneScoped;
     // Handle events
@@ -74,8 +74,7 @@ void processEvents(WindowState& window, Camera& camera, InputState& input, Scene
                 {
                     int width = event.window.data1; 
                     int height = event.window.data2;
-                    glViewport(0, 0, width, height);
-
+                    
                     camera.aspect = (float)width / (float)height;
 
                     window.width = width;
@@ -130,7 +129,7 @@ void processEvents(WindowState& window, Camera& camera, InputState& input, Scene
                         }
                     }
 
-                    appState.selected_entity = {
+                    input.selected_entity = {
                         .id = clicked.id,
                         .name = clicked.nodeName,
                     };

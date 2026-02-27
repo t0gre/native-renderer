@@ -1,10 +1,6 @@
 #pragma once
 
 #include <SDL3/SDL.h>
-#include "camera.h"
-#include "render_program.h"
-#include "scene.h"
-#include "input.h"
 
 struct WindowState  {
     SDL_Window* object;

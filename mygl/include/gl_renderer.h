@@ -1,7 +1,8 @@
-#ifndef GL_RENDERER_H
-#define GL_RENDERER_H
+#pragma once
 
 #include "sdl_state.h"
+#include "render_program.h"
+#include "camera.h"
 
 WindowState initWindow(const char* title);
 
@@ -26,6 +27,3 @@ class GlRenderer {
 
 };
 
-
-
-#endif //GL_RENDERER_H

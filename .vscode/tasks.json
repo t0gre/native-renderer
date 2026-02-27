@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cmake",
+			"label": "CMake: build - app-debug",
+			"command": "build",
+			"targets": [
+				"native"
+			],
+			"preset": "app-debug",
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "CMake template build task"
+		},
+		{
+			"type": "cmake",
+			"label": "CMake: build - tests-debug",
+			"command": "build",
+			"targets": [
+				"tests"
+			],
+			"preset": "tests-debug",
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "CMake template build task"
+		}
+	],
+}
