@@ -23,14 +23,14 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ccache
-        key: ccache-cache  
+        key: ccache-cache-${{ github.sha }}  
         restore-keys: |
-          ccache-cache  
+          ccache-cache-  
 
     - if: ${{ steps.cache-ccache.outputs.cache-hit == 'true' }}
       name: Report on cache
       continue-on-error: true
-      run: ls ccache"
+      run: ls ccache
 
     - name: Deps
       run: |
