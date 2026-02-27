@@ -22,8 +22,8 @@ jobs:
       id: cache-ccache
       uses: actions/cache@v4
       with:
-        path: $HOME/.cache/ccache
-        key: cache-cache
+        path: $HOME/.cache
+        key: ccache
         restore-keys: |
           $HOME/.cache/ccache
 
