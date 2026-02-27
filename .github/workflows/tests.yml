@@ -13,23 +13,19 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
 
+    
     steps:
+
+    - name: Cache git folder
+      uses: actions/cache@v3
+      with:
+        path: checkout_path/.git
+        key: git-folder
+
     - uses: actions/checkout@v4
       with:
         submodules: recursive
 
-    - name: Cache ccache
-      id: cache-ccache
-      uses: actions/cache@v4
-      with:
-        path: ccache
-        key: ccache-cache-${{ github.sha }}  
-        restore-keys: |
-          ccache-cache
-          ccache-cache-  
-
-    - name: Check cache
-      run: ls ccache
 
     - name: Deps
       run: |
@@ -39,11 +35,10 @@ jobs:
             libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
-            libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev ccache
-
+            libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. 
-      run: mkdir -p ccache && CCACHE_DIR=$PWD/ccache cmake --preset debug -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+      run: cmake --preset debug
 
     - name: Build
       # Build your program with the given configuration
