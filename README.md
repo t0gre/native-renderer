@@ -12,24 +12,24 @@
 ## Building the main app with CMake (for dev)
 
 
-cmake --preset debug 
-cmake --build --preset app-debug
-cd build/debug
-./native  
+- `cmake --preset debug` 
+- `cmake --build --preset app-debug`
+- `cd build/debug`
+- `./native`  
 
 ## Building the main app with CMake (for release)
 
-cmake --preset release 
-cmake --build --preset app-release 
-cd build/debug
-./native  
+- `cmake --preset release` 
+- `cmake --build --preset app-release` 
+- `cd build/debug`
+- `./native`  
 
 ## Building the tests with CMake (for dev)
 
-cmake --preset debug 
-cmake --build --preset tests-debug 
-cd build/debug 
-./tests 
+- `cmake --preset debug` 
+- `cmake --build --preset tests-debug` 
+- `cd build/debug` 
+- `./tests` 
 
 
 ## Platform support
