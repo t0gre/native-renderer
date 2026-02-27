@@ -20,7 +20,7 @@ jobs:
 
     - name: Cache cmake
       id: cache-cmake
-      uses: actions/cache/v4
+      uses: actions/cache@v4
       with:
         path: build/debug
 
