@@ -16,11 +16,10 @@ jobs:
     - name: Checkout this repo
       uses: actions/checkout@v4
       
+    # N.B. this needs updating if deps change
     - name: Get submodules cache key
       id: submodules-key
-      uses: ./.github/actions/lstree
-      with:
-        paths: third_party/assimp,third_party/SDL,third_party/tracy
+      run: echo "assimp-sdl-tracy"
 
     - name: Cache Submodules
       id: cache-submodule
@@ -47,7 +46,7 @@ jobs:
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
             libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev
-            
+
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. 
       run: cmake --preset debug
