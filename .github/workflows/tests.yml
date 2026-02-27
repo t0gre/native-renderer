@@ -5,7 +5,9 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  tests:
+    
+
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
@@ -16,8 +18,26 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Cache cmake
+      id: cache-cmake
+      uses: actions/cache/v4
+      with:
+      path: build/debug
+
+    - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+      name: Report on cache
+      continue-on-error: true
+      run: echo "cache hit"
+
     - name: Deps
-      run: sudo apt-get install libgl1-mesa-dev
+      run: |
+        sudo apt-get install libgl1-mesa-dev build-essential git make \
+            pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
+            libaudio-dev libfribidi-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
+            libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
+            libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
+            libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
+            libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. 
