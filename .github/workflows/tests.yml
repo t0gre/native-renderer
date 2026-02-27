@@ -13,10 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
     - name: Deps
       run: sudo apt-get install libgl1-mesa-dev
-      
+
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. 
       run: cmake --preset debug
