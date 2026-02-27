@@ -30,7 +30,7 @@ jobs:
     - if: ${{ steps.cache-ccache.outputs.cache-hit == 'true' }}
       name: Report on cache
       continue-on-error: true
-      run: echo "cache hit"
+      run: echo "cache hit good"
 
     - name: Deps
       run: |
