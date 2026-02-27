@@ -30,7 +30,7 @@ jobs:
     - if: ${{ steps.cache-ccache.outputs.cache-hit == 'true' }}
       name: Report on cache
       continue-on-error: true
-      run: echo "cache hit fo sho"
+      run: echo "cache hit"
 
     - name: Deps
       run: |
@@ -44,7 +44,7 @@ jobs:
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. 
-      run: mkidr ccache && CCACHE_DIR=$PWD/ccache cmake --preset debug -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+      run: mkdir ccache && CCACHE_DIR=$PWD/ccache cmake --preset debug -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
     - name: Build
       # Build your program with the given configuration
