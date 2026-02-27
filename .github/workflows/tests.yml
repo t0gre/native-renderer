@@ -18,17 +18,19 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Cache cmake
-      id: cache-cmake
+    - name: Cache ccache
+      id: cache-ccache
       uses: actions/cache@v4
       with:
-        path: build/debug
-        key: cmake-cache
+        path: $HOME/.cache/ccache
+        key: cache-cache
+      restore-keys: |
+        $HOME/.cache/ccache
 
-    - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+    - if: ${{ steps.cache-ccache.outputs.cache-hit == 'true' }}
       name: Report on cache
       continue-on-error: true
-      run: echo "cache hit actually"
+      run: echo "cache hit"
 
     - name: Deps
       run: |
@@ -38,11 +40,11 @@ jobs:
             libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
-            libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev
+            libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev ccache
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. 
-      run: cmake --preset debug
+      run: cmake --preset debug -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
     - name: Build
       # Build your program with the given configuration
