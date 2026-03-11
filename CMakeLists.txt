@@ -6,7 +6,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(OpenGL REQUIRED)
 
-option( TRACY_ENABLE "" ON)
+if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    set(TRACY_ENABLE ON CACHE BOOL "" FORCE)
+else()
+    set(TRACY_ENABLE OFF CACHE BOOL "" FORCE)
+endif()
 add_subdirectory(third_party/tracy)
 add_subdirectory(lib lib)
 add_subdirectory(mym mym)
