@@ -5,7 +5,7 @@
 #include "scene.h"
 #include <stack>
 #include <algorithm>
-#include "mystl.hpp"
+
 
 Vec2 getPointerClickInClipSpace(const int mouse_x, const int mouse_y, const int canvas_width, const int canvas_height) {
     // Convert from window coordinates to normalized device coordinates (clip space)
@@ -84,11 +84,11 @@ Vec3Result rayIntersectsTriangle(Ray ray, Triangle triangle) {
 }
 
 
-DArray<VertexIntersection> rayIntersectsVertices(Ray ray, Vertices vertices) {
+std::vector<VertexIntersection> rayIntersectsVertices(Ray ray, Vertices vertices) {
     
-    DArray<VertexIntersection> intersections;
+    std::vector<VertexIntersection> intersections;
 
-    float * positions = vertices.positions.begin();
+    float * positions = vertices.positions.data();
 
     for (size_t i = 0; i < vertices.vertex_count * 3; i += 9) {
         
@@ -117,9 +117,9 @@ DArray<VertexIntersection> rayIntersectsVertices(Ray ray, Vertices vertices) {
 }
 
 
-DArray<NodeIntersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
+std::vector<NodeIntersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
     
-    DArray<NodeIntersection> intersections;
+    std::vector<NodeIntersection> intersections;
     std::stack<const SceneNode*> node_stack;
     
     
@@ -185,8 +185,8 @@ DArray<NodeIntersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) 
     return intersections;
 }
 
-DArray<NodeIntersection> rayIntersectsScene(const Ray &ray, const Scene& scene) {
-    DArray<NodeIntersection> intersections;
+std::vector<NodeIntersection> rayIntersectsScene(const Ray &ray, const Scene& scene) {
+    std::vector<NodeIntersection> intersections;
     
     for (const auto& node: scene.nodes) {
         auto rayNodeIntersections = rayIntersectsSceneNode(ray, *node);
@@ -202,7 +202,7 @@ DArray<NodeIntersection> rayIntersectsScene(const Ray &ray, const Scene& scene) 
 
 
 void sortBySceneDepth(
-    DArray<NodeIntersection>& intersections,
+    std::vector<NodeIntersection>& intersections,
     Camera camera
 ) {
 

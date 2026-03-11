@@ -6,7 +6,7 @@
 #include "vec.h"
 #include "mesh.h"
 #include "scene.h"
-#include "mystl.hpp"
+#include <vector>
 #include "camera.h"
 
 
@@ -44,14 +44,14 @@ struct NodeIntersection {
 
 Vec3Result rayIntersectsTriangle(Ray ray, Triangle triangle);
 
-DArray<VertexIntersection> rayIntersectsVertices(Ray ray, Vertices vertices);
+std::vector<VertexIntersection> rayIntersectsVertices(Ray ray, Vertices vertices);
 
-DArray<NodeIntersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node);
+std::vector<NodeIntersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node);
 
-DArray<NodeIntersection> rayIntersectsScene(const Ray &ray, const Scene& scene);
+std::vector<NodeIntersection> rayIntersectsScene(const Ray &ray, const Scene& scene);
 
 void sortBySceneDepth(
-    DArray<NodeIntersection>& intersections,
+    std::vector<NodeIntersection>& intersections,
     Camera camera
 );
 

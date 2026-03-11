@@ -1,4 +1,5 @@
 
+#include "arena.hpp"
 #include "mat4.h"
 #include "math_utils.h"
 #include "camera.h"
@@ -36,6 +37,7 @@ void updateScene(Scene& scene, float dt) {
 int main(int argc, char** argv)
 {
    
+    Arena app_arena(4096);
 
     InputState input = {
         .pointer_down = false,
@@ -174,7 +176,7 @@ int main(int argc, char** argv)
             "floor"
         );
 
-    auto scene_nodes = DArray<SceneNode*>();
+    std::vector<SceneNode*, ArenaAllocator<SceneNode*>> scene_nodes(&app_arena);
     scene_nodes.push_back(&green_tree);
     scene_nodes.push_back(&floor_model);
 

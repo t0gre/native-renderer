@@ -15,7 +15,7 @@ void setParent(SceneNode& node, SceneNode& parent) {
         const SceneNode * existing_child = oldParent->children[i];
         
         if (existing_child->id == node.id) {
-            oldParent->children.erase(i);
+            oldParent->children.erase(oldParent->children.begin() + i);
         }
     }
 
@@ -56,7 +56,7 @@ SceneNode createSceneNode(const Mat4 &transform, const std::optional<Mesh> &mesh
    .id = sceneNodeCounter,
    .local_transform = transform,
    .world_transform = transform, // actually valid since there's no parent
-   .children = DArray<SceneNode*>(), // empty array if no children
+   .children = std::vector<SceneNode*>(), // empty array if no children
    .mesh = mesh,
    .name = name
 };

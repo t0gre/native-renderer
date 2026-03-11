@@ -2,7 +2,6 @@
 #include <SDL3/SDL.h>
 #include <GLES3/gl3.h>
 #include "math.h"
-#include <variant>
 
 #include "events.h"
 #include "mat4.h"

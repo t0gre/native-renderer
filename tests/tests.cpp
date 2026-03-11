@@ -1,12 +1,12 @@
 #include <cstdio>
 #include <string>
+#include <vector>
 
-#include "mystl.hpp"
 
 #include "test_helpers.h" 
     
 int main(int argc, char** argv) {
-    DArray<TestResult> results;
+    std::vector<TestResult> results;
 
     // triangle tests
     for (const auto &result : runTriangleTests()) {

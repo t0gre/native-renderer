@@ -41,7 +41,7 @@ char* get_shader_content(const char* fileName)
 }
 
 // reads something that is not really a csv, because it has no line endings
-DArray<float> read_csv(const char* filename) {
+std::vector<float> read_csv(const char* filename) {
 
   FILE* fptr = fopen(filename, "r");
 
@@ -55,7 +55,7 @@ DArray<float> read_csv(const char* filename) {
     
   number_of_floats++;
   const size_t number = number_of_floats;
-  DArray<float> floats;
+  std::vector<float> floats;
 
   size_t float_cursor = 0;
   char number_string[10] = { 0 }; // it wont be longer than this
@@ -161,7 +161,7 @@ static TextureData loadEmbeddedTexture(const aiTexture* aiTex) {
     return data;
 }
 
-  // Helper: convert aiMesh -> Mesh (fills Vertices.positions and Vertices.normals using DArray)
+  // Helper: convert aiMesh -> Mesh (fills Vertices.positions and Vertices.normals using std::vector)
 // convert a single aiMesh into our Mesh representation
 Mesh convertAiMesh(const aiMesh* aMesh, const aiScene* scene) {
     Mesh m;

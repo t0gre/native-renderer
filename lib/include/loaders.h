@@ -2,11 +2,10 @@
 #define LOADER_H
 
 #include "scene.h"
-#include "mystl.hpp"
 
 char* get_shader_content(const char* fileName);
 
-DArray<float> read_csv(const char* filename);
+std::vector<float> read_csv(const char* filename);
 
 SceneNode load_glb(const std::string&);
 
