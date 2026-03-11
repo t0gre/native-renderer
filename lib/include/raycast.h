@@ -44,14 +44,14 @@ struct NodeIntersection {
 
 Vec3Result rayIntersectsTriangle(Ray ray, Triangle triangle);
 
-std::vector<VertexIntersection> rayIntersectsVertices(Ray ray, Vertices vertices);
+std::vector<VertexIntersection, ArenaAllocator<VertexIntersection>> rayIntersectsVertices(Ray ray, Vertices vertices, Arena& arena);
 
-std::vector<NodeIntersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node);
+std::vector<NodeIntersection, ArenaAllocator<NodeIntersection>> rayIntersectsSceneNode(Ray ray, const SceneNode& node, Arena& arena);
 
-std::vector<NodeIntersection> rayIntersectsScene(const Ray &ray, const Scene& scene);
+std::vector<NodeIntersection, ArenaAllocator<NodeIntersection>> rayIntersectsScene(const Ray &ray, const Scene& scene, Arena& arena);
 
 void sortBySceneDepth(
-    std::vector<NodeIntersection>& intersections,
+    std::vector<NodeIntersection, ArenaAllocator<NodeIntersection>>& intersections,
     Camera camera
 );
 

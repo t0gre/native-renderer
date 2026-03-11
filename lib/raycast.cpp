@@ -1,4 +1,5 @@
 #include "raycast.h"
+#include "arena.hpp"
 #include "float.h"
 #include "mesh.h"
 #include "vec.h"
@@ -84,9 +85,9 @@ Vec3Result rayIntersectsTriangle(Ray ray, Triangle triangle) {
 }
 
 
-std::vector<VertexIntersection> rayIntersectsVertices(Ray ray, Vertices vertices) {
+std::vector<VertexIntersection, ArenaAllocator<VertexIntersection>> rayIntersectsVertices(Ray ray, Vertices vertices, Arena& arena) {
     
-    std::vector<VertexIntersection> intersections;
+    std::vector<VertexIntersection, ArenaAllocator<VertexIntersection>> intersections(&arena);
 
     float * positions = vertices.positions.data();
 
@@ -117,9 +118,9 @@ std::vector<VertexIntersection> rayIntersectsVertices(Ray ray, Vertices vertices
 }
 
 
-std::vector<NodeIntersection> rayIntersectsSceneNode(Ray ray, const SceneNode& node) {
+std::vector<NodeIntersection, ArenaAllocator<NodeIntersection>> rayIntersectsSceneNode(Ray ray, const SceneNode& node, Arena& arena) {
     
-    std::vector<NodeIntersection> intersections;
+    std::vector<NodeIntersection, ArenaAllocator<NodeIntersection>> intersections(&arena);
     std::stack<const SceneNode*> node_stack;
     
     
@@ -149,7 +150,8 @@ std::vector<NodeIntersection> rayIntersectsSceneNode(Ray ray, const SceneNode& n
             
             auto rayNodeIntersections = rayIntersectsVertices(
                 newRay, 
-                nodeUnderTest->mesh.value().vertices);
+                nodeUnderTest->mesh.value().vertices,
+            arena);
 
             if (rayNodeIntersections.size() > 0) {
                 for (const auto& intersection : rayNodeIntersections) {
@@ -185,11 +187,12 @@ std::vector<NodeIntersection> rayIntersectsSceneNode(Ray ray, const SceneNode& n
     return intersections;
 }
 
-std::vector<NodeIntersection> rayIntersectsScene(const Ray &ray, const Scene& scene) {
-    std::vector<NodeIntersection> intersections;
+std::vector<NodeIntersection, ArenaAllocator<NodeIntersection>> rayIntersectsScene(const Ray &ray, const Scene& scene, Arena& arena) {
+    
+    std::vector<NodeIntersection, ArenaAllocator<NodeIntersection>> intersections(&arena);
     
     for (const auto& node: scene.nodes) {
-        auto rayNodeIntersections = rayIntersectsSceneNode(ray, *node);
+        auto rayNodeIntersections = rayIntersectsSceneNode(ray, *node, arena);
         if (rayNodeIntersections.size() > 0) {
                 for (const auto& intersection : rayNodeIntersections) {
                      intersections.push_back(intersection);
@@ -202,7 +205,7 @@ std::vector<NodeIntersection> rayIntersectsScene(const Ray &ray, const Scene& sc
 
 
 void sortBySceneDepth(
-    std::vector<NodeIntersection>& intersections,
+    std::vector<NodeIntersection, ArenaAllocator<NodeIntersection>>& intersections,
     Camera camera
 ) {
 

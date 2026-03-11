@@ -1,6 +1,7 @@
 
 #include <SDL3/SDL.h>
 #include <GLES3/gl3.h>
+#include "arena.hpp"
 #include "math.h"
 
 #include "events.h"
@@ -12,7 +13,7 @@
 
 using namespace mym;
 
-void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene)
+void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene, Arena& frame_arena)
 {
     ZoneScoped;
     // Handle events
@@ -70,7 +71,7 @@ void processEvents(WindowState& window, Camera& camera, InputState& input, Scene
                     );
 
                     // intersect scene
-                    auto hits = rayIntersectsScene(worldRay, scene);
+                    auto hits = rayIntersectsScene(worldRay, scene, frame_arena);
 
                     if (hits.size() == 0) break;
                         

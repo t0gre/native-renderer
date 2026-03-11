@@ -17,4 +17,4 @@ typedef struct InputState {
 } InputState;
 
 
-void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene);
+void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene,  Arena& frame_arena);

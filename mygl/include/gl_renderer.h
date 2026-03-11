@@ -20,9 +20,9 @@ class GlRenderer {
     public:
         GlRenderer();
         void drawGl(
-                WindowState window, 
-                Camera camera, 
-                Scene scene 
+                const WindowState& window,
+                const Camera& camera,
+                const Scene& scene
             );
 
 };

@@ -38,6 +38,7 @@ int main(int argc, char** argv)
 {
    
     Arena app_arena(4096);
+    Arena frame_arena(4096);
 
     InputState input = {
         .pointer_down = false,
@@ -262,7 +263,8 @@ int main(int argc, char** argv)
         &next_update_time,
         &scene_mutex,
         &camera_mutex,
-        &window_mutex
+        &window_mutex,
+        &frame_arena
     ] { 
             
         while(!window.should_close) {
@@ -275,9 +277,10 @@ int main(int argc, char** argv)
                 std::lock_guard<LockableBase(std::mutex)> camera_guard(camera_mutex);
                 std::lock_guard<LockableBase(std::mutex)> window_guard(window_mutex);
                 // event is forwarded to imgui in here
-                processEvents(window, camera, input, scene);
+                processEvents(window, camera, input, scene, frame_arena);
             }
             
+            frame_arena.reset();
             next_update_time += std::chrono::milliseconds(UPDATE_INTERVAL);
             std::this_thread::sleep_until(next_update_time);
         }

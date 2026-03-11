@@ -19,11 +19,16 @@ Arena::Arena(std::size_t chunk_size)
 }
 
 char* Arena::allocate(std::size_t size) {
-    if (_current->capacity - _current->offset < size) {
-        size_t new_size = size > _chunk_size ? size : _chunk_size;
-        Chunk* next = _make_chunk(new_size);
-        _current->next = next;
-        _current = next;
+    while (_current->capacity - _current->offset < size) {
+        if (_current->next) {
+            // reuse existing chunk left over from before last reset
+            _current = _current->next;
+        } else {
+            size_t new_size = size > _chunk_size ? size : _chunk_size;
+            Chunk* next = _make_chunk(new_size);
+            _current->next = next;
+            _current = next;
+        }
     }
     char* ptr = _current->buffer + _current->offset;
     _current->offset += size;
