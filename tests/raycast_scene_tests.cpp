@@ -50,6 +50,7 @@ const BasicColorMaterial irrelevant = {
 
 TestResult intersect_node_with_position_transform() {
    
+    Arena test_arena(4096);
     auto vertices = setupVertices();
 
     Mat4 transform = fromPositionAndEuler(
@@ -70,7 +71,7 @@ TestResult intersect_node_with_position_transform() {
      .direction = {0.f, -1.f, 0.f}
     };
 
-    auto result = rayIntersectsSceneNode(ray, node);
+    auto result = rayIntersectsSceneNode(ray, node, test_arena);
 
     const VertexIntersection expected = { 
         .point = { -11.f, 0.f, 0.f}, 
@@ -105,6 +106,7 @@ TestResult intersect_node_with_position_transform() {
 
 TestResult intersect_node_with_multiple_position_transform() {
    
+    Arena test_arena(4096);
     auto vertices = setupVertices();
 
     Mat4 transform = fromPositionAndEuler(
@@ -135,7 +137,7 @@ TestResult intersect_node_with_multiple_position_transform() {
     };
 
 
-    auto result = rayIntersectsSceneNode(ray, parentNode);
+    auto result = rayIntersectsSceneNode(ray, parentNode, test_arena);
 
     const VertexIntersection expected = { 
         .point = { -11.f, 0.f, 0.f}, 
@@ -170,6 +172,7 @@ TestResult intersect_node_with_multiple_position_transform() {
 
 TestResult intersect_node_with_roation_transform() {
    
+    Arena test_arena(4096);
     auto vertices = setupVertices();
 
     Mat4 transform = fromPositionAndEuler(
@@ -190,7 +193,7 @@ TestResult intersect_node_with_roation_transform() {
      .direction = {0.f, -1.f, 0.f}
     };
 
-    auto result = rayIntersectsSceneNode(ray, node);
+    auto result = rayIntersectsSceneNode(ray, node, test_arena);
 
     const VertexIntersection expected = { 
         .point = { -1.f, -1.f, 0.f}, 
