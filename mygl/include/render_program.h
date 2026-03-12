@@ -5,8 +5,6 @@
 #include <vector>
 #include "scene.h"
 #include "mesh.h"
-#include <string>
-#include "mystl.hpp"
 
 GLuint guaranteeUniformLocation(const GLuint program, const GLchar *name);
 
@@ -82,7 +80,7 @@ BasicColorRenderProgram initShader(void);
 TextureRenderProgram initTextureShader(void);
 
 typedef struct GlState {
-    DArray<GLuint> vaos;
+    std::vector<GLuint> vaos;
 } GlState;
 
 

@@ -61,9 +61,9 @@ GlRenderer::GlRenderer() {
 
 
 void GlRenderer::drawGl(
-    WindowState window, 
-    Camera camera, 
-    Scene scene 
+    const WindowState& window,
+    const Camera& camera,
+    const Scene& scene
 )
 {
     

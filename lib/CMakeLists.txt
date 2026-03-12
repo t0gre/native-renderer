@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.24)
 project(NativeRendererLib)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set (CMAKE_CXX_STANDARD 20)
 
 # find_package(OpenGL REQUIRED)
 set(SDL_ALSA OFF)
@@ -25,7 +26,8 @@ add_library(lib SHARED
     scene.cpp
     raycast.cpp    
     loaders.cpp
-    include/mystl.hpp 
+    arena.cpp
+    include/arena.hpp
 )
 
 target_include_directories(lib PUBLIC include)

@@ -4,16 +4,16 @@
 #include <optional>
 #include <string>
 
+#include "arena.hpp"
 #include "light.h"
 #include "mesh.h"
-#include "mystl.hpp"
 #include "mat4.h"
 
 typedef struct SceneNode {
     size_t id;
     Mat4 local_transform; 
     Mat4 world_transform;
-    DArray<SceneNode *> children; // empty if no children
+    std::vector<SceneNode *> children; // empty if no children
     std::optional<Mesh> mesh; 
     std::optional<SceneNode *> parent;
     std::optional<std::string> name;
@@ -24,7 +24,7 @@ typedef struct SceneNode {
 void setParent(SceneNode& node, SceneNode& parent);
 
 typedef struct Scene {
-    DArray<SceneNode*> nodes;
+    std::vector<SceneNode*, ArenaAllocator<SceneNode*>> nodes;
     AmbientLight ambient_light;
     DirectionalLight directional_light;
     PointLight point_light;

@@ -1,4 +1,5 @@
 
+#include "arena.hpp"
 #include "mat4.h"
 #include "math_utils.h"
 #include "camera.h"
@@ -12,6 +13,7 @@
 #include "backends/imgui_impl_sdl3.h"
 #include "backends/imgui_impl_opengl3.h"
 #include <mutex>
+#include <thread>
 
 using namespace mym;
 #define UPDATE_INTERVAL 10
@@ -36,6 +38,8 @@ void updateScene(Scene& scene, float dt) {
 int main(int argc, char** argv)
 {
    
+    Arena app_arena(4096);
+    Arena frame_arena(4096);
 
     InputState input = {
         .pointer_down = false,
@@ -174,7 +178,7 @@ int main(int argc, char** argv)
             "floor"
         );
 
-    auto scene_nodes = DArray<SceneNode*>();
+    std::vector<SceneNode*, ArenaAllocator<SceneNode*>> scene_nodes(&app_arena);
     scene_nodes.push_back(&green_tree);
     scene_nodes.push_back(&floor_model);
 
@@ -260,7 +264,8 @@ int main(int argc, char** argv)
         &next_update_time,
         &scene_mutex,
         &camera_mutex,
-        &window_mutex
+        &window_mutex,
+        &frame_arena
     ] { 
             
         while(!window.should_close) {
@@ -273,9 +278,10 @@ int main(int argc, char** argv)
                 std::lock_guard<LockableBase(std::mutex)> camera_guard(camera_mutex);
                 std::lock_guard<LockableBase(std::mutex)> window_guard(window_mutex);
                 // event is forwarded to imgui in here
-                processEvents(window, camera, input, scene);
+                processEvents(window, camera, input, scene, frame_arena);
             }
             
+            frame_arena.reset();
             next_update_time += std::chrono::milliseconds(UPDATE_INTERVAL);
             std::this_thread::sleep_until(next_update_time);
         }

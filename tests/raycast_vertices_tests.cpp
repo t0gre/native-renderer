@@ -1,3 +1,4 @@
+#include "arena.hpp"
 #include "mesh.h"
 #include "test_helpers.h"
 #include <raycast.h>
@@ -40,6 +41,8 @@ Vertices setupData() {
 
 TestResult intersect_vertices_first() {
    
+    Arena test_arena(4096);
+
     auto meshVertices = setupData();
     // triangle is symmetrical x-y and just a bit back from origin z
    
@@ -48,7 +51,7 @@ TestResult intersect_vertices_first() {
      .direction = {0.f, -1.f, 0.f}
     };
 
-    auto result = rayIntersectsVertices(ray, meshVertices);
+    auto result = rayIntersectsVertices(ray, meshVertices, test_arena);
 
     const VertexIntersection expected = { 
         .point = { -1.f, 0.f, 0.f}, 
@@ -81,6 +84,7 @@ TestResult intersect_vertices_first() {
 
 TestResult intersect_vertices_last() {
    
+    Arena test_arena(4096);
     auto meshVertices = setupData();
 
     // triangle is symmetrical x-y and just a bit back from origin z
@@ -90,7 +94,7 @@ TestResult intersect_vertices_last() {
      .direction = {0.f, -1.f, 0.f}
     };
 
-    auto result = rayIntersectsVertices(ray, meshVertices);
+    auto result = rayIntersectsVertices(ray, meshVertices, test_arena);
 
     const VertexIntersection expected = { 
         .point = { 1.f, 0.f, 0.f}, 

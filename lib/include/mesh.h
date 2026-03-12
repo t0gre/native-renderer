@@ -4,13 +4,13 @@
 #include <optional>
 #include <assert.h>
 #include "material.h"
-#include "mystl.hpp"
+#include <vector>
 
 struct Vertices {
   size_t vertex_count;
-  DArray<float> positions;
-  DArray<float> normals;
-  DArray<unsigned int> indices;
+  std::vector<float> positions;
+  std::vector<float> normals;
+  std::vector<unsigned int> indices;
   size_t index_count;
 };
 

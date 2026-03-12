@@ -3,7 +3,7 @@
 
 #include "vec.h"
 #include <variant>
-#include "mystl.hpp"
+#include <vector>
 #include <string>
 #include <GLES3/gl3.h>
 
@@ -32,8 +32,8 @@ struct BasicColorMaterial {
 
 struct BasicTextureMaterial
 {
-      DArray<float> texture;
-      DArray<float> uvMap;
+      std::vector<float> texture;
+      std::vector<float> uvMap;
       std::string texture_path; // path reported by Assimp (may be embedded like "*0")
       TextureData texture_data; // loaded texture data (pixels, dimensions, etc.)
       GLuint texture_id; // OpenGL texture ID once created by renderer

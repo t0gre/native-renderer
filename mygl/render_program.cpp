@@ -1,11 +1,11 @@
 #include "render_program.h"
 #include "loaders.h"
 #include "mesh.h"
-#include "mystl.hpp"
 
 #include <stddef.h>
 #include <assert.h>
 #include <stdio.h>
+#include <vector>
 
 
 GLuint guaranteeUniformLocation(const GLuint program, const GLchar *name) {
@@ -37,7 +37,7 @@ void initMesh(Mesh  &mesh) {
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mesh.vertices.vertex_count*3, 
-                 mesh.vertices.positions.begin(), GL_STATIC_DRAW);
+                 mesh.vertices.positions.data(), GL_STATIC_DRAW);
 
     // Specify the layout of the shader vertex data (positions only, 3 floats)
     GLint posAttrib = 0;
@@ -48,7 +48,7 @@ void initMesh(Mesh  &mesh) {
     glGenBuffers(1, &vbo_norm);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_norm);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mesh.vertices.vertex_count*3, 
-                 mesh.vertices.normals.begin(), GL_STATIC_DRAW);
+                 mesh.vertices.normals.data(), GL_STATIC_DRAW);
 
     // Specify the layout of the shader vertex data (normals only, 3 floats)
     
@@ -63,7 +63,7 @@ void initMesh(Mesh  &mesh) {
             glGenBuffers(1, &vbo_uv);
             glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
             glBufferData(GL_ARRAY_BUFFER, sizeof(float) * texMat.uvMap.size(), 
-                        texMat.uvMap.begin(), GL_STATIC_DRAW);
+                        texMat.uvMap.data(), GL_STATIC_DRAW);
 
             GLint uvAttrib = 2;
             glEnableVertexAttribArray(uvAttrib);
@@ -77,7 +77,7 @@ void initMesh(Mesh  &mesh) {
         glGenBuffers(1, &ebo);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.vertices.index_count,
-                     mesh.vertices.indices.begin(), GL_STATIC_DRAW);
+                     mesh.vertices.indices.data(), GL_STATIC_DRAW);
     }
 
     // unbind array buffer (but keep EBO bound to VAO) and VAO to avoid accidental state changes
@@ -132,7 +132,7 @@ ShadowMap createShadowMap() {
 
 ShadowRenderProgram initShadowRenderProgram() {
 
-    DArray<AttributeBinding> attribBindings;
+    std::vector<AttributeBinding> attribBindings;
     
     attribBindings.push_back({ .name = "a_position", .location = 0});
 
