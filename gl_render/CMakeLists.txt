@@ -5,7 +5,7 @@ project(GlRenderer)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(OpenGL REQUIRED)
-add_subdirectory(../lib lib)
+add_subdirectory(../scene scene)
 
 add_library(gl_render SHARED 
     basic_color_render_program.cpp
@@ -15,5 +15,5 @@ add_library(gl_render SHARED
 )
 
 target_include_directories(gl_render PUBLIC include)
-target_link_libraries(gl_render PUBLIC lib)
+target_link_libraries(gl_render PUBLIC scene)
 

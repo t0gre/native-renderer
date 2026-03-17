@@ -1,6 +1,6 @@
 include_guard(GLOBAL)
 cmake_minimum_required(VERSION 3.24)
-project(NativeRendererLib)
+project(3DScene)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set (CMAKE_CXX_STANDARD 20)
@@ -21,7 +21,7 @@ add_subdirectory(../third_party/assimp assimp)
 add_subdirectory(../linalg linalg)
 
 # lib (include is for templates)
-add_library(lib SHARED 
+add_library(scene SHARED 
     camera.cpp
     scene.cpp
     raycast.cpp    
@@ -30,9 +30,9 @@ add_library(lib SHARED
     include/arena.hpp
 )
 
-target_include_directories(lib PUBLIC include)
+target_include_directories(scene PUBLIC include)
 
-target_link_libraries(lib 
+target_link_libraries(scene 
     linalg
     SDL3::SDL3  
     assimp::assimp
