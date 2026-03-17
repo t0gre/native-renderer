@@ -4,7 +4,7 @@
 #include "vec.h"
 #include "mat4.h"
 
-using namespace mym;
+using namespace linalg;
 
 typedef struct Orbit {
   float azimuth;

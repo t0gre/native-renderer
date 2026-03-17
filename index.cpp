@@ -15,7 +15,7 @@
 #include <mutex>
 #include <thread>
 
-using namespace mym;
+using namespace linalg;
 #define UPDATE_INTERVAL 10
 
 float  dt = 1.0f/UPDATE_INTERVAL;

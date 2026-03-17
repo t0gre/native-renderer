@@ -1,6 +1,6 @@
 #include "camera.h"
 
-using namespace mym;
+using namespace linalg;
 
 Mat4 getProjectionMatrix(Camera camera) {
   return perspective(camera.field_of_view_radians, camera.aspect, camera.near, camera.far);

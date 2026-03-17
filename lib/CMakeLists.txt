@@ -18,7 +18,7 @@ set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF)
 set(ASSIMP_BUILD_GLTF_IMPORTER ON)
 add_subdirectory(../third_party/assimp assimp)
 
-add_subdirectory(../mym mym)
+add_subdirectory(../linalg linalg)
 
 # lib (include is for templates)
 add_library(lib SHARED 
@@ -33,7 +33,7 @@ add_library(lib SHARED
 target_include_directories(lib PUBLIC include)
 
 target_link_libraries(lib 
-    mym
+    linalg
     SDL3::SDL3  
     assimp::assimp
     ${OPENGL_LIBRARIES})

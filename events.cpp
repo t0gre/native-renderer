@@ -11,7 +11,7 @@
 
 #include "backends/imgui_impl_sdl3.h"
 
-using namespace mym;
+using namespace linalg;
 
 void processEvents(WindowState& window, Camera& camera, InputState& input, Scene& scene, Arena& frame_arena)
 {

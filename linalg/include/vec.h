@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdbool.h>
 
-namespace mym {
+namespace linalg {
 
 typedef union Vec2 { 
   struct {

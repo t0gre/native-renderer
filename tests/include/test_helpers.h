@@ -10,7 +10,7 @@ struct TestResult {
 };
 
 bool floatsAreClose(float a, float b);
-bool vec3sAreEqual(mym::Vec3 a, mym::Vec3 b);
+bool vec3sAreEqual(linalg::Vec3 a, linalg::Vec3 b);
 
 std::vector<TestResult> runTriangleTests();
 std::vector<TestResult> runVerticesTests();

@@ -4,8 +4,9 @@
 #include "scene.h"
 #include "test_helpers.h"
 #include "raycast.h"
+#include "math_utils.h"
 
-using namespace mym;
+using namespace linalg;
 
 Vertices setupVertices() {
 
