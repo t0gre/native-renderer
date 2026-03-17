@@ -14,8 +14,8 @@ endif()
 
 add_subdirectory(third_party/tracy)
 add_subdirectory(lib lib)
-add_subdirectory(mym mym)
-add_subdirectory(mygl mygl)
+add_subdirectory(linalg linalg)
+add_subdirectory(gl_render gl_render)
 
 # imgui 
 set(IMGUI_PATH  "${CMAKE_SOURCE_DIR}/third_party/imgui")
@@ -34,8 +34,8 @@ target_link_libraries(ImGui PRIVATE SDL3::SDL3)
 add_executable(native index.cpp events.cpp)
 
 target_link_libraries(native PRIVATE 
-    mym
-    mygl
+    linalg
+    gl_render
     lib
     SDL3::SDL3
     ${OPENGL_LIBRARIES}
@@ -70,7 +70,7 @@ add_executable(tests
     )
 
 target_link_libraries(tests PRIVATE 
-    mym
+    linalg
     lib 
 )
 

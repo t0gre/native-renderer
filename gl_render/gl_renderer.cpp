@@ -1,6 +1,6 @@
 #include "gl_renderer.h"
 
-using namespace mym;
+using namespace linalg;
 
 WindowState initWindow(const char* title)
 {

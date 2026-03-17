@@ -25,8 +25,8 @@ struct TextureData {
 };
 
 struct BasicColorMaterial {
-      mym::Vec3 color;
-      mym::Vec3 specular_color;
+      linalg::Vec3 color;
+      linalg::Vec3 specular_color;
       float shininess;
 };
 

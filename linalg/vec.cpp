@@ -3,7 +3,7 @@
 #include "math_utils.h"
 #include <algorithm>
 
-namespace mym {
+namespace linalg {
 Vec3 scaleVector(const Vec3 vec, const float scalar) {
    
     return (Vec3){

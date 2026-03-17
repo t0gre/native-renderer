@@ -12,7 +12,7 @@ struct Entity {
 
 typedef struct InputState {
     bool pointer_down;
-    mym::Vec2 pointer_position;
+    linalg::Vec2 pointer_position;
     std::optional<Entity> selected_entity;
 } InputState;
 

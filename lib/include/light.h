@@ -3,7 +3,7 @@
 
 #include "vec.h"
 
-using namespace mym;
+using namespace linalg;
 
 typedef struct PointLight {
   Vec3 color;

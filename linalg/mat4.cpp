@@ -1,7 +1,8 @@
 #include "vec.h"
 #include "mat4.h"
+#include "math_utils.h"
 
-namespace mym {
+namespace linalg {
 
 Mat4 lookAt(const Vec3 camera_position, const Vec3 target, const Vec3 up) {
         const Vec3 z_axis = normalize(

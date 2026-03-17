@@ -1,10 +1,9 @@
 #ifndef MAT_4_H
 #define MAT_4_H
 
-#include "math_utils.h"
 #include "vec.h"
 
-namespace mym {
+namespace linalg {
 
 typedef union Mat4 { 
     struct {
